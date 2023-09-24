@@ -9,7 +9,9 @@ int main(void) {
     float sum = 0.0, x; //2 float varoables declared. x is full of garbage.
     printf("Input some numbers: ");
 
-    while (scanf("%f", &x) == 1) { //WHILE USERS ARE ENTERING A FLOAT, increase the CNT AND ADD USER INPUT INTO SUM %f is a floating type. while means something happens inside brackets and if TRUE, next instruction executed. 
+    while (scanf("%f", &x) == 1) { //if you have successfuly scanned a number and stored as x, then do LOOP (dealing with two things)
+        
+        //WHILE USERS ARE ENTERING A FLOAT, increase the CNT AND ADD USER INPUT INTO SUM %f is a floating type. while means something happens inside brackets and if TRUE, next instruction executed. 
     /*if failed, returns 0, 1 is SUCCESS. 
     This means any number of values can be stored in x. But the value of the whole function call is the total number of numbers successfully scanned.
     If TRUE, then do all these instructions.
