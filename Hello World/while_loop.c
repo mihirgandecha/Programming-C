@@ -1,20 +1,29 @@
 // Sums are computed.
+//We can use the line 12 to create a coin simulator
 #include <stdio.h>
 
 int main(void) {
 
+//First the code initialises two types of variables
     int cnt = 0;
-    float sum = 0.0, x;
+    float sum = 0.0, x; //2 float varoables declared. x is full of garbage.
     printf("Input some numbers: ");
 
-    while (scanf("%f", &x) == 1) {
-        cnt = cnt + 1;
-        sum = sum + x;
+    while (scanf("%f", &x) == 1) { //WHILE USERS ARE ENTERING A FLOAT, increase the CNT AND ADD USER INPUT INTO SUM %f is a floating type. while means something happens inside brackets and if TRUE, next instruction executed. 
+    /*if failed, returns 0, 1 is SUCCESS. 
+    This means any number of values can be stored in x. But the value of the whole function call is the total number of numbers successfully scanned.
+    If TRUE, then do all these instructions.
+    Equality is tested with == sign. If you want to check that something is the same as something else. */     
+        cnt = cnt + 1; //add one to counter
+        sum = sum + x; //add value x to sum
     }
 
-    printf("\\n%s%5i\\n%s%5f\\n\\n", "Count:", cnt, "Sum: ", sum);
+    printf("\n%s%5i\n%s%5f\n\n", "Count:", cnt, "Sum: ", sum);
+    //Print new line, then print string (%s) - which looks at line and is "Count", THEN Print integer in box space of 5 
     return 0;
-}
+} /* Puts everything into space called BOOKER. When you press enter, it takes BOOKER. Flow of characters.
+
+*/
 
 /*
 Sure, let's use the analogy of a **"Coin-Counting Machine"** to explain a `while` loop:
