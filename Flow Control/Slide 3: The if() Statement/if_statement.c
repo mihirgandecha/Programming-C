@@ -16,7 +16,7 @@ then printf statement.
     printf("Input three integers: ");
     if(scanf("%i%i%i", &x, &y, &z) != 3){
         printf("Didn't get 3 numbers?\n");
-        return 1; //avoids crash
+        return 1; //This means exit main - we are all finished. We are leaving with a non-zero value meaning something has gone wrong. 00 errors.
     }
 
     int min;
@@ -31,5 +31,5 @@ then printf statement.
             min = z;
         }
     printf("The minimum value is %i\n", min);
-    return 0;
+    return 0; // all is well. RETURNING a non-zero in main means something has gone wrong!
 }
