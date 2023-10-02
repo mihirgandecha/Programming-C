@@ -6,19 +6,22 @@ void test(void);
 
 int main(void)
 {
-    printf()
+    test();
 
     return 0;
 }
 
 int mult(int a, int b)
 {
-    int result = 0;
+    int result = a;
     for (int i = 1; i < b; ++i){
         result += a; 
+        }
+    if (b == 0){
+        result = 0;
     }
     return result;
-}
+    }
 
 void test(void)
 {
