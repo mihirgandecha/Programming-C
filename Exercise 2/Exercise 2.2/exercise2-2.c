@@ -20,6 +20,8 @@ int main(void){
 }
 
 int conversion(double x){
-    (double)1- pow(sin(x), (double)2) + pow(cos(x), (double)2);
+    if (pow(sin(x), (double)2) + pow(cos(x), (double)2) = 1){
+        
+    }
     return x;
 }
