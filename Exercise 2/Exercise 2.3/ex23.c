@@ -4,14 +4,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
-#define INTERVAL 10000
+#define INTERVAL 1000
 
 double algorithm();
+void test(void);
 
 int main(void){
 
     double answer = algorithm();
     printf("%lf", answer);
+
+    test();
+
     return 0; 
 }
 
@@ -23,29 +27,29 @@ int main(void){
     double d;
     double PI;
 
-    for (square_points; square_points < INTERVAL; ++square_points){
+    for (square_points = 0; square_points < INTERVAL; ++square_points){
 
         rand_x = ((double)rand()/ (double)RAND_MAX);
         rand_y = ((double)rand()/(double)RAND_MAX);
-        printf("%lf,  %lf\n", rand_x, rand_y);
+
         d = pow(rand_x, (double)2) + pow(rand_y, (double)2);
-        printf("d is: %lf\n", d);
 
         if (d <= 1){
             circle_points++;
-            printf("Circle Points: %i\n", circle_points);
         }
 
     }
-    printf("Circle Points: %i Square Points: %i\n", circle_points, square_points);
+    
     PI = 4 * ((double)circle_points / (double)square_points);
 
-    printf("Final Estimation of Pi = %lf", &PI);
+    printf("Final Estimation of Pi = %lf\n", PI);
     return PI;
 
 }
 
 void test(void){
 
-    assert( algorithm() > 1);
+    double test_pi = algorithm(INTERVAL);
+    assert(test_pi > 1);
+    assert (test_pi >= 3.1); //prints the tests too! How can I silence? Check rand() function is it correct?
 }
