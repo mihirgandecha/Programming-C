@@ -12,5 +12,6 @@ int main(void) {
   };
   
   // Step 2: ASSIGN VALUES. Be sure to order in same way as declaration!
-  struct Person person1 = {"Ada", "Lovelace", 28}; 
+  struct Person person1 = {"Ada", "Lovelace", 28};
+  struct Person person2 = {"Marie", "Curie", 44}; 
 }
