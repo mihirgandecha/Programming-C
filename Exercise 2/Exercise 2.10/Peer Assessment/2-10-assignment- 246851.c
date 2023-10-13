@@ -23,7 +23,7 @@ int scode(int b){
 
     while ((b = getchar()) != '!'){
         if(b >= 'a' && b <= 'z'){
-            putchar(b + CHANGE); 
+            putchar(-b + CHANGE); 
         }
         else{
             putchar(b);

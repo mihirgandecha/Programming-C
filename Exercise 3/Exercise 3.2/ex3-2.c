@@ -6,15 +6,6 @@ int button_press(int t);
 
 int main(void){
 
-    struct Button {
-        char button_name[25];
-        int time_in_seconds;
-        int button_counter;
-    };
-
-    struct Button ten_min = {"Ten Minute Button", 600, 0};
-    struct Button one_min = {"One Minute Button", 60, 0};
-    struct Button ten_sec = {"Ten Second Button", 10, 0};
 
     //User Input
     int time_in;
@@ -25,31 +16,56 @@ int main(void){
         printf("Invalid input!");
         return 1;
     }
+
     int result = button_press(time_in);
     printf("Number of button presses = %i\n ", result);
 
+return 0;
 }
 
 int button_press(int t){ 
 
-    //Decision Tree One
-    int i = ten_min.button_counter;
-    int ten_duration = ten_min.time_in_seconds;
+    struct Button {
+        char button_name[25];
+        int time_in_seconds;
+        int button_counter;
+    };
 
-    while (t > ten_duration){
-        i++;
-        t -= ten_duration;
-    }
-
-
+    struct Button ten_min = {"Ten Minute Button", 600, 0};
+    struct Button one_min = {"One Minute Button", 60, 0};
+    struct Button ten_sec = {"Ten Second Button", 10, 0};
     
-    // for (int i; t > i; i++){
-    //     t -= ten_duration;
-        return t;
+    //Decision Tree One
+    while (t >= ten_min.time_in_seconds){
+        t -= ten_min.time_in_seconds;
+        ten_min.button_counter++;
+    } 
+
+    //Decision Tree Two
+    while (t >= one_min.time_in_seconds){
+        t -= one_min.time_in_seconds;
+        one_min.button_counter++;
+    }
+
+    //Decision Tree Three
+
+    while (t >= ten_sec.time_in_seconds){
+        t -= ten_sec.time_in_seconds;
+        ten_sec.button_counter++;
+    }
+
+    if (t > 0){
+        ten_sec.button_counter++;
     }
 
 
+    int result = ten_min.button_counter + one_min.button_counter + ten_sec.button_counter; 
+    return result;
+    }
 
+    void test(void){
+        assert(button_press(25) == 3);
+        assert(button_press(90) == 4);
+        assert(button_press(705) == 7);
+    }
 
-//     return button_press;
-// }
