@@ -150,16 +150,21 @@ void test(void) {
     card d[DECK];
     init_deck(d); //Direct assignment
 
-    card c = {hearts, 10}; //1st element initialised correctly
-    assert(d[9].pips == c.pips);
+//Check initialising deck
+    card c = {hearts, 10}; //Look at the 10th cell of array, and see if it is 10 Hearts
+    assert(d[9].pips == c.pips); //could just be d[10] == "hearts"
     assert(d[9].st==c.st);
-    for(int i=0;i<1000;i++){
+
+//How can we test shuffle deck?
+//shuffle deck 1000 times 1 time in 52 aprox we should pull a 10 Hearts
+    for(int i = 0; i < 1000; i++){
         shuffle_deck(d); //Happens 1 time in52 ?
-        if((d[0].st==c.st)&&(d[0].pips==c.pips)){
+
+        if((d[0].st == c.st) && (d[0].pips == c.pips)){
             n++;
         }
     } // Is this a reasonable test ?
-    assert((n>10)&&(n<30));
+    assert((n > 10) && (n < 30)); //between 10 and 30
 }
 
 
