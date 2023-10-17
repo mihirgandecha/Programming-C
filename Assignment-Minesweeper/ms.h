@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #define MAXSQ 10
+
 typedef struct board {
    int grid[MAXSQ][MAXSQ];
    int w;

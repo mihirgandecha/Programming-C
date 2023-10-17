@@ -159,7 +159,7 @@ void test(void) {
 //shuffle deck 1000 times 1 time in 52 aprox we should pull a 10 Hearts
     for(int i = 0; i < 1000; i++){
         shuffle_deck(d); //Happens 1 time in52 ?
-//rand is ALWAYS the same random number
+
         if((d[0].st == c.st) && (d[0].pips == c.pips)){
             n++;
         }

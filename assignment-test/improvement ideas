@@ -1,0 +1,5 @@
+make-board:
+
+look into size_t vs int
+also const char 
+should be cast?
