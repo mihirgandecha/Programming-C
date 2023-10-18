@@ -1,38 +1,81 @@
 #include "ms.h"
 
 // Maybe some of your own function prototypes here
+int string_check(char* inp, int max_len);
+int count_mines(char* inp, int max_len);
 
-//print board function? y only after finished!
-//inform the user of the rules?
+int string_check(char* inp, int max_len){
+  char rules[] = "012345678?X";
+  int rules_len = strlen(rules);
 
-check_str(char*){
-
+  for (int i = 0; i < max_len; i++){
+    int rule_broken = 0;
+    for (int j = 0; j < rules_len; j++){
+      if(inp[i] == rules[j]) {
+        rule_broken = 1;
+      }
+    }
+    if (!rule_broken){
+      return 0;
+    }
+  }
+  return 1;
 }
+
+int count_mines(char* inp, int max_len){
+  int mine_count = 0;
+
+  for(int i = 0; i < max_len; i++){
+    if(inp[i] == 'X'){
+      mine_count++;
+    }
+  }
+
+  return mine_count;
+}
+
 
 /*board solve_board(board b)
 {
 }*/
 
-/*void board2str(char s[MAXSQ*MAXSQ+1], board b)
+void board2str(char s[MAXSQ*MAXSQ+1], board b)
 {
-}*/
+  for (int i = 0; i < b.h; i++){
+    for(int j = 0; j < b.w; j++){
+      s[i * b.w + j] = b.grid[i][j];
+    }
+  }
+}
+
 
 bool syntax_check(unsigned totmines, unsigned width, unsigned height, char inp[MAXSQ*MAXSQ+1])
 {
-    //Check if width is > MAXSQ - good practice to say why false?
-    if ((width || height) > MAXSQ){
-      return false;
-    }
-// Ensure only characters are from the set:   0123456789?X
 
-// Ensure mines in string <= totmines
+if ((width > MAXSQ) || (height > MAXSQ)){
+  return false;
+}
 
-
+int max_len = strlen(inp);
+int board_len = width * height;
 
 // Make sure number of characters in string == width*height
-  int max_len = strlen(width * height) + 1;
-  check_str();
+if (max_len != (board_len + 1)){ //check +1
+  return false;
+}
 
+// Ensure only characters are from the set:   0123456789?X
+return string_check(inp, max_len);
+  
+// Ensure mines in string <= totmines
+int mine_string = count_mines(inp, max_len);
+
+if ((unsigned)mine_string > totmines){
+  return false;
+}
+
+
+return true;
 }
 
 // Returns a board based on the totmines, width, height and grid (passed as a string)
@@ -50,10 +93,10 @@ board make_board(int totmines, int width, int height, char inp[MAXSQ*MAXSQ+1])
       b.grid[i][j] = (int)inp[i * width + j];
     }
   }
-
   return b;
+  }
+
+void test(void)
+{
 }
 
-/*void test(void)
-{
-}*/
