@@ -2,8 +2,12 @@
 
 // Maybe some of your own function prototypes here
 
-//order of function is always same in drv.c - functionfor this?
-//print board function?
+//print board function? y only after finished!
+//inform the user of the rules?
+
+check_str(char*){
+
+}
 
 /*board solve_board(board b)
 {
@@ -13,11 +17,22 @@
 {
 }*/
 
-// Make sure number of characters in string == width*height
-// Ensure only characters are from the set:   0123456789?X
-// Ensure mines in string <= totmines
 bool syntax_check(unsigned totmines, unsigned width, unsigned height, char inp[MAXSQ*MAXSQ+1])
 {
+    //Check if width is > MAXSQ - good practice to say why false?
+    if ((width || height) > MAXSQ){
+      return false;
+    }
+// Ensure only characters are from the set:   0123456789?X
+
+// Ensure mines in string <= totmines
+
+
+
+// Make sure number of characters in string == width*height
+  int max_len = strlen(width * height) + 1;
+  check_str();
+
 }
 
 // Returns a board based on the totmines, width, height and grid (passed as a string)

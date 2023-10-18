@@ -4,3 +4,34 @@ look into size_t vs int
 also const char 
 should be cast?
 
+#include <stdbool.h>
+#include <string.h>
+
+bool is_within_char_rules(char *str, char *rules) {
+  for (int i = 0; str[i] != '\0'; i++) {
+    bool found = false;
+    for (int j = 0; rules[j] != '\0'; j++) {
+      if (str[i] == rules[j]) {
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      return false;
+    }
+  }
+  return true;
+}
+
+int main() {
+  char str[100] = "11?010?";
+  char rules[] = "0123456789?X";
+
+  if (!is_within_char_rules(str, rules)) {
+    printf("The string is not within the char rules.\n");
+    return 1;
+  }
+
+  printf("The string is within the char rules.\n");
+  return 0;
+}
