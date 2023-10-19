@@ -134,6 +134,8 @@ int countUnknownsAroundCell(board b, int x, int y) {
     return unknowns;
 }
 
+
+
 // Apply the first solving rule: if the number of mines equals 'totmines', mark the cell.
 board applyRuleOne(board b) {
     // Go through each cell.

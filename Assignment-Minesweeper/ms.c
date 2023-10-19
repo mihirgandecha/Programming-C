@@ -1,8 +1,16 @@
 #include "ms.h"
+#define int_to_char(i) ('0' + (i))   
 
 // Maybe some of your own function prototypes here
 int string_check(char* inp, int max_len);
+
 int count_mines(char* inp, int max_len);
+int count_unknown(char* inp, int max_len);
+
+int unknown_around_cell(board b, int a, int b);
+int mines_around_cell(board b, int a, int b);
+
+board applyRuleOne(board b);
 
 //Function for checking string is within rules
 int string_check(char* inp, int max_len){
@@ -50,12 +58,82 @@ int count_unknown(char* inp, int max_len){
 }
 
 //Function for counting unknown around grid when we find a '?'
-int UNKaround_cell(board b, int a, int b){
+int unknown_around_cell(board b, int a, int b){
   int unknown = 0;
-  //Loop to check surrounding cell
+  //Loop to check surrounding cell (3 x 3 with UNK in middle)
+  for (int point_a = -1; point_a <= 1; point_a++){
+    for (int point_b = -1; point_b <= 1; point_b++){
+      int newpoint_a = a + point_a; 
+      int newpoint_b = b + point_b;
+
+      //Check newpoint_a and newpoint_b is within board width and height
+      if(
+        (newpoint_a >= 0 && newpoint_a < b.w) &&  
+        (newpoint_b >= 0 && newpoint_b < b.h) &&
+        //Check if cell is unknown
+        (b.grid[newpoint_a][newpoint_b] == UNK)
+        ) {
+          unknown++;
+        } 
+    }
+    return unknown;
+  }
+}
+
+//Function for counting unknown around grid when we find a '?'
+int mines_around_cell(board b, int a, int b){
+  int mines = 0;
+  //Loop to check surrounding cell (3 x 3 with UNK in middle)
+  for (int point_a = -1; point_a <= 1; point_a++){
+    for (int point_b = -1; point_b <= 1; point_b++){
+      int newpoint_a = a + point_a; 
+      int newpoint_b = b + point_b;
+
+      //Check newpoint_a and newpoint_b is within board width and height
+      if(
+        (newpoint_a >= 0 && newpoint_a < b.w) &&  
+        (newpoint_b >= 0 && newpoint_b < b.h) &&
+        //Check if cell is unknown
+        (b.grid[newpoint_a][newpoint_b] == UNK)
+        ) {
+          mines++;
+        } 
+    }
+    return mines;
+  }
+}
+
+board applyRuleOne(board b){
+  for (int j = 0; i < b.h; j++){
+    for (int i = 0; i < b.w; i++){
+      if (b.grid[i][j] == UNK){
+        int mines = mines_around_cell(b, i, j);
+        if (mines == b.totmines){
+
+          b.grid[i][j] = int_to_char(mines);
+        }
+      }
+    }
+  }
+  return b;
 
 }
 
+board applyRuleTwo(board b) {
+  for (int j = 0; i < b.h; j++){
+    for (int i = 0; i < b.w; i++){
+      char current_cell = b.grid[i][j];
+      
+
+
+    }
+
+
+  }
+
+
+  return b;
+}
 
 /*board solve_board(board b)
 {
