@@ -98,3 +98,98 @@ board solve_board(board b) {
 
     return b;
 }
+
+
+
+
+// Count the mines around the cell at position (x, y).
+int countMinesAroundCell(board b, int x, int y) {
+    int mines = 0;
+    // Check the surrounding cells.
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int nx = x + dx, ny = y + dy;
+            // Check if it's within the board and if there's a mine.
+            if (nx >= 0 && nx < b.h && ny >= 0 && ny < b.w && b.grid[nx][ny] == MINE) {
+                mines++;
+            }
+        }
+    }
+    return mines;
+}
+
+// Count the unknowns around the cell at position (x, y).
+int countUnknownsAroundCell(board b, int x, int y) {
+    int unknowns = 0;
+    // Check the surrounding cells.
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            int nx = x + dx, ny = y + dy;
+            // Check if it's within the board and if it's an unknown cell.
+            if (nx >= 0 && nx < b.h && ny >= 0 && ny < b.w && b.grid[nx][ny] == UNK) {
+                unknowns++;
+            }
+        }
+    }
+    return unknowns;
+}
+
+// Apply the first solving rule: if the number of mines equals 'totmines', mark the cell.
+board applyRuleOne(board b) {
+    // Go through each cell.
+    for (int i = 0; i < b.h; i++) {
+        for (int j = 0; j < b.w; j++) {
+            if (b.grid[i][j] == UNK) {
+                int mines = countMinesAroundCell(b, i, j);
+                if (mines == b.totmines) {
+                    b.grid[i][j] = '0' + mines; // Update the cell with the number of surrounding mines.
+                }
+            }
+        }
+    }
+    return b; // Return the updated board.
+}
+
+// Apply the second solving rule: if the number of unknowns equals the total minus surrounding mines, they're all mines.
+board applyRuleTwo(board b) {
+    // Go through each cell.
+    for (int i = 0; i < b.h; i++) {
+        for (int j = 0; j < b.w; j++) {
+            // Only proceed if the cell is a number.
+            if (isdigit(b.grid[i][j])) {
+                int mines = countMinesAroundCell(b, i, j);
+                int unknowns = countUnknownsAroundCell(b, i, j);
+                int total = b.grid[i][j] - '0';
+
+                // If the number of unknowns equals the 'total' minus counted mines, all unknowns are mines.
+                if (total - mines == unknowns) {
+                    // Update the unknown cells to mines.
+                    for (int dx = -1; dx <= 1; dx++) {
+                        for (int dy = -1; dy <= 1; dy++) {
+                            int nx = i + dx, ny = j + dy;
+                            if (nx >= 0 && nx < b.h && ny >= 0 && ny < b.w && b.grid[nx][ny] == UNK) {
+                                b.grid[nx][ny] = MINE;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return b; // Return the updated board.
+}
+
+// Main function to apply the rules iteratively until the board is solved.
+board solveBoard(board b) {
+    bool hasChanged;
+    do {
+        board prevBoard = b; // Keep track of the state before the rules are applied.
+
+        b = applyRuleOne(b);
+        b = applyRuleTwo(b);
+
+        hasChanged = !(memcmp(prevBoard.grid, b.grid, sizeof(b.grid)) == 0); // Check if the board has changed.
+    } while (hasChanged); // Repeat if there was any change.
+
+    return b; // Return the solved board.
+}

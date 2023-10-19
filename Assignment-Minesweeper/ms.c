@@ -4,6 +4,7 @@
 int string_check(char* inp, int max_len);
 int count_mines(char* inp, int max_len);
 
+//Function for checking string is within rules
 int string_check(char* inp, int max_len){
   char rules[] = "012345678?X";
   int rules_len = strlen(rules);
@@ -22,16 +23,37 @@ int string_check(char* inp, int max_len){
   return 1;
 }
 
+//Function for counting mines in grid
 int count_mines(char* inp, int max_len){
   int mine_count = 0;
 
   for(int i = 0; i < max_len; i++){
-    if(inp[i] == 'X'){
+    if(inp[i] == MINE){
       mine_count++;
     }
   }
 
   return mine_count;
+}
+
+//Function for counting unknowns in grid
+int count_unknown(char* inp, int max_len){
+  int unknown_count = 0;
+
+  for(int i = 0; i < max_len; i++){
+    if(inp[i] == UNK){
+      count_unknown++;
+    }
+  }
+
+  return count_unknown;
+}
+
+//Function for counting unknown around grid when we find a '?'
+int UNKaround_cell(board b, int a, int b){
+  int unknown = 0;
+  //Loop to check surrounding cell
+
 }
 
 
@@ -89,10 +111,10 @@ board make_board(int totmines, int width, int height, char inp[MAXSQ*MAXSQ+1])
 
     //Initialise board grid (1D Arr -> 2D Arr)
     for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      b.grid[i][j] = (int)inp[i * width + j];
+      for (int j = 0; j < width; j++) {
+        b.grid[i][j] = (int)inp[i * width + j];
+      }
     }
-  }
   return b;
   }
 
