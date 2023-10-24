@@ -224,20 +224,21 @@ void board2str(char s[MAXSQ*MAXSQ+1], board b){
 bool syntax_check(unsigned totmines, unsigned width, unsigned height, char inp[MAXSQ*MAXSQ+1]){
 
 if ((width > MAXSQ) || (height > MAXSQ)){
+  printf("width&height against MAXSQ failed");
   return false;
 }
 
 //Where width and height = 0
 if ((width == 0) || (height == 0)){
+  printf("width&height == 0");
   return false;
 }
 
 int max_len = strlen(inp);
-max_len++;
 int board_len = width * height;
 
 // Make sure number of characters in string == width*height
-if (max_len != board_len){ 
+if (max_len != board_len){
   return false;
 }
 
@@ -248,14 +249,9 @@ if (!string_check(inp, max_len)){
   
 // Ensure mines in string <= totmines
 int mine_string = count_mines(inp, max_len);
-int unknown_string = count_unknown(inp, max_len);
 
 if ((unsigned)mine_string > totmines){
   return false;
-  }
-
-if (unknown_string > 0 && (unsigned)(mine_string + unknown_string) > totmines){
-    return false;
   }
 
 return true;

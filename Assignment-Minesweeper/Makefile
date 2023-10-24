@@ -8,8 +8,8 @@ CC := clang
 
 all: ms
 
-ms: mss.c drv.c ms.h
-	$(CC) $(GENFLAGS) mss.c drv.c -o ms
+ms: ms.c drv.c ms.h
+	$(CC) $(GENFLAGS) ms.c drv.c -o ms
 
 clean:
 	rm -f ms
