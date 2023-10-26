@@ -21,7 +21,8 @@ void set_array(int a[MAX], unsigned int len, int n);
 int main(void)
 {
     int x[MAX] = {2, 3, 3, 3, 3};
-    set_array(x, 5, 3); assert(x[4] == 3); //better to do testing in void test(void) - but this does work!
+    set_array(x, 5, 3); 
+    assert(x[4] == 3); //better to do testing in void test(void) - but this does work!
     /*
     Prints:
     x[0] = 5;

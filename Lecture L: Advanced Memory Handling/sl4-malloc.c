@@ -24,7 +24,7 @@ int main(void)
 char* nify(char s[])
 {
     int l = strlen(s);
-    char* t = (char*)malloc(l+1); //why +1? null charc! therefore string!
+    char* t = (char*) malloc(l+1); //why +1? null charc! therefore string!
     if(t==NULL){
         exit(EXIT_FAILURE);
     }
