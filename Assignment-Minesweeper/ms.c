@@ -132,7 +132,8 @@ board applyRuleOne(board b){
   return b;
 
 }
-
+//no way of knowing if this works
+//What I should have done: 
 board applyRuleTwo(board b) {
   for (int j = 0; j < b.h; j++){
     for (int i = 0; i < b.w; i++){
