@@ -3,14 +3,14 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #define MAX_BOARD 10
+#define EMPTY -1
 
 typedef struct board {
    int chessboard[MAX_BOARD][MAX_BOARD];
-   int row;
-   int column;
-   int queen;
 } board;
 
+int parentBoard(board *b, int n);
 void test(void);

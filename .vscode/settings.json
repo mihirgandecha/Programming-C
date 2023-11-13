@@ -4,6 +4,7 @@
         "exercise161": "c",
         "stdio.h": "c",
         "functional": "c",
-        "random": "c"
+        "random": "c",
+        "string.h": "c"
     }
 }

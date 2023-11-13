@@ -1,5 +1,5 @@
 # General flags we'll always use (-Werror to prevent code generation if *any* errors)
-GENFLAGS := -Wall -Wextra -pedantic -std=c99 -Wvla -Wfloat-equal -Werror
+GENFLAGS := -Wall -Wextra -pedantic -std=c99 -Wvla -Wfloat-equal -Werror -g
 
 # -O3 means optimise compiled code for execution speed
 OPTIM := $(GENFLAGS) -O3
@@ -19,7 +19,7 @@ CC := clang
 all: 8q 8q_san
 
 run:
-	./8q_san 4
+	./8q_san 3 verbose 
 
 clean:
 	rm -f 8q 8q_san 8q.zip
