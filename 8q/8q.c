@@ -32,6 +32,7 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
+
 char isSafecr(board childBoard, *parentBoard, int n, int queen_count){
 
     //For a 4x4 board:
