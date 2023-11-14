@@ -5,6 +5,7 @@
         "stdio.h": "c",
         "functional": "c",
         "random": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "assert.h": "c"
     }
 }
