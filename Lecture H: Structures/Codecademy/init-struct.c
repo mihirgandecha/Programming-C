@@ -13,6 +13,7 @@ int main(void) {
   int table1Width = 24;
   int table1Height = 20;
   char table1Color[20] = "Dark Brown";
+  char q[2] = "Q";
 
   int table2Length = 42;
   int table2Width = 18;

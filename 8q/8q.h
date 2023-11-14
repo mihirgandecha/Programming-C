@@ -14,6 +14,7 @@ typedef struct board {
    int queen_count;
    int empty_count;
    int nposib;
+   char queen_array[n] = {};
 } board;
 
 int parentBoard(board *b, int n);

@@ -6,6 +6,7 @@
         "functional": "c",
         "random": "c",
         "string.h": "c",
-        "assert.h": "c"
+        "assert.h": "c",
+        "stdbool.h": "c"
     }
 }

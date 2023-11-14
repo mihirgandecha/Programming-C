@@ -49,7 +49,32 @@ char isSafecr(board childBoard, *parentBoard, int n, int queen_count){
     *parentBoard.quenn_count = n;
     *parentBoard.empty_count = *parentBoard.nposib - *parentBoard.queen_count;
     
-    //For row, first placement:
+    //make 1D-array of Q for 4x4
+    //int queen_array[n] = {}; where inside is only Q
+    char qArr_test(int *board.queen_count){
+    
+    if (int queen_count = 4){
+        q_arr[4] = {'Q', 'Q', 'Q', 'Q'};
+        return 0;
+    }
+    else{
+        return 1;
+    }
+    }
+    //Rewritten to test for 4x4:
+    assert(char qArr_test(4) == char queen_array[4] = {'Q', 'Q', 'Q', 'Q'});
+
+    //Create queen_array function 
+    
+
+    struct 
+    for(int i=0; i<n; i++){
+
+    }
+
+    //After syntax check on array: 
+
+    //For row, first Q1 placement:
     
 
 
