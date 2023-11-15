@@ -7,6 +7,7 @@
         "random": "c",
         "string.h": "c",
         "assert.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "stdlib.h": "c"
     }
 }
