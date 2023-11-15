@@ -13,8 +13,7 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
     
-    n = atoi(argv[1]);
-    if (n <= 0 || n > MAX_BOARD){
+    if (sscanf(argv[1], "%d", &n) != 1 || n <= 0 || n > MAX_BOARD){
         fprintf(stderr, "Invalid board size");
         return EXIT_FAILURE;
     }
@@ -35,13 +34,6 @@ int main(int argc, char *argv[]){
     printQ(&four, n);
 
     
-    //now solve_list[1] - equate to child_board?
-    // board childBoard1;
-    // deepCopy(&parent_board, n, &childBoard1);
-    // solve_list[f] = childBoard1;
-    // printf("\n");
-    // printBoard(&childBoard1, n);
-    
     //Initialise the array list of structures for 4(N) board to solve
     board solve_list[MAX_BOARD * MAX_BOARD]; //how many squares to place Q
     //Set f = 0 to indicate start of struct array
@@ -58,22 +50,30 @@ int main(int argc, char *argv[]){
     deepCopy(&solve_list[f], n, &childBoard);
     solve_list[b] = childBoard;
     printf("\n");
-    printBoard(&childBoard, n);
-    // //function for as f increments, b also increments, so that we know end of array (i.e. in 3x3 board, and we are placing 3 queens, we should have an arr of structures of N+1 possibilities so far if we place Q1 in all possible places. i.e. f = 9, b = 10) 
-    // for (int i = 0; i < n*n; i++){
-    //     for (int j = 0; j < n*n; j++){
-    //         deepCopy(&solve_list[f], n, &solve_list[b]);
-    //         solve_list[b].chessboard[i][j] = QUEEN;
-    //         b++;
-    //     }
-    // }
-    // printBoard(&solve_list[b], 4);
+    
+    //function for as f increments, b also increments, so that we know end of array (i.e. in 3x3 board, and we are placing 3 queens, we should have an arr of structures of N+1 possibilities so far if we place Q1 in all possible places. i.e. f = 9, b = 10) 
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < n; j++){
+            deepCopy(&solve_list[f], n, &solve_list[b]);
+            solve_list[b].chessboard[i][j] = QUEEN;
+            printBoard(&solve_list[b], n);
+            printf("\n");
+            b++;
+        }
+    }
+    // solve_list[b].chessboard[i][j] = QUEEN;
+    printBoard(&solve_list[b], n);
+    printf("\n");
+    
 
     test();
     return 0;
 
     return 0;
+
 }
+
+
 
     
 void q_arr(queen_array *t, int board_size){
@@ -132,23 +132,22 @@ void printQ(queen_array *q, int board_size){
         }
 }
 
-// char isSafecr(board childBoard, *parentBoard, int n, int queen_count){
+//check if a queen is safe in a column or row
+bool isSafe(board *b, int board_size, int row, int col){
+    int queen_count = 0;
+    
+    for (int i = 0; i < board_size; i++){
+        if (b->chessboard[row][i] == QUEEN || b->chessboard[i][col] == QUEEN){
+            queen_count++;
+            if (queen_count > 1){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
-//     //For a 4x4 board: 
-//     assert(isSafecr(childBoard1, *parentBoard, int 4, int 4) == 2031, count_child == 1);
-//     assert(childBoard1.quenn_count == 4);
-//     assert(childBoard1.empty_count == 12);
-//     //Squares to be filled = n*n, make sure empty+queen = n*n
-//     assert(childBoard1.queen_count + childBoard1.empty_count = n*n);
 
-
-
-//     int f[0] = *parentBoard;
-//     //Make into assert test?
-//     *parentBoard.nposib = n*n;
-//     *parentBoard.quenn_count = n;
-//     *parentBoard.empty_count = *parentBoard.nposib - *parentBoard.queen_count;
-// }
 void test(void){
     queen_array six;
     q_arr(&six, 6);
@@ -157,9 +156,3 @@ void test(void){
     assert(six.q_index[0] == 1 && six.q_index[5] == 6);
     
 }
-
-//Assert testing - works sometimes but not always (writing first)
-//Going from me writing 4x4 -> for any N up to 10
-//Test for print? I just did out of bound function
-//#define - should I do for Q[0] when 0 is hash defined to be INITIAL
-//Comments - right now writing comments as a guide to myself, however how can I follow house style as 'effective' as i am writing?

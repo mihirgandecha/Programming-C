@@ -200,6 +200,23 @@ bool DiagSafe(chess_array *board, int board_size){
 
 }
 
+bool DiagSafe(chess_array *board, int board_size){
+    for (int i = 0; i < board_size; i++) {
+        for (int j = 0; j < board_size; j++) {
+            if (board->chessboard[i][j] == QUEEN) {
+                for (int k = 1; k < board_size; k++) {
+                    if ((i - k >= 0 && board->chessboard[i - k][j - k] == QUEEN) ||
+                        (i - k >= 0 && board->chessboard[i - k][j + k] == QUEEN) ||
+                        (i + k < board_size && board->chessboard[i + k][j - k] == QUEEN) ||
+                        (i + k < board_size && board->chessboard[i + k][j + k] == QUEEN)) {
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
 
 void test(void){
     queen_array six;

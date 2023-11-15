@@ -22,10 +22,26 @@ typedef struct board {
    char chessboard[MAX_BOARD][MAX_BOARD];
 } board;
 
-void q_arr(queen_array *t, int board_size);
+
+//Initialise the parent board
 void emptyBoard(board *b, int board_size);
+
+//Print any board
 void printBoard(board *b, int board_size);
+
+//Check if placement is within bounds
 bool in_bound(board *b, int board_size);
+
+//Initialise the queen array
+void q_arr(queen_array *t, int board_size);
+
+//Print array of queens with its index and position
 void printQ(queen_array *q, int board_size);
+
+//Deep copy the parent board to child board
 void deepCopy(board *p, int board_size, board *c);
+
+//Check if the row or column is safe
+bool isSafe(board *b, int board_size, int row, int col);
+
 void test(void);
