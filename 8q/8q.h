@@ -26,4 +26,6 @@ void q_arr(queen_array *t, int board_size);
 void emptyBoard(board *b, int board_size);
 void printBoard(board *b, int board_size);
 bool in_bound(board *b, int board_size);
+void printQ(queen_array *q, int board_size);
+void deepCopy(board *p, int board_size, board *c);
 void test(void);

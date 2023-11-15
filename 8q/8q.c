@@ -42,8 +42,8 @@ int main(int argc, char *argv[]){
 
     printf("\n");
     //print empty board
-    printBoard(&parent_board, n);
-    printf("\n");
+    // printBoard(&parent_board, n);
+    // printf("\n");
 
     //Now we have empty board of nxn, and corresponding structure of q-arr if 4 queens all indexed
 
@@ -54,11 +54,27 @@ int main(int argc, char *argv[]){
     solve_list[f] = parent_board; 
     //print f = 0 to test array list of structure - for f=0:
     printBoard(&solve_list[f], n);
+    int b = 1; //end of code
+    //function for as f increments, b also increments, so that we know end of array (i.e. in 3x3 board, and we are placing 3 queens, we should have an arr of structures of N+1 possibilities so far if we place Q1 in all possible places. i.e. f = 9, b = 10) 
 
     //solve for f = 1 (placing 1 queen)
     f++;
-    four.row[0] = 0;
-    four.row[0] = 0; 
+    //now solve_list[1] - equate to child_board?
+    board childBoard1;
+    solve_list[f] = childBoard1;
+    deepCopy(&parent_board, n, &solve_list[f]);
+    printf("\n");
+    printBoard(&childBoard1, n);
+    
+    // char qu[1] = 'q';
+    // strcmp(solve_list[f].chessboard, qu); 
+    // strcmp(childBoard1.chessboard[0][0], QUEEN);
+    //print copied board
+    // printf("\n");
+    // printBoard(&solve_list[f], n);
+    // printBoard(&childBoard1, n);
+    //q_arr(&four, n);
+    //printQ(&four, n);
 
     test();
     return 0;
@@ -98,6 +114,7 @@ void emptyBoard(board *b, int board_size){
     }
 }
 
+
 void printBoard(board *b, int board_size){
 for (int i = 0; i < board_size; i++){
         for (int j = 0; j < board_size; j++){
@@ -107,9 +124,24 @@ for (int i = 0; i < board_size; i++){
     }
 }
 
+void deepCopy(board *p, int board_size, board *c){
+    for (int i = 0; i < board_size; i++){
+        for (int j = 0; j < board_size; j++){
+            c->chessboard[i][j] = p->chessboard[i][j];
+        }
+    }
+}
+
+void printQ(queen_array *q, int board_size){
+    printf("\nCurrent Q-Positions: \n");
+        for (int i = 0; i < board_size; i++) {
+            printf("%c at index %d is positioned at (%d, %d)\n", q->queen[i], q->q_index[i], q->row[i], q->col[i]);
+        }
+}
+
 // char isSafecr(board childBoard, *parentBoard, int n, int queen_count){
 
-//     //For a 4x4 board:
+//     //For a 4x4 board: 
 //     assert(isSafecr(childBoard1, *parentBoard, int 4, int 4) == 2031, count_child == 1);
 //     assert(childBoard1.quenn_count == 4);
 //     assert(childBoard1.empty_count == 12);
