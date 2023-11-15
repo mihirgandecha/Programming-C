@@ -32,49 +32,42 @@ int main(int argc, char *argv[]){
     //Initalise queen array structure for board
     q_arr(&four, n);
     // Print the Q-Current Pos - convert into a function and remove at end
-    printf("\nCurrent Q-Positions: \n");
+    printQ(&four, n);
+
     
-    
-    for (int i = 0; i < n; i++) {
-        printf("%c at index %d is positioned at (%d, %d)\n", four.queen[i], four.q_index[i], four.row[i], four.col[i]);
-    }
-
-
-    printf("\n");
-    //print empty board
-    // printBoard(&parent_board, n);
-    // printf("\n");
-
-    //Now we have empty board of nxn, and corresponding structure of q-arr if 4 queens all indexed
-
-    //Initialise the array list of structures for 4(N) board to solve
-    board solve_list[MAX_BOARD];
-    //Set f = 0 to parentBoard and print
-    int f = 0;
-    solve_list[f] = parent_board; 
-    //print f = 0 to test array list of structure - for f=0:
-    printBoard(&solve_list[f], n);
-    int b = 1; //end of code
-    //function for as f increments, b also increments, so that we know end of array (i.e. in 3x3 board, and we are placing 3 queens, we should have an arr of structures of N+1 possibilities so far if we place Q1 in all possible places. i.e. f = 9, b = 10) 
-
-    //solve for f = 1 (placing 1 queen)
-    f++;
     //now solve_list[1] - equate to child_board?
-    board childBoard1;
-    solve_list[f] = childBoard1;
-    deepCopy(&parent_board, n, &solve_list[f]);
-    printf("\n");
-    printBoard(&childBoard1, n);
-    
-    // char qu[1] = 'q';
-    // strcmp(solve_list[f].chessboard, qu); 
-    // strcmp(childBoard1.chessboard[0][0], QUEEN);
-    //print copied board
+    // board childBoard1;
+    // deepCopy(&parent_board, n, &childBoard1);
+    // solve_list[f] = childBoard1;
     // printf("\n");
-    // printBoard(&solve_list[f], n);
     // printBoard(&childBoard1, n);
-    //q_arr(&four, n);
-    //printQ(&four, n);
+    
+    //Initialise the array list of structures for 4(N) board to solve
+    board solve_list[MAX_BOARD * MAX_BOARD]; //how many squares to place Q
+    //Set f = 0 to indicate start of struct array
+    int f = 0;
+    int b = 0; //end of struct array
+    //Initialise parentBoard and equate to f=0
+    board parentBoard;
+    emptyBoard(&parentBoard, n);
+    solve_list[f] = parentBoard; 
+    printBoard(&solve_list[f], n);
+    
+    b++;
+    board childBoard;
+    deepCopy(&solve_list[f], n, &childBoard);
+    solve_list[b] = childBoard;
+    printf("\n");
+    printBoard(&childBoard, n);
+    // //function for as f increments, b also increments, so that we know end of array (i.e. in 3x3 board, and we are placing 3 queens, we should have an arr of structures of N+1 possibilities so far if we place Q1 in all possible places. i.e. f = 9, b = 10) 
+    // for (int i = 0; i < n*n; i++){
+    //     for (int j = 0; j < n*n; j++){
+    //         deepCopy(&solve_list[f], n, &solve_list[b]);
+    //         solve_list[b].chessboard[i][j] = QUEEN;
+    //         b++;
+    //     }
+    // }
+    // printBoard(&solve_list[b], 4);
 
     test();
     return 0;
