@@ -224,5 +224,43 @@ void test(void){
     
     assert(six.n == 6);
     assert(six.q_index[0] == 1 && six.q_index[5] == 6);
+    //     //test for magic numbers to do!
+//     queen_array six;
+//     q_arr(&six, 6);
     
+//     assert(six.board_size == 6);
+//     assert(six.q_index[0] == 1 && six.q_index[5] == 6);
+    
+//     //In a 3x3 board
+//     board three;
+//     if (three->chessboard[1][1] = 'Q';){
+//         //top left diaganol
+//         assert(three->chessboard[0][0] = 'Q');
+//         //top right diaganol
+//         assert(three->chessboard[0][2] = 'Q');
+//         //bottom left diaganol
+//         assert(three->chessboard[2][0] = 'Q');
+//         //bottom right diaganol
+//         assert(three->chessboard[2][2] = 'Q');
+//     }
+}
+
+
+void q_arr(queen_array *t, int board_size){
+    
+    t->board_size = board_size;
+    
+    for (int i = 0; i < board_size; i++){
+        t->queen[i] = QUEEN;      
+        t->q_index[i] = i + 1;  
+        t->row[i] = OUT_BOUNDS;
+        t->col[i] = OUT_BOUNDS;
+    }
+}
+
+void printQ(queen_array *q, int board_size){
+    printf("\nCurrent Q-Positions: \n");
+        for (int i = 0; i < board_size; i++) {
+            printf("%c at index %d is positioned at (%d, %d)\n", q->queen[i], q->q_index[i], q->row[i], q->col[i]);
+        }
 }
