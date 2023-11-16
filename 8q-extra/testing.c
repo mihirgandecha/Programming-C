@@ -265,6 +265,22 @@ void q_arr(queen_array *t, int board_size){
     }
 }
 
+bool isSafe(board *b, int board_size, int row, int col) {
+    // Check row and column safety
+    if (!isSafe_RC(b, board_size, row, col)) {
+        return false;
+    }
+    // Check diagonal safety
+    if (!Q_DiagSafe(b, row, col, -1, -1, board_size) ||
+        !Q_DiagSafe(b, row, col, -1,  1, board_size) ||
+        !Q_DiagSafe(b, row, col,  1, -1, board_size) ||
+        !Q_DiagSafe(b, row, col,  1,  1, board_size)) {
+        return false;
+    }
+    return true;
+}
+
+
 void printQ(queen_array *q, int board_size){
     printf("\nCurrent Q-Positions: \n");
         for (int i = 0; i < board_size; i++) {

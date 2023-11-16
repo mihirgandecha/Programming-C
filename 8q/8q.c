@@ -83,15 +83,6 @@ void printBoard(board *b, int board_size){
     }
 }
    
-bool in_bound(int row, int col, int board_size){
-    int row = board_size - 1;
-    int col = board_size - 1;
-   
-    if ((row <= 0 || col <= 0) || (row > board_size || col > board_size)){
-        return false;
-    }
-        return true;
-}
 
 void deepCopy(board *original, board *copy, int board_size){
     for (int i = 0; i < board_size; i++){
@@ -101,8 +92,12 @@ void deepCopy(board *original, board *copy, int board_size){
     }
 }
 
+bool in_bound(int row, int col, int board_size){
+    return row >= && row < board_size && col >= 0 && col < board_size;
+}
+
 //check if a queen is safe in a column or row
-bool isSafe(board *b, int board_size, int row, int col){
+bool isSafe_RC(board *b, int board_size, int row, int col){
     int queen_count = 0;
     
     for (int i = 0; i < board_size; i++){
@@ -115,47 +110,49 @@ bool isSafe(board *b, int board_size, int row, int col){
     }
     return true;
 }
-
+//Function to check if one queen is safe for any diagonal direction
 bool Q_DiagSafe(board b*, int Q_Row, int Q_Col, int B_Row, int B_Col, int board_size){
     int row_current = Q_Row + B_Row;
     int col_current = Q_Col + B_Col;
+
+    //Testing for if Q is safe in its current 
+    while(in_bound(row_current, col_current, board_size)){
+        if(b->chessboard[row_current][col_current] != QUEEN){
+            return false;
+        }
+        row_current = row_current + B_Row;
+        col_current = col_current + B_Col;
+    }
+    return true; 
 }
-//need to make this function short readable
-//FLENN!!!
-bool DiagSafe(board *b, int board_size){
-    for (int i = 0; i < board_size; i++){
-        for (int j = 0; j < board_size; j++){
-            if (b->chessboard[i][j] == QUEEN){
-
-
+//Function to check if all N queens are safe, using Q_DiagSafe to check each Queen 
+bool QAll_DiagSafe(board *b, int board_size){
+    for (int row = 0; row < board_size; row++){
+        for (int col = 0; col < board_size; col++){
+            if (b->chessboard[row][col] == QUEEN){
+                if (!Q_DiagSafe(b, row, col, -1, -1, board_size) ||
+                    !Q_DiagSafe(b, row, col, -1,  1, board_size) ||
+                    !Q_DiagSafe(b, row, col,  1, -1, board_size) ||
+                    !Q_DiagSafe(b, row, col,  1,  1, board_size)) {
+                    return false;
+                }
             }
         }
     }
-    for (row, col; inbound == true; row--, col--){
-        if (b->chessboard[row][col] == 'Q'){
-            return false;
-        }
-    }
-    
-    //top right diaganol
-    for (row, col; inbound == true; row++, col--){
-        if (b->chessboard[row][col] == 'Q'){
-            return false;
-        }
-    }
-    
-    //bottom left diaganol
-    for (row, col; inbound == true; row--, col++){
-        if (b->chessboard[row][col] == 'Q'){
-            return false;
-        }
-    }
+    return true;
+}
 
-    //bottom right diaganol
-    for (row, col; inbound == true; row++, col++){
-        if (b->chessboard[row][col] == 'Q'){
-            return false;
-        }
+bool isSafe(board *b, int board_size, int row, int col) {
+    // Check row and column safety
+    if (!isSafe_RC(b, board_size, row, col)) {
+        return false;
+    }
+    // Check diagonal safety
+    if (!Q_DiagSafe(b, row, col, -1, -1, board_size) ||
+        !Q_DiagSafe(b, row, col, -1,  1, board_size) ||
+        !Q_DiagSafe(b, row, col,  1, -1, board_size) ||
+        !Q_DiagSafe(b, row, col,  1,  1, board_size)) {
+        return false;
     }
     return true;
 }
