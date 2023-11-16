@@ -1,10 +1,8 @@
 #include "8q.h"
 //main function to take arguement and cmnd-line number of arguements (as an array)
 int main(int argc, char *argv[]){
-    //!!!delete after or make assertion
+
     int n = MAX_BOARD;
-    board parent_board;
-    queen_array four;
     //initialise to see if program uses-which it should!!! in makefile or cmnd line ask in labs!?
     bool verbose = false;
     
@@ -29,13 +27,13 @@ int main(int argc, char *argv[]){
     int b = 1; 
     
     board parentBoard;
-    emptyBoard(&parent_board, n);
-    solve_list[f] = parent_board;
+    emptyBoard(&parentBoard, n);
+    solve_list[f] = parentBoard;
 
     board childBoard;
     deepCopy(&solve_list[f], &childBoard, n);
-    
     solve_list[b] = childBoard;
+
     printBoard(&solve_list[b], n);
     printf("\n");
 
@@ -43,11 +41,11 @@ int main(int argc, char *argv[]){
     for (int i = 0; i < n; i++){
         for (int j = 0; j < n; j++){
             solve_list[b].chessboard[i][j] = QUEEN;
-            printBoard(&solve_list[b], n);
-            printf("\n");
             b++;
         }
     }
+
+    printBoard(&solve_list[b], n);
     //test generate such that placing Q1 on a board is always N*N
    
 
@@ -68,7 +66,6 @@ int main(int argc, char *argv[]){
     return 0;
 
 }
-
 void emptyBoard(board *b, int board_size){
     for (int i = 0; i < board_size; i++){
         for (int j = 0; j < board_size; j++){
@@ -86,17 +83,14 @@ void printBoard(board *b, int board_size){
     }
 }
    
-bool in_bound(board *b, int board_size){
+bool in_bound(int row, int col, int board_size){
     int row = board_size - 1;
     int col = board_size - 1;
    
-    if (row < 0 || col < 0){
+    if ((row <= 0 || col <= 0) || (row > board_size || col > board_size)){
         return false;
     }
-    if(row > board_size || col > board_size){
-        return false;
-    }
-    return true;
+        return true;
 }
 
 void deepCopy(board *original, board *copy, int board_size){
@@ -121,37 +115,44 @@ bool isSafe(board *b, int board_size, int row, int col){
     }
     return true;
 }
+
+bool Q_DiagSafe(board b*, int Q_Row, int Q_Col, int B_Row, int B_Col, int board_size){
+    int row_current = Q_Row + B_Row;
+    int col_current = Q_Col + B_Col;
+}
 //need to make this function short readable
 //FLENN!!!
 bool DiagSafe(board *b, int board_size){
-    
-    int row = 0;
-    int col = 0;
-    //top left diaganol
-    bool three_inbound = in_bound(b, 3);
+    for (int i = 0; i < board_size; i++){
+        for (int j = 0; j < board_size; j++){
+            if (b->chessboard[i][j] == QUEEN){
 
-    for (row, col; three_inbound == true; row--, col--){
+
+            }
+        }
+    }
+    for (row, col; inbound == true; row--, col--){
         if (b->chessboard[row][col] == 'Q'){
             return false;
         }
     }
     
     //top right diaganol
-    for (row, col; three_inbound == true; row++, col--){
+    for (row, col; inbound == true; row++, col--){
         if (b->chessboard[row][col] == 'Q'){
             return false;
         }
     }
     
     //bottom left diaganol
-    for (row, col; three_inbound == true; row--, col++){
+    for (row, col; inbound == true; row--, col++){
         if (b->chessboard[row][col] == 'Q'){
             return false;
         }
     }
 
     //bottom right diaganol
-    for (row, col; three_inbound == true; row++, col++){
+    for (row, col; inbound == true; row++, col++){
         if (b->chessboard[row][col] == 'Q'){
             return false;
         }

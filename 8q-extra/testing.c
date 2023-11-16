@@ -245,6 +245,13 @@ void test(void){
 //     }
 }
 
+typedef struct queen_array {
+    int board_size;
+    char queen[MAX_BOARD];
+    int q_index[MAX_BOARD];
+    int row[MAX_BOARD];
+    int col[MAX_BOARD];
+} queen_array;
 
 void q_arr(queen_array *t, int board_size){
     

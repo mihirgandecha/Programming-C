@@ -11,14 +11,6 @@
 #define OUT_BOUNDS -1
 #define MAX_PERM 1000
 
-typedef struct queen_array {
-    int board_size;
-    char queen[MAX_BOARD];
-    int q_index[MAX_BOARD];
-    int row[MAX_BOARD];
-    int col[MAX_BOARD];
-} queen_array;
-
 typedef struct board {
    char chessboard[MAX_BOARD][MAX_BOARD];
 } board;
