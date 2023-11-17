@@ -9,13 +9,13 @@
 #define EMPTY 'X'
 #define QUEEN 'Q'
 #define OUT_BOUNDS -1
-#define MAX_PERM 1000000
+#define MAX_PERM 500
 
 typedef struct board {
    char chessboard[MAX_BOARD][MAX_BOARD];
 } board;
 
-
+void printAllBoards(board arrayof_struct[], int *n, int f);
 //Initialise the parent board
 void emptyBoard(board *b, int board_size);
 

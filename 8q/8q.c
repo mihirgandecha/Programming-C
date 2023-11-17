@@ -18,15 +18,51 @@ int main(int argc, char *argv[]){
         verbose = true;
     }
 
+    //works
+    board p;
+
+
     board solve_list[MAX_PERM];
-    int b = 0;
-    int solutions = 0;
+    // int b = 0;
+    // int solutions = 0;
     
-    initialise_Q1boards(solve_list, &b, n);
-    solveBoard(solve_list, &b, &solutions, n, &verbose);
+    // initialise_Q1boards(solve_list, &b, n);
+    // solveBoard(solve_list, &b, &solutions, n, &verbose);
+    
+    emptyBoard(&p, n);
+    int f = 0;
+    solve_list[f] = p;
+    //returns an array of structure of position f = 0, where f = 0 is filled with empty values
+    //works
+    if (verbose == true){
+
+    printAllBoards(solve_list, &n, f);
+    }
+
     
     return EXIT_SUCCESS;
 }
+// //function for creating the back boards
+// void append_list(board solve_list[], board *b, int list_size){
+//     board parentBoard;
+//     emptyBoard(&parentBoard, 3);
+
+
+//     //for every board that goes through is valid position and places a queen, increment the list_size
+//     //to do so need only one function is_valid_position, that checks Q can be placed within rules of Q, within_bounds, etc
+//     //if is valid_position == true for position x, y: 
+//     //place the Q in directly next place (where is_valid checks rules) by using loop to board.chessboard(append) x,y coordinates
+//         //AND somehow saving this board position as list_board
+//         //increment list_size by 1
+//         //do the process again where we call the in_bound function for N queens, ie 4x4 has 4 queens - outer loop? 
+//     int numbertimes_isvalidposCalled = 0; //rename
+//     list_size = 1;
+//     do{
+
+
+//     } while((numbertimes_isvalidposCalled - 1) == board_size);
+// }
+
 
 void emptyBoard(board *b, int board_size){
     for (int i = 0; i < board_size; i++){
@@ -40,6 +76,15 @@ void printBoard(board *b, int board_size){
     for (int i = 0; i < board_size; i++){
         for (int j = 0; j < board_size; j++){
             printf("%c", b->chessboard[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void printAllBoards(board arrayof_struct[], int *n, int f){
+    for (int i = 0; i < *n; i++){
+        for (int j = 0; j < *n; j++){
+            printf("%c", arrayof_struct[f].chessboard[i][j]);
         }
         printf("\n");
     }

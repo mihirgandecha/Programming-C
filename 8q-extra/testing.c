@@ -426,3 +426,15 @@ void generate_childBoard(board *parent_board, int board_size, board solve_list[]
         }
     }
 }
+
+board create_emptyBoard(board *b, board arrayof_struct[]){
+    for (int i = 0; i < *n; i++){
+        for (int j = 0; j < *n; j++){
+            b->chessboard[i][j] = EMPTY;
+        }
+    }
+    int f = 0;
+    arrayof_struct[f] = board b;
+    //returns an array of structure of position f = 0, where f = 0 is filled with empty values
+    return arrayof_struct[f];
+}
