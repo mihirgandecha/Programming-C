@@ -16,3 +16,16 @@ int main(void)
     fclose(fp);
     return EXIT_SUCCESS;
 }
+
+void placeFirstQueen(board *solve_list, int *b, int board_size) {
+    for (int i = 0; i < board_size; i++) {
+        for (int j = 0; j < board_size; j++) {
+            board newBoard;
+            emptyBoard(&newBoard, board_size);  
+            newBoard.chessboard[i][j] = QUEEN;  
+            solve_list[*b] = newBoard;          
+            (*b)++;                             
+        }
+    }
+}
+

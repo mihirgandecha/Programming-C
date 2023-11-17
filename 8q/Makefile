@@ -19,7 +19,7 @@ CC := clang
 all: 8q 8q_san
 
 run:
-	./8q_san verbose
+	./8q_san 
 
 clean:
 	rm -f 8q 8q_san 8q.zip

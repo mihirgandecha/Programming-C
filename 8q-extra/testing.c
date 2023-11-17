@@ -287,3 +287,142 @@ void printQ(queen_array *q, int board_size){
             printf("%c at index %d is positioned at (%d, %d)\n", q->queen[i], q->q_index[i], q->row[i], q->col[i]);
         }
 }
+
+void generate_childBoard(board *parent_board, int board_size, board solve_list[], int *b)
+
+
+    // //breadth-first search implementation:
+    // //Initialise the array list of structures for 4(N) board to solve
+    // board solve_list[MAX_PERM];
+    // //f representing front of queue and b representing back of queue
+    // int f = 0;
+    // int b = 1; 
+    
+    // board parentBoard;
+    // emptyBoard(&parentBoard, n);
+    // solve_list[f] = parentBoard;
+
+    // board childBoard;
+    // deepCopy(&solve_list[f], &childBoard, n);
+    // solve_list[b] = childBoard;
+
+    // printBoard(&solve_list[b], n);
+    // printf("\n");
+
+    // //place q1
+    // int b_q1max = n*n;
+    
+    // for (int i = 0; i < n; i++){
+    //     solve_list[b].chessboard[i][i] = QUEEN;
+    //     b++;
+    //     }
+
+    // printBoard(&solve_list[b], n);
+    //test generate such that placing Q1 on a board is always N*N
+   
+
+    //Check in-bound?
+    // in_bound(&parent_board, n);
+
+    //do-while loop to represent childBoards being generated whilst f!=childBoard
+    // do{
+    //     generate_childBoards();
+    //     f++;
+    // }
+    // while(f != end_childBoard);
+    // printf(solutions);
+
+    void solveBoard(board *solve_list, int *b, int board_size, bool verbose) {
+    int start = 0;
+    do {
+        int current_end = *b;
+        for (int i = start; i < current_end; i++) {
+            for (int row = 0; row < board_size; row++) {
+                for (int col = 0; col < board_size; col++) {
+                    if (isSafe(&solve_list[i], board_size, row, col)) {
+                        board childBoard;
+                        deepCopy(&solve_list[i], &childBoard, board_size);
+                        childBoard.chessboard[row][col] = QUEEN;
+                        if (!compareBoard(&childBoard, solve_list, *b, board_size)) {
+                            solve_list[*b] = childBoard;
+                            (*b)++;
+                            if (isCompleteSolution(&childBoard, board_size)) {
+                                printSolution(&childBoard, board_size, verbose);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        start = current_end;
+    } while (start != *b);
+}
+
+void printSolution(board *b, int board_size, bool verbose) {
+    if (verbose) {
+        for (int i = 0; i < board_size; i++) {
+            for (int j = 0; j < board_size; j++) {
+                if (b->chessboard[i][j] == QUEEN) {
+                    printf("%d", j + 1);  // Print column index of queen in each row
+                }
+            }
+        }
+        printf("\n");
+    }
+}
+
+bool compareBoard(board *newBoard, board *solve_list, int b, int board_size) {
+    for (int i = 0; i < b; i++) {
+        if (compareBoard(newBoard, &solve_list[i], board_size)) {
+            return true;  // Duplicate board found
+        }
+    }
+    return false;  // No duplicates
+}
+
+bool isCompleteSolution(board *b, int board_size) {
+    int queen_count = 0;
+    for (int i = 0; i < board_size; i++) {
+        for (int j = 0; j < board_size; j++) {
+            if (b->chessboard[i][j] == QUEEN) {
+                queen_count++;
+            }
+        }
+    }
+    return queen_count == board_size;  // Check if all queens are placed
+}
+
+// ... [rest of the functions like isSafe, deepCopy, etc.] ...
+
+int main(int argc, char *argv[]) {
+    // ... [existing setup code] ...
+
+    int verbose_level = 0;
+    if (argc == 3) {
+        verbose_level = atoi(argv[2]);
+    }
+
+    board solve_list[MAX_PERM];
+    int f = 0;
+    int b = 0;
+
+    placeQ1(solve_list, &b, n);
+    solveBoard(solve_list, &b, n, verbose_level >= 6);
+
+    // ... [rest of main function] ...
+    return 0;
+}
+
+void generate_childBoard(board *parent_board, int board_size, board solve_list[], int *b){
+    for (int i = 0; i < board_size; i++){
+        for (int j = 0; j < board_size; j++){
+            if(isSafe(parent_board, board_size, i, j)){
+                board childBoard;
+                deepCopy(parent_board, &childBoard, board_size);
+                childBoard.chessboard[i][j] = QUEEN;
+                solve_list[*b] = childBoard;
+                (*b)++;
+            }
+        }
+    }
+}
