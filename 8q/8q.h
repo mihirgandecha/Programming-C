@@ -9,11 +9,22 @@
 #define EMPTY 'X'
 #define QUEEN 'Q'
 #define OUT_BOUNDS -1
-#define MAX_PERM 500
+#define MAX_PERM 80000
 
 typedef struct board {
    char chessboard[MAX_BOARD][MAX_BOARD];
 } board;
+
+// void appendList(int *list_size, int *board_size);
+
+// WORKS: void appendList(board arrayof_struct[], int *list_size, int *board_size);
+void appendList(board solve_list[], int *list_size, int *board_size);
+
+void QNNSolved(board arrayof_struct[], int *list_size, int *board_size);
+
+void nqueenSolved(board solve_list[], int *list_size, int *board_size);
+
+int countQueens(board *b, int board_size);
 
 void printAllBoards(board arrayof_struct[], int *n, int f);
 //Initialise the parent board
@@ -36,7 +47,7 @@ bool isSafe_RC(board *b, int board_size, int row, int col);
 bool Q_DiagSafe(board *b, int row, int col, int board_size);
 
 //(5)Last function that combines check for in_bound, isSafe_RC, Q_DiagSafe, DiagSafe
-bool isSafe(board *b, int board_size, int row, int col);
+bool isSafe(board *temp, int board_size, int row, int col);
 
 //Solving board functions:
 //(1)Initialise Q1 placement:
