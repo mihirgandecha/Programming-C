@@ -8,6 +8,7 @@
 #define MAX_BOARD 10
 #define EMPTY 'X'
 #define QUEEN 'Q'
+#define IN_BOUND 1
 #define OUT_BOUNDS -1
 #define MAX_PERM 80000
 
@@ -37,17 +38,21 @@ void printBoard(board *b, int board_size);
 void deepCopy(board *original, board *copy, int board_size);
 
 //Functions for Q-positioning:
-//(1)Check if placement is within bounds
+//GTG! Just in main!
 int in_bound(int row, int col, int board_size);
+void testin_bound(void);
 
 //(2)Check if the row or column is safe
 bool isSafe_RC(board *b, int board_size, int row, int col);
+void test_isSafeRC(void);
 
 //(3)Function to check if queen is safe for any diagonal direction
 bool Q_DiagSafe(board *b, int row, int col, int board_size);
+void test_QDiagSafe(void);
 
 //(5)Last function that combines check for in_bound, isSafe_RC, Q_DiagSafe, DiagSafe
 bool isSafe(board *temp, int board_size, int row, int col);
+void test_isSafe(void);
 
 //Solving board functions:
 //(1)Initialise Q1 placement:

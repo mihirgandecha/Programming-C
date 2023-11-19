@@ -17,42 +17,32 @@ int main(int argc, char *argv[]){
     if (argc == 3 && strcmp(argv[2], "verbose") == 0){
         verbose = true;
     }
-
     //works
-    board p;
-
-
+    board parentBoard;
     board solve_list[MAX_PERM];
-    // int b = 0;
-    // int solutions = 0;
     
-    // initialise_Q1boards(solve_list, &b, n);
-    // solveBoard(solve_list, &b, &solutions, n, &verbose);
-    
-    emptyBoard(&p, n);
+    emptyBoard(&parentBoard, n);
+    //Now parentBoard filled with X for n intput
     int f = 0;
-    solve_list[f] = p;
-    
+    solve_list[f] = parentBoard;
+    //Now parentBoard is set to f = 0, in array of struct list
+
     int list_size = 0;
+    //Acts like back
     board initialBoard;
     emptyBoard(&initialBoard, n);
-    solve_list[list_size++] = initialBoard;
-    // board childBoard;
-    // deepCopy(&p, &childBoard, n);
-    // solve_list[list_size] = childBoard;
-    // list_size++;
-    // printf("\n");
-    // // printAllBoards(solve_list, &n, f);
 
-    // QNNSolved(solve_list, &list_size, &n);
-    // printAllBoards(&solve_list[10], &n, 0);
+    testin_bound();
+    test_isSafeRC();
+    test_QDiagSafe();
+    test_isSafe();
 
     
     // Solve the N-Queens problem
-    nqueenSolved(solve_list, &list_size, &n);
 
     if (verbose) {
         int solution_count = 0;
+        nqueenSolved(solve_list, &list_size, &n);
         for (int i = 0; i < list_size; i++) {
             if (countQueens(&solve_list[i], n) == n) {
                 solution_count++;
@@ -91,12 +81,179 @@ void deepCopy(board *original, board *copy, int n) {
     }
 }
 
-void printAllBoards(board arrayof_struct[], int *n, int f){
+void printAllBoards(board arrayof_struct[], int *n, int list_size){
     for (int i = 0; i < *n; i++){
         for (int j = 0; j < *n; j++){
-            printf("%c", arrayof_struct[f].chessboard[i][j]);
+            printf("%c", arrayof_struct[list_size].chessboard[i][j]);
         }
         printf("\n");
+    }
+}
+
+//Check for queen functions:
+
+int in_bound(int row, int col, int board_size){
+    if (row >= 0 && row < board_size && col >= 0 && col < board_size){
+        return IN_BOUND;
+    }
+    return OUT_BOUNDS;
+}
+
+void testin_bound(void){
+    int board_size = MAX_BOARD;
+
+    //test board is within bounds
+    assert(in_bound(0, 0, board_size) == IN_BOUND);
+    assert(in_bound(9, 9, board_size) == IN_BOUND);
+    assert(in_bound(7, 9, board_size) == IN_BOUND);
+
+    //test boundries of col and row inside
+    assert(in_bound(0, (board_size - 1), board_size) == IN_BOUND);
+    assert(in_bound((board_size - 1), 0, board_size) == IN_BOUND);
+
+    //test OUT_BOUND
+    assert(in_bound(-1, 0, board_size) == OUT_BOUNDS);
+    assert(in_bound(0, -1, board_size) == OUT_BOUNDS);
+    assert(in_bound(0, 10, board_size) == OUT_BOUNDS);
+    assert(in_bound(10, 0, board_size) == OUT_BOUNDS);
+                 
+}
+
+bool isSafe_RC(board *b, int board_size, int row, int col){
+
+    for (int i = 0; i < board_size; i++){
+        if ((b->chessboard[row][i] == QUEEN && i != col) || 
+            (b->chessboard[i][col] == QUEEN && i != row)){
+            return false;
+
+            }
+        }
+    return true;
+}
+
+void test_isSafeRC(void){
+    int board_size = 5;
+    board testBoard;
+    emptyBoard(&testBoard, board_size);
+
+    //test on empty board
+    for (int row = 0; row < board_size; row++){
+        for (int col = 0; col < board_size; col++){
+            assert(isSafe_RC(&testBoard, board_size, row, col) == true);
+        }
+    }
+
+    //test for unsafe
+    testBoard.chessboard[0][4] = QUEEN;
+    testBoard.chessboard[4][4] = QUEEN;
+    
+    assert(isSafe_RC(&testBoard, board_size, 1, 4) == false);
+    assert(isSafe_RC(&testBoard, board_size, 3, 4) == false);
+
+}
+
+bool Q_DiagSafe(board *b, int row, int col, int board_size){
+    for (int i = 0; i < board_size; i++){
+        for (int j = 0; j < board_size; j++){
+            //conditional to find Q position on a board
+            if (b->chessboard[i][j] == QUEEN){
+                //Difference between 2 diag points
+                int dx = col - j;
+                int dy = row - i;
+
+                if ((dx == dy) || (dx == -dy)){
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void test_QDiagSafe(void){
+    int board_size = MAX_BOARD;
+    board testBoard;
+    emptyBoard(&testBoard, board_size);
+
+    // 4 tests for each diaganol
+    testBoard.chessboard[0][0] = QUEEN;
+    assert(Q_DiagSafe(&testBoard, 9, 9, board_size) == false);
+    testBoard.chessboard[0][9] = QUEEN;
+    assert(Q_DiagSafe(&testBoard, 9, 0, board_size) == false);
+    testBoard.chessboard[9][0] = QUEEN;
+    assert(Q_DiagSafe(&testBoard, 0, 9, board_size) == false);
+    testBoard.chessboard[9][9] = QUEEN;
+    assert(Q_DiagSafe(&testBoard, 0, 0, board_size) == false);
+    
+    // Test positions diagonally relative to the queen
+    board testBoard2;
+    int board_size2 = 5;
+    emptyBoard(&testBoard2, board_size2);
+    testBoard.chessboard[2][2] = QUEEN;
+    assert(Q_DiagSafe(&testBoard, 0, 1, board_size2) == true); // Diagonally unsafe
+    assert(Q_DiagSafe(&testBoard, 0, 4, board_size2) == false);  // Diagonally safe
+    assert(Q_DiagSafe(&testBoard, 4, 3, board_size2) == true);  // Diagonally safe
+    assert(Q_DiagSafe(&testBoard, 1, 1, board_size2) == false);
+    // Additional tests can be added for thoroughness
+}
+
+bool isSafe(board *temp, int board_size, int row, int col){
+
+    if ((isSafe_RC(temp, board_size, row, col) && Q_DiagSafe(temp, row, col, board_size)) == false){
+        return false;
+    }
+
+    return true;
+}
+
+void test_isSafe(void){
+    int board_size = 5;
+    board testBoard;
+    emptyBoard(&testBoard, board_size);
+
+    testBoard.chessboard[3][2] = QUEEN;
+    testBoard.chessboard[4][4] = QUEEN;
+
+    assert(isSafe(&testBoard, board_size, 0, 3) == true);
+    assert(isSafe(&testBoard, board_size, 2, 4) == false); 
+    assert(isSafe(&testBoard, board_size, 2, 2) == false); 
+    assert(isSafe(&testBoard, board_size, 4, 3) == false); 
+    assert(isSafe(&testBoard, board_size, 0, 3) == true); 
+    assert(isSafe(&testBoard, board_size, 0, 1) == true); 
+    assert(isSafe(&testBoard, board_size, 2, 0) == true); 
+
+}
+
+
+void addQN(board *current_board, board *solve_list, int board_size, int *b) {
+    int nextRow = -1;
+    for (int i = 0; i < board_size && nextRow == -1; i++) {
+        bool rowEmpty = true;
+        for (int j = 0; j < board_size; j++) {
+            if (current_board->chessboard[i][j] == QUEEN) {
+                rowEmpty = false;
+            }
+        }
+        if (rowEmpty) {
+            nextRow = i;
+        }
+    }
+
+    if (nextRow != -1) {
+        for (int col = 0; col < board_size; col++) {
+            if (isSafe(current_board, board_size, nextRow, col)) {
+                board childBoard;
+                deepCopy(current_board, &childBoard, board_size);
+                childBoard.chessboard[nextRow][col] = QUEEN;
+
+                if (*b < MAX_BOARD) {
+                    solve_list[*b] = childBoard;
+                    (*b)++;
+                } else {
+                    return;
+                }
+            }
+        }
     }
 }
 
@@ -221,103 +378,6 @@ int countQueens(board *b, int board_size){
     return queen_count;
 }
 
-
-
-
-int in_bound(int row, int col, int board_size){
-    if (row >= 0 && row < board_size && col >= 0 && col < board_size){
-        return 0;
-    }
-    return 1;
-}
-
-bool isSafe_RC(board *b, int board_size, int row, int col){
-    int queen_count = 0;
-    
-    for (int i = 0; i < board_size; i++){
-        if (b->chessboard[row][i] == QUEEN || b->chessboard[i][col] == QUEEN){
-            queen_count++;
-            if (queen_count > 1){
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-bool Q_DiagSafe(board *b, int row, int col, int board_size){
-    int directions[4][2] = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-    
-    for (int i = 0; i < 4; i++) {
-        int dRow = directions[i][0];
-        int dCol = directions[i][1];
-
-        int cRow = row, cCol = col;
-        while (cRow >= 0 && cRow < board_size && cCol >= 0 && cCol < board_size) {
-            if (cRow != row && cCol != col && b->chessboard[cRow][cCol] == QUEEN) {
-                return false;
-            }
-            cRow += dRow;
-            cCol += dCol;
-        }
-    }
-    return true;
-}
-
-bool isSafe(board *temp, int board_size, int row, int col){
-    if (!isSafe_RC(temp, board_size, row, col)) {
-        return false;
-    }
-
-    if (!Q_DiagSafe(temp, row, col, board_size)) {
-        return false;
-    }
-
-    return true;
-}
-
-void initialise_Q1boards(board *solve_list, int *b, int board_size){
-    for (int j = 0; j < board_size; j++) {
-        board childBoard;
-        emptyBoard(&childBoard, board_size);
-        childBoard.chessboard[0][j] = QUEEN;  
-        solve_list[*b] = childBoard;          
-        (*b)++;         
-    }
-}
-
-void addQN(board *current_board, board *solve_list, int board_size, int *b) {
-    int nextRow = -1;
-    for (int i = 0; i < board_size && nextRow == -1; i++) {
-        bool rowEmpty = true;
-        for (int j = 0; j < board_size; j++) {
-            if (current_board->chessboard[i][j] == QUEEN) {
-                rowEmpty = false;
-            }
-        }
-        if (rowEmpty) {
-            nextRow = i;
-        }
-    }
-
-    if (nextRow != -1) {
-        for (int col = 0; col < board_size; col++) {
-            if (isSafe(current_board, board_size, nextRow, col)) {
-                board childBoard;
-                deepCopy(current_board, &childBoard, board_size);
-                childBoard.chessboard[nextRow][col] = QUEEN;
-
-                if (*b < MAX_BOARD) {
-                    solve_list[*b] = childBoard;
-                    (*b)++;
-                } else {
-                    return;
-                }
-            }
-        }
-    }
-}
-
 void solveBoard(board *solve_list, int *b, int *solutions, int board_size, bool *verbose) {
     int current_index = 0;
 
@@ -358,7 +418,7 @@ void printBoardSolution(board *b, int board_size){
         for (int j = 0; j < board_size; j++) {
             if (b->chessboard[i][j] == QUEEN) {
                 printf("%d", j + 1); // Column numbers start from 1
-                break; // Move to the next row after finding the queen
+                break; // Move to the next row after finding the queen - remove
             }
         }
     }
@@ -388,9 +448,40 @@ bool compareBoard(board *current_board, board solve_list[], int num_boards, int 
 
 void test(void){
     int n = 3;
-    board solve_list[MAX_PERM];
-    int b = 0;
+    // board solve_list[MAX_PERM];
+    board testParentBoard;
 
-    initialise_Q1boards(solve_list, &b, n);
-    assert(b == n * n);
+    //Test for empty board: making sure all characters are 'X', (2)test for checking only 1 string char in each cell    
+    for (int row = 0; row < n; row++){
+        for (int col = 0; col < n; col++){
+            testParentBoard.chessboard[row][col] = 'A';
+        }
+    }
+    emptyBoard(&testParentBoard, n);
+    for (int row = 0; row < n; row++){
+        for (int col = 0; col < n; col++){
+            assert(testParentBoard.chessboard[row][col] = EMPTY);
+            assert(strlen(&testParentBoard.chessboard[row][col]) == 1);
+        }
+    }
+
+    //Test for deepCopy function: making sure for all cells A -> X
+    board testChildBoard;
+
+    for (int row = 0; row < n; row++){
+        for (int col = 0; col < n; col++){
+            testChildBoard.chessboard[row][col] = 'A';
+        }
+    }
+
+    deepCopy(&testParentBoard, &testChildBoard, n);
+    for (int row = 0; row < n; row++){
+        for (int col = 0; col < n; col++){
+            assert(testChildBoard.chessboard[row][col] = EMPTY);
+            assert(strlen(&testChildBoard.chessboard[row][col]) == 1);
+        }
+    }
+
+    //Tests for Q-rules:
+
 }
