@@ -10,68 +10,59 @@
 #define QUEEN 'Q'
 #define IN_BOUND 1
 #define OUT_BOUNDS -1
-#define MAX_PERM 80000
+#define MAX_PERM 50000
 
 typedef struct board {
    char chessboard[MAX_BOARD][MAX_BOARD];
 } board;
 
-// void appendList(int *list_size, int *board_size);
-
-// WORKS: void appendList(board arrayof_struct[], int *list_size, int *board_size);
-void appendList(board solve_list[], int *list_size, int *board_size);
-
-void QNNSolved(board arrayof_struct[], int *list_size, int *board_size);
-
-void nqueenSolved(board solve_list[], int *list_size, int *board_size);
-
-int countQueens(board *b, int board_size);
-
-void printAllBoards(board arrayof_struct[], int *n, int f);
-//Initialise the parent board
+//Solve NQueen Functions
+//Initialises an empty board with 'X'
 void emptyBoard(board *b, int board_size);
 
-//Print any board
-void printBoard(board *b, int board_size);
+//Creates a deep copy of boards taking orignal->copy
+void deepCopy(board *original, board *copy, int n);
 
-//Deep copy the parent board to child board
-void deepCopy(board *original, board *copy, int board_size);
-
-//Functions for Q-positioning:
-//GTG! Just in main!
+//Checks if a given row and column is in bounds of the board
 int in_bound(int row, int col, int board_size);
-void testin_bound(void);
 
-//(2)Check if the row or column is safe
+//Checks if a given row and column is safe from other queens
 bool isSafe_RC(board *b, int board_size, int row, int col);
-void test_isSafeRC(void);
 
-//(3)Function to check if queen is safe for any diagonal direction
+//Checks if a given row and column is safe from other queens diagonally
 bool Q_DiagSafe(board *b, int row, int col, int board_size);
-void test_QDiagSafe(void);
 
-//(5)Last function that combines check for in_bound, isSafe_RC, Q_DiagSafe, DiagSafe
+//Checks if a given row, column is safe (in-bound too) from other queens
 bool isSafe(board *temp, int board_size, int row, int col);
-void test_isSafe(void);
 
-//Solving board functions:
-//(1)Initialise Q1 placement:
-void initialise_Q1boards(board *solve_list, int *b, int board_size);
+//Finds the maximum number of permutations for a given board size
+int getMaxPerm(int board_size);
 
-//(2)Initialise Q2-QN placement given test_QPlacement succeeeds:
-void addQN(board *current_board, board *solve_list, int board_size, int *b);
+//Creates list of all possible boards
+void nqueenSolved(board solve_list[], int *list_size, int *board_size);
 
-//(3)Check if Q count == board_size
-bool isQNSolved(board *b, int board_size);
+//Counts the number of queens on a board
+int countQueens(board *b, int board_size);
 
-//(4)Duplicate check:
+//Checks if two boards are identical
 bool areBoardsIdentical(board *board1, board *board2, int board_size);
+
+//Checks if a board is already in the list of boards
 bool compareBoard(board *current_board, board solve_list[], int num_boards, int board_size);
 
-//(5)Solve the board:
-void solveBoard(board *solve_list, int *b, int *solutions, int board_size, bool *verbose);
-//Print solution:
+//Prints the board solution if -verbose flag is used
 void printBoardSolution(board *b, int board_size);
 
+//Solves the n-queens problem taking all inputs and functions
+void solveNQueens(int n, int verbose);
+
 //Test function
+void testEmptyBoard(int n);
+void testDeepCopy(int n);
+//tests for queen rules: 
+void testin_bound(void);
+void test_isSafeRC(void);
+void test_QDiagSafe(void);
+void test_isSafe(void);
+
 void test(void);

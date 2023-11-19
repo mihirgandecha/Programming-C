@@ -26,4 +26,4 @@ clean:
 
 # Crete a .zip file using ALL files in this directory
 zip: 8q.c 8q.h 
-	zip -r 8q.zip 8q.c 8q.h # extension.txt extension.c Makefile 
+	zip -r 8q.zip 8q.c 8q.h Makefile 
