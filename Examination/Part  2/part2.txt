@@ -1,0 +1,8 @@
+Part 2 (40%) : String Sub-Sequence
+Complete the function subseq which returns the length of the longest subsequence that two strings share.
+For instance, the strings firedoor and hundreds have the length 3 string red in common.
+The driver file main2.c, subseq.h and the Makefile, are given and cannot be changed. You should
+complete subseq.c making any changes that you like, such that both files can be compiled together (and
+run correctly) without warnings.
+Only submit your version of subseq.c - we will use our version of the other files. We will adapt our
+version of main2.c to test your code with other, similar, examples.

@@ -1,0 +1,37 @@
+Part 1 (60%) : QWERTY Keyboard
+Some words (such as typewriter) can be typed using only the letters that appear on the top row of
+characters on a ‘QWERTY’ keyboard.
+Finish the function in toprow.c which, along with the main1.c, toprow.h and Makefile given, allow
+you to decide whether a string contains only the characters qwertyuiop and QWERTYUIOP.
+The driver file main1.c, toprow.h and the Makefile, are given and cannot be changed. You should
+complete toprow.c making any changes that you like, such that both .c files can be compiled together
+(and run correctly) without warnings.
+Only submit you version of toprow.c - we will use our version of the other files. We will adapt our
+version of main1.c to test your code with other, similar, examples.
+without using size_t passing assertions:
+
+int main(void)
+{
+
+   // We will use these, as well as other, similar examples
+   // to test your code with.
+
+   // typewriter
+   assert(toprow("typewriter")==true);
+   // Torque
+   assert(toprow("Torque")==true);
+   // Equity
+   assert(toprow("Equity")==true);
+   // empty string
+   assert(toprow("")==true);
+
+   // FLASH
+   assert(toprow("FLASH")==false);
+   // typewriters
+   assert(toprow("typewriters")==false);
+   // tip-top
+   assert(toprow("tip-top")==false);
+
+}
+
+ONLY FILL FUNCTION bool toprow(const char s[])
