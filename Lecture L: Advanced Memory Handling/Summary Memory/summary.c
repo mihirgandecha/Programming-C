@@ -3,6 +3,7 @@
 
 int main() {
     // Demonstrating malloc
+    // When using x/5d arr1 does show that values are 0, but different for all systems! Therefore does not behave same as CALLOC
     int *arr1 = (int *)malloc(5 * sizeof(int));
     if (arr1 == NULL) {
         perror("malloc");

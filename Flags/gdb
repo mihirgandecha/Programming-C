@@ -1,0 +1,10 @@
+See the Code and Assembly at the same time:
+
+lay next
+ENTER 
+ENTER
+
+malloc:
+x/5i arr1 -- shows the machine instructions
+x/5d arr1 -- shows the data
+

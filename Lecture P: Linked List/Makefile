@@ -2,6 +2,7 @@ CC := clang
 CWARNS := -Wall -Wpedantic -Wextra -Wfloat-equal -Wvla
 CFLAGSNOABORT := $(CWARNS) -std=c99 -O3
 CFLAGS := $(CFLAGNOABORT) -Werror
+DEBUG := -g
 LDLIBS := -lm
 SOURCES := $(wildcard *.c)
 EXES := $(SOURCES:.c=)
@@ -30,7 +31,7 @@ nify2 : nify2.c
 	rm -f $@.autoout $@.manout
 
 llist: llist.c $(GENC)
-	$(CC) $(CFLAGS) $< $(GENC) $(LDLIBS) -o $@
+	$(CC) $(CFLAGS) $< $(GENC) $(LDLIBS) -g -o $@
 
 list: list.c $(GENC)
 	$(CC) $(CFLAGS) $< $(GENC) $(LDLIBS) -o $@
