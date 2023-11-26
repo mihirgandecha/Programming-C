@@ -14,7 +14,7 @@ all: $(EXEC)
 $(EXEC): part1.c
 	$(CC) $(CFLAGS) part1.c -o $(EXEC)
 
-# Clean up
+# Clean up yay
 clean:
 	rm -f $(EXEC)
 
