@@ -1,6 +1,6 @@
 CC := clang
 CWARNS := -Wall -Wpedantic -Wextra -Wfloat-equal -Wvla
-CFLAGNOABORT := $(CWARNS) -std=c99 -O3
+CFLAGSNOABORT := $(CWARNS) -std=c99 -O3
 CFLAGS := $(CFLAGNOABORT) -Werror
 LDLIBS := -lm
 SOURCES := $(wildcard *.c)
@@ -32,6 +32,8 @@ nify2 : nify2.c
 llist: llist.c $(GENC)
 	$(CC) $(CFLAGS) $< $(GENC) $(LDLIBS) -o $@
 
+list: list.c $(GENC)
+	$(CC) $(CFLAGS) $< $(GENC) $(LDLIBS) -o $@
 
 % : %.c
 	$(CC) $(CFLAGS) $< $(LDLIBS) -o $@
@@ -47,7 +49,6 @@ llist: llist.c $(GENC)
 	@script -c ./$* $*.script
 	@cat $*.script | egrep -v "^Script " > $@
 	@rm -f $*.script
-
 
 debugmake : 
 	@echo "CWARNS = " $(CWARNS)
