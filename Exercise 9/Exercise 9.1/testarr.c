@@ -6,7 +6,6 @@
 
 int main(void)
 {
-
    arr *a;
    printf("Basic Array Tests ... Start\n");
    /* Set up empty array */

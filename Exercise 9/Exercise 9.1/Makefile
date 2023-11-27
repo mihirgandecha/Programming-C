@@ -1,5 +1,5 @@
 CC=gcc
-GENPATH= /home/mihirgany/mihirgandecha/ADTs
+GENPATH= /home/mihirgany/mihirgandecha/ADTs/General
 COMMON= -Wall -Wextra -Wfloat-equal -Wvla -Wpedantic -std=c99 -Werror
 DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
