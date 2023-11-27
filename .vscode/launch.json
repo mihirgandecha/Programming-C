@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "8q.c",
+            "program": "summary.c",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
