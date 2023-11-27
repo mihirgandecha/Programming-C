@@ -1,7 +1,7 @@
 CC=gcc
 GENPATH=/home/yk23504/Documents/ADTs/General
 COMMON= -Wall -Wextra -Wfloat-equal -Wvla -Wpedantic -std=c99 -Werror
-DEBUG= -g
+DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
 VALGRIND= $(COMMON) $(DEBUG)
 PRODUCTION= $(COMMON) -O3
