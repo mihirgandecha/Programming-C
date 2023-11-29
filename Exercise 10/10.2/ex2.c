@@ -18,29 +18,30 @@ Node* MakeNode(char c);
 void InsertRandom(Node* t, Node* n);
 char* PrintTree(Node* t);
 int MaxDepth(Node* head);
-void FreeTree(Node* node);
+Node* makeTree(char c);
 
 int main(void) {
-    char c; //garbage value
-    Node* head = MakeNode('A'); //Created pointer node head. Using x/1d shows ascii 65 representing 'A' 
-    Node* n; //Creates node n, with char being set to 0 through calloc
+    
+    srand(time(NULL));
 
-    srand(time(NULL)); //Such that every time rand is called not same number. Either 0 or 1 (L or R)
+    char c = 'B';
 
-    for (c = 'B'; c < 'G'; c++) { //c is set to first child, condition is until 'F' node is created, increment number of random node being created 
-        n = MakeNode(c); //So instead of n being 0, char is passed so that struct node includes characters 'b' -> 'f'
-        InsertRandom(head, n); //input parent and child
-    }
+    Node* tree1 = makeTree(c);
+    
+    Node* tree2 = makeTree(c);
 
-    printf("%s\n", PrintTree(head));
+    printf("%s\n", PrintTree(tree1));
+    printf("%s\n", PrintTree(tree2));
 
-    int treeHeight = MaxDepth(head); // Calculate the maximum depth of the tree.
-    printf("Maximum depth of the tree: %d\n", treeHeight);
-
-    FreeTree(head);
+    int treeHeight1 = MaxDepth(tree1); // Calculate the maximum depth of the first tree.
+    int treeHeight2 = MaxDepth(tree2); // Calculate the maximum depth of the second tree.
+    
+    printf("Maximum depth of the first tree: %d\n", treeHeight1);
+    printf("Maximum depth of the second tree: %d\n", treeHeight2);
 
     return 0;
 }
+
 
 //If NULL, means no node on the left/right
 Node* MakeNode(char c) {
@@ -64,6 +65,17 @@ void InsertRandom(Node* t, Node* n) { //input is parent (where the node is inser
             InsertRandom(t->right, n);
         }
     }
+}
+
+Node* makeTree(char c) {
+    if (c > 'G') {
+        return NULL; // Return NULL to indicate the end of recursion.
+    }
+    Node* head = MakeNode('A');
+    Node* n = MakeNode(c);
+    InsertRandom(head, n);
+    head->left = makeTree(c + 1); // Update the left child with the result of the recursive call.
+    return head; // Return the current node.
 }
 
 char* PrintTree(Node* t) {
@@ -96,15 +108,4 @@ int MaxDepth(Node* head){
     }
 }
 
-void FreeTree(Node* node) {
-    if (node == NULL) {
-        return;
-    }
 
-    // Recursively free left and right subtrees
-    FreeTree(node->left);
-    FreeTree(node->right);
-
-    // Free the current node
-    free(node);
-}
