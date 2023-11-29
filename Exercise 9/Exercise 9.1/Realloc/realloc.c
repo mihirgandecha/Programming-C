@@ -1,18 +1,35 @@
-#include "arr.h"
-#include "specific.h"
+// #include "arr.h"
+// #include "specific.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#define COLLTYPE "Realloc"
+#define MAXSIZE 1000
+
+
+typedef struct arr{
+    int *a[MAXSIZE];
+} arr;
+
+arr init(void);
+
+int main(void){
+    arr a = init();
+    assert(a != NULL);
+    return 0;
+}
 
 /* Creates the empty array */
-arr* arr_init(void){
-    arr* a = (arr*)ncalloc(1, sizeof(int));
+arr init(void){
+    arr *a = (arr*)calloc(1, sizeof(int));
     
-    return a;
-// a = arr_init();
-//    assert(a != NULL);
-
+    return *a;
 }
-/* Similar to l[n] = i, safely resizing if required */
-void arr_set(arr *l, int n, int i);
-/* Similar to = l[n] */
-int arr_get(arr *l, int n);
-/* Clears all space used, and sets pointer to NULL */
-void arr_free(arr **l);
+// /* Similar to l[n] = i, safely resizing if required */
+// void arr_set(arr *l, int n, int i);
+// /* Similar to = l[n] */
+// int arr_get(arr *l, int n);
+// /* Clears all space used, and sets pointer to NULL */
+// void arr_free(arr **l);
