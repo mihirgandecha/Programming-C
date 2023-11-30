@@ -7,8 +7,8 @@ PRODUCTION= $(COMMON) -O3
 
 all: driverbsa_s driverbsa fibmemo sieve_s isfactorial # extfibmemo_s
 
-driverbsa_s: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
-	$(CC) driver.c Alloc/alloc.c -o driverbsa_s -I./Alloc $(SANITIZE)
+driverbsa_s: bsa.h specific.h alloc.c driver.c
+	$(CC) driver.c alloc.c -o driverbsa_s -I./Alloc $(SANITIZE)
 
 driverbsa: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
 	$(CC) driver.c Alloc/alloc.c -o driverbsa -I./Alloc $(PRODUCTION)
