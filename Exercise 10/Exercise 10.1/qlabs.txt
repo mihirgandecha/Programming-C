@@ -1,0 +1,6 @@
+1. Need help writing recursive functions - not identifying the base case + recursive call
+
+2. Sanitize flag (what should the overflow be - 0?)
+
+3. Order of flags to use, what should end compile be?
+

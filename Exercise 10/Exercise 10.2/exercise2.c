@@ -19,25 +19,41 @@ void InsertRandom(Node* t, Node* n);
 char* PrintTree(Node* t);
 int MaxDepth(Node* head);
 void FreeTree(Node* node);
+bool checkDuplicate(Node* root1, Node* root2, int maxDepth1, int maxDepth2);
 
 int main(void) {
-    char c; //garbage value
-    Node* head = MakeNode('A'); //Created pointer node head. Using x/1d shows ascii 65 representing 'A' 
-    Node* n; //Creates node n, with char being set to 0 through calloc
+    char t1; //garbage value
+    Node* head1 = MakeNode('A'); //Created pointer node head. Using x/1d shows ascii 65 representing 'A' 
+    Node* n1; //Creates node n, with char being set to 0 through calloc
 
     srand(time(NULL)); //Such that every time rand is called not same number. Either 0 or 1 (L or R)
 
-    for (c = 'B'; c < 'G'; c++) { //c is set to first child, condition is until 'F' node is created, increment number of random node being created 
-        n = MakeNode(c); //So instead of n being 0, char is passed so that struct node includes characters 'b' -> 'f'
-        InsertRandom(head, n); //input parent and child
+    for (t1 = 'B'; t1 < 'G'; t1++) { //c is set to first child, condition is until 'F' node is created, increment number of random node being created 
+        n1 = MakeNode(t1); //So instead of n being 0, char is passed so that struct node includes characters 'b' -> 'f'
+        InsertRandom(head1, n1); //input parent and child
     }
 
-    printf("%s\n", PrintTree(head));
+    char t2;
+    Node* head2 = MakeNode('A');
+    Node* n2;
 
-    int treeHeight = MaxDepth(head); // Calculate the maximum depth of the tree.
-    printf("Maximum depth of the tree: %d\n", treeHeight);
+    for (t2 = 'B'; t2 < 'G'; t2++) { //c is set to first child, condition is until 'F' node is created, increment number of random node being created 
+        n2 = MakeNode(t2); //So instead of n being 0, char is passed so that struct node includes characters 'b' -> 'f'
+        InsertRandom(head2, n2); //input parent and child
+    }
 
-    FreeTree(head);
+    printf("%s\n", PrintTree(head1));
+    printf("%s\n", PrintTree(head2));
+
+    int treeHeight1 = MaxDepth(head1); // Calculate the maximum depth of the tree.
+    printf("Maximum depth of the tree: %d\n", treeHeight1);
+
+
+    int treeHeight2 = MaxDepth(head2); // Calculate the maximum depth of the tree.
+    printf("Maximum depth of the tree: %d\n", treeHeight2);
+
+    FreeTree(head1);
+    FreeTree(head2);
 
     return 0;
 }
@@ -51,9 +67,6 @@ Node* MakeNode(char c) {
 }
 //understand what is causing left/right to be set to NULL
 void InsertRandom(Node* t, Node* n) { //input is parent (where the node is inserted) and child (the node to be inserted), such that loop includes child 'B' -> 'F' (only char is changing in struct so far)
-    if (t == NULL || n == NULL) {
-        return; // Safety check, ensure t and n are not NULL
-    }
     if ((rand() % 2) == 0) { /* Left */
         if (t->left == NULL) {
             t->left = n; //want to keep calling this function until t-left/right == NULL
@@ -99,6 +112,39 @@ int MaxDepth(Node* head){
     }
 }
 
+bool checkDuplicate(Node* root1, Node* root2, int maxDepth1, int maxDepth2){
+    //Is depth the same?
+    if (maxDepth1 != maxDepth2){
+        return false;
+    }
+    //L1 checkingif either one is 0, then not duplicate
+    if (root1 || root2 == NULL){
+        return false;
+    }
+    //base case?
+    if (root1->c && root2.c == 'F'){
+        return;
+    }
+    //L2 checking
+    for (root1.c = 'A'; root1.c < 'G'; root1.c++){
+        
+    }
+
+
+    int leftDepth1 = checkDuplicate(root1->left);
+    int leftDepth2 = checkDuplicate(root2->left);
+
+    int rightDepth1 = checkDuplicate(root1->right);
+    int rightDepth2 = checkDuplicate(root2->right);
+
+    if ()
+
+    if (root1 && root2 == NULL){
+        return true;
+    }
+}
+
+
 void FreeTree(Node* node) {
     if (node == NULL) {
         return;
@@ -111,3 +157,4 @@ void FreeTree(Node* node) {
     // Free the current node
     free(node);
 }
+
