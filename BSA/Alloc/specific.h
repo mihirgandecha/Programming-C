@@ -1,8 +1,7 @@
 #pragma once
 
-#include "bsa.h"
+#include "../bsa.h"
 
 struct bsa {
-    int **row;
-    int numRows;
+    int *col[BSA_ROWS];
 };
