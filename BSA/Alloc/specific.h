@@ -2,6 +2,10 @@
 
 #include "../bsa.h"
 
+struct BSA_Col{
+    int* positionIndex; //the position of d within a row created 
+};
+
 struct bsa {
-    int *col[BSA_ROWS];
+    BSA_Col* array; //whole bsa struct, what pnter-index within pointer of array
 };
