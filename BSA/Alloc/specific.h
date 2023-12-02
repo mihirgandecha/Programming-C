@@ -16,3 +16,10 @@ typedef struct BSA_Col{
 struct bsa { //whole bsa structure
     BSA_Col* array; //1D array of pointers
 };
+
+// typedef struct indxFigures{
+//     int kthRow;
+//     int kStart;
+//     int kEnd;
+//     int rowLen;
+// }indxFigures;

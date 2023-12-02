@@ -14,22 +14,21 @@ bool bsa_set(bsa* b, int indx, int d){
     if (b == NULL || b->array == NULL){
         return false;
     }
-    //first calculating kth row given the index 
+    //first calculating kth row given the index
+
     int k = 0;
-    int kthRow = kth_row(indx, &k);
+    int kRow = kth_row(indx, &k);
 
     //Check that kth row is in bound, false if 30 or higher
-    if (kthRow >= BSA_ROWS){
+    if (kRow >= BSA_ROWS){
         return false;
     }
-
     //might need to redo how kth_row works as this calls again (more memory) - calculating array row size, given index
     //example: row(k) = 2; index-6, d=10
-    int kRowStart = index_start(kth_row); //output 3
-    int kRowEnd = index_end(kth_row); //output 6
+    int kRowStart = index_start(kRow); //output 3
+    int kRowEnd = index_end(kRow); //output 6 - works
     //row size should be 4
-    int rowSize = (kRowEnd - kRowStart) - 1; //function?
-
+    int rowSize = (kRowEnd - kRowStart) + 1; //function? - want to make 4
     //check if row (2nd) at k has been created
     if (b->array[k].positionIndex == NULL){
         //create the row with the required size
@@ -40,11 +39,12 @@ bool bsa_set(bsa* b, int indx, int d){
         }
         //initialise the row with default values 'X'? or 0?
         for (int i = 0; i < rowSize; i++){
-            b->array[k].positionIndex = 0;
+            b->array[k].positionIndex[i] = 0;
         }
     }
     //set value d into the created row
     b->array[k].positionIndex[indx - kRowStart] = d;
+    return true; //works i think
 }
 
 int kth_row(int index, int *k){
@@ -135,7 +135,7 @@ int* bsa_get(bsa* b, int indx){
 
 // Delete element at index indx - forces a shrink
 // if that was the only cell in the row occupied.
-bool bsa_delete(bsa* b, int indx){
+bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. Delete row if nothing is set
     return false;
     if (b->array != NULL){
         printf("%d", indx);
@@ -148,14 +148,15 @@ bool bsa_delete(bsa* b, int indx){
 int bsa_maxindex(bsa* b){
     //base case (-1): does b->array.positionIndex == NULL? return
     if (b->array->positionIndex == NULL){
-        return;
+        return 1;
     }
     //loop through, calling kendindex to kstart, stopping at where a value != 0. have to call k fnctions then. easier way?
-    int endB = sizeof(b->array->positionIndex) / sizeof(b->array->positionIndex[0]) - 1;
+    int endB = sizeof(&b->array->positionIndex) / sizeof(b->array->positionIndex[0]) - 1;
     if (b->array->positionIndex[endB] == 0){
         endB--;
         return bsa_maxindex(b);
     }
+    return 0;
 }
 
 // Clears up all space used
