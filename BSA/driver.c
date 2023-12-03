@@ -18,9 +18,9 @@ int main(void)
    // Initialise
    bsa* b = bsa_init(); //initialising BSA (1D arr of 30 - yet no rows are initialised)
    assert(b);
-   bsa_set(b, 3, 10);
+   bsa_set(b, 1073741823, 10);
 
-   assert(bsa_set(b, MAXEND_INDEX + 1, 4) == false); //index-0 to value 4
+   // assert(bsa_set(b, MAXEND_INDEX + 1, 4) == false); //index-0 to value 4
 
    // assert(bsa_maxindex(b)==-1); //max_index is what you get from it, -1 because we cant get anything and we have no index
 

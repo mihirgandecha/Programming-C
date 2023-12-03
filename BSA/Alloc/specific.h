@@ -21,6 +21,9 @@ struct bsa { //whole bsa structure
 bool testInitialisation(bsa *b);
 void testInit(void);
 
+bool storeData(bsa* b, int k);
+// bool bsa_set2(bsa* b, int indx, int d);
+
 int kth_row(int index, int *k);
 int index_start(int k);
 int index_end(int index_start);
@@ -28,7 +31,11 @@ void test_krow(void);
 void testIstart(void);
 void testIend(void);
 
+//testing k
+bool testK(int k);
+void test_testK(void);
+
 //new k:
-void kthRow_Helper(int indx, int *k);
-int kthRow_Main(int indx);
-void test_krowNew(void);
+// void kthRow_Helper(int indx, int *k);
+// int kthRow_Main(int indx);
+// void test_krowNew(void);
