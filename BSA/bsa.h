@@ -7,6 +7,8 @@
 #include <stdbool.h>
 
 #define BSA_ROWS 30
+#define MAXSTART_INDEX 536870911
+#define MAXEND_INDEX 1073741822
 
 typedef struct bsa bsa;
 

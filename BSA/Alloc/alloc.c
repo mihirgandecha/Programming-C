@@ -10,23 +10,24 @@ bsa* bsa_init(void){
 // Set element at index indx (2^k) with value d i.e. b[i] = d;
 // May require an allocation if it's the first element in that row
 bool bsa_set(bsa* b, int indx, int d){
-    //Check that b has been initialised first (it needs to be passed through to bsa_init first). if statement for if not null, call bsa_init? <- check driver.c
-    if (b == NULL || b->array == NULL){
-        return false;
-    }
+    //Check that b has been initialised first as NULL return false indicates bsa allocation did not work 
+    testInitialisation(b);
+    //Calculate and return measurements dataset:
+
+
     //first calculating kth row given the index
-
-    int k = 0;
-    int kRow = kth_row(indx, &k);
-
+    int tempK = 0;
+    int k = kth_row(indx, &tempK);
     //Check that kth row is in bound, false if 30 or higher
-    if (kRow >= BSA_ROWS){
+    if (k >= BSA_ROWS){
         return false;
     }
+
     //might need to redo how kth_row works as this calls again (more memory) - calculating array row size, given index
     //example: row(k) = 2; index-6, d=10
-    int kRowStart = index_start(kRow); //output 3
-    int kRowEnd = index_end(kRow); //output 6 - works
+
+    int kRowStart = index_start(k); //output 3
+    int kRowEnd = index_end(k); //output 6 - works
     //row size should be 4
     int rowSize = (kRowEnd - kRowStart) + 1; //function? - want to make 4
     //check if row (2nd) at k has been created
@@ -43,19 +44,59 @@ bool bsa_set(bsa* b, int indx, int d){
         }
     }
     //set value d into the created row
-    b->array[k].positionIndex[indx - kRowStart] = d;
+    b->array[k].positionIndex[indx - kRowStart] = d; //consider putting in struct
     return true; //works i think
 }
 
-int kth_row(int index, int *k){
+void kthRow_Helper(int indx, int *k){
+    int iS = index_start(*k); //works
+    int iE = index_end(*k);
 
+    if(!(indx >= iS) && (indx <= iE)){
+        *k += 1;
+        kthRow_Helper(indx, k);
+    }
+}
+
+int kthRow_Main(int indx){
+    int k = 0;
+    kthRow_Helper(indx, &k);
+
+    if (k >= BSA_ROWS){
+        return OUTBOUND;
+    }
+    return k;
+}
+
+void test_krowNew(void){ //works
+    int k;
+    k = 0;
+    assert(kth_row(0, &k) == 0);
+    k = 0;
+    assert(kth_row(1, &k) == 1);
+    k = 0;
+    assert(kth_row(2, &k) == 1);
+    k = 0;
+    assert(kth_row(3, &k) == 2);//works now
+    k = 0;
+    assert(kth_row(6, &k) == 2); 
+    k = 0;
+    assert(kth_row(7, &k) == 3); 
+    k = 0;
+    assert(kth_row(14, &k) == 3);
+    k = 0;
+    assert(kth_row(30, &k) == 4); 
+    k = 0;
+    assert(kth_row(128, &k) == 7);
+}
+
+int kth_row(int index, int *k){ //pass b too?
     int iS = index_start(*k); //works
     int iE = index_end(*k);
 
     if((index >= iS) && (index <= iE)){
         return *k;
     }
-    
     else{
         *k += 1;
         return kth_row(index, k);
@@ -77,8 +118,7 @@ void testIstart(void){
     assert(index_start(4) == 15);
     assert(index_start(5) == 31);
     assert(index_start(6) == 63);
-    assert(index_start(BSA_ROWS - 2) == 268435455); //row 28
-    assert(index_start(BSA_ROWS - 1) == 536870911); //last row 29
+    assert(index_start(BSA_ROWS - 1) == MAXSTART_INDEX); //last row 29
 }
 
 int index_end(int k){
@@ -97,7 +137,7 @@ void testIend(void){
     assert(index_end(9) == 1022);
     assert(index_end(10) == 2046);
     assert(index_end(11) == 4094);
-    assert(index_end(BSA_ROWS - 1) == 1073741822);
+    assert(index_end(BSA_ROWS - 1) == MAXEND_INDEX);
 }
 
 void test_krow(void){
@@ -122,9 +162,24 @@ void test_krow(void){
     assert(kth_row(128, &k) == 7);
 }
 
+bool testInitialisation(bsa *b){
+    if (b == NULL || b->array == NULL){
+        return false;
+    }
+    return true;
+}
+
+void testInit(void){
+    bsa *noAlloc = NULL;
+    assert(testInitialisation(noAlloc) == false);
+
+    bsa *allocated = bsa_init();
+    assert(testInitialisation(allocated) == true);
+    bsa_free(allocated);
+}
 // Return pointer to data at element b[i]
 // or NULL if element is unset, or part of a row that hasn't been allocated.
-int* bsa_get(bsa* b, int indx){
+int* bsa_get(bsa* b, int indx){ 
     return false;     
     b->array = calloc(BSA_ROWS, sizeof(BSA_Col));
     if (b->array != NULL){
@@ -187,7 +242,7 @@ bool bsa_free(bsa* b){
 
 // // You'll this to test the other functions you write
 void test(void){
-    // bsa* testArray = bsa_init();
+    bsa* testArray = bsa_init();
     // for (int testcolP = 0; testcolP < BSA_ROWS; testcolP++){
     //     assert(&testArray->array[testcolP] == NULL);
     // }
@@ -196,4 +251,9 @@ void test(void){
     test_krow();
     testIstart();
     testIend();
+    
+    test_krowNew();
+
+    bsa_set(testArray, (MAXEND_INDEX), 10);
+
 }

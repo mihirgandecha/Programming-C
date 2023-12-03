@@ -20,6 +20,8 @@ int main(void)
    assert(b);
    bsa_set(b, 3, 10);
 
+   assert(bsa_set(b, MAXEND_INDEX + 1, 4) == false); //index-0 to value 4
+
    // assert(bsa_maxindex(b)==-1); //max_index is what you get from it, -1 because we cant get anything and we have no index
 
    // Set some values
