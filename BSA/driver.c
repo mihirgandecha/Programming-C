@@ -12,39 +12,32 @@ int main(void)
    // char str[LISTSTRLEN] = "";
 
    // A NULL BSA has size zero
-   // assert(bsa_maxindex(NULL)==-1); //no room to put anything else
-   // assert(!bsa_tostring(NULL, str));
+   assert(bsa_maxindex(NULL)==-1);
+//    assert(!bsa_tostring(NULL, str));
 
    // Initialise
-   bsa* b = bsa_init(); //initialising BSA (1D arr of 30 - yet no rows are initialised)
+   bsa* b = bsa_init();
    assert(b);
-   bsa_set(b, 3, 10);
-   bsa_free(b);
-
-
-   // assert(bsa_set(b, MAXEND_INDEX + 1, 4) == false); //index-0 to value 4
-
-   // assert(bsa_maxindex(b)==-1); //max_index is what you get from it, -1 because we cant get anything and we have no index
+   assert(bsa_maxindex(b)==-1);
 
    // Set some values
-//    assert(bsa_set(b, 0, 4)); //index-0 to value 4
-//    assert(bsa_maxindex(b)==0);
-//    // Reset existing value
-//    assert(bsa_set(b, 0, 0)); //overwriting and resetting to 0
-//    assert(bsa_set(b, 15, 15)); //now setting to 15
+   assert(bsa_set(b, 0, 4));
+   assert(bsa_maxindex(b)==0);
+   // Reset existing value
+   assert(bsa_set(b, 0, 0));
+   assert(bsa_set(b, 15, 15));
 
 //    // tostring
 //    assert(bsa_tostring(b, str));
-//    assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}")==0); //curly braces is each row, {} means empty row, meaning only go up to row we have allocated
-// //maybe call maxindex here^
-// //{[15]=15}" row 15 = value 15
-//    // Get some values tbsa've already been set
-//    int* p = bsa_get(b, 0);
-//    assert(p);
-//    assert(*p == 0);
-//    p = bsa_get(b, 15);
-//    assert(p);
-//    assert(*p == 15);
+//    assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}")==0);
+
+   // Get some values tbsa've already been set
+   int* p = bsa_get(b, 0);
+   assert(p);
+   assert(*p == 0);
+   p = bsa_get(b, 15);
+   assert(p); // fails
+   assert(*p == 15);
 
 //    // Get an unset value 
 //    p = bsa_get(b, 1);
@@ -88,7 +81,7 @@ int main(void)
 //    assert(bsa_tostring(b, str));
 //    assert(strcmp(str, "")==0);
   
-   // bsa_free(b);
+   bsa_free(b);
 
 //    // foreach - use it to compute product of numbers, and also to double each one
 //    b = bsa_init();
@@ -120,4 +113,3 @@ int main(void)
 //    *n = 0;
 //    *p = *p * 2;
 }
-   

@@ -3,6 +3,9 @@
 #include "../bsa.h"
 
 #define OUTBOUND -1
+#define MAXSTART_INDEX 536870911
+#define MAXEND_INDEX 1073741822
+#define OUTBOUND_END 1073741823
 
 typedef struct BSA_Col{
     int* positionIndex; //the position of d within a row created

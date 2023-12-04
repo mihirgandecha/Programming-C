@@ -5,7 +5,7 @@ bsa* bsa_init(void){ //need conditional for if ==NULL
     if (buildBSA == NULL){
         return NULL; //just return?
     }
-    buildBSA->array = (BSA_Col*)calloc(BSA_ROWS, sizeof(BSA_Col * BSA_ROWS)); //do i need if (build BSA != NULL?)
+    buildBSA->array = (BSA_Col*)calloc(BSA_ROWS, sizeof(BSA_Col)); //not for data points! just 1d array of pointers
     if (buildBSA->array == NULL){
         return false;
     }
@@ -16,12 +16,13 @@ bsa* bsa_init(void){ //need conditional for if ==NULL
 // May require an allocation if it's the first element in that row
 bool bsa_set(bsa* b, int indx, int d){
     //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
-    if (indx >= (MAXEND_INDEX + 1) || (indx < 0)){
-        return false;
-    } 
     if (testInitialisation(b) == false){
         return false;
     } //works
+
+    if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
+        return false;
+    } 
     //first calculating kth row given the index
     int tempK = 0;
     int k = kth_row(indx, &tempK); //k to be 2
@@ -39,7 +40,7 @@ bool bsa_set(bsa* b, int indx, int d){
 }
 
 bool storeData(bsa* b, int k){
-    if ((testInitialisation(b) || testK(k)) == false){
+    if (testInitialisation(b) == false){
         return false;
     }
     b->array->kStart = index_start(k);
@@ -47,16 +48,14 @@ bool storeData(bsa* b, int k){
     b->array->rowLen = (b->array->kEnd - b->array->kStart) + 1; //function? - want to make 4 - works!
 
     if (b->array[k].positionIndex == NULL){ //yessss
-        b->array[k].positionIndex = calloc(b->array->rowLen, sizeof(int));
+        b->array[k].positionIndex = (int*)calloc(b->array->rowLen, sizeof(int));
         if (b->array[k].positionIndex == NULL){
             return false;
-        }
-        for (int i = 0; i < b->array->rowLen; i++){
-            b->array[k].positionIndex[i] = 0;
-        }
+        }  
     }
     return true;
 }
+
 
 void test_krowNew(void){ //works
     int k;
@@ -186,12 +185,19 @@ void testInit(void){
 // Return pointer to data at element b[i]
 // or NULL if element is unset, or part of a row that hasn't been allocated.
 int* bsa_get(bsa* b, int indx){ 
-    return false;     
-    b->array = calloc(BSA_ROWS, sizeof(BSA_Col));
-    if (b->array != NULL){
-        printf("%d", indx);
+    if (testInitialisation(b) == false){
+        return NULL;
     }
-    return false;
+    for (int y = 0; y < BSA_ROWS; y++){
+        if (b->array[y].positionIndex != NULL){
+            for (int x = 0; x < b->array[y].rowLen; x++){
+                if (b->array[y].positionIndex[x] == indx){
+                    return &(b->array[y].positionIndex[x]);
+                }
+            }
+        }
+    }
+    return NULL;
 }
 
 // Delete element at index indx - forces a shrink
@@ -208,31 +214,40 @@ bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. De
 // -1 if no cells have been written to yet
 int bsa_maxindex(bsa* b){
     //base case (-1): does b->array.positionIndex == NULL? return
-    if (b->array->positionIndex == NULL){
-        return 1;
+    if ((b == NULL) || (b->array == NULL)){
+        return OUTBOUND;
     }
+    int maxIndex = OUTBOUND;
     //loop through, calling kendindex to kstart, stopping at where a value != 0. have to call k fnctions then. easier way?
-    int endB = sizeof(&b->array->positionIndex) / sizeof(b->array->positionIndex[0]) - 1;
-    if (b->array->positionIndex[endB] == 0){
-        endB--;
-        return bsa_maxindex(b);
+    for (int y = 0; y < BSA_ROWS; y++){
+        if ((b->array[y].positionIndex != NULL) && (b->array[y].kEnd >= b->array[y].kStart)){
+            for (int x = 0; x < b->array[y].rowLen; x++){
+                if ((b->array[y].positionIndex[x] != 0) && x > maxIndex){
+                    maxIndex = x;
+                }
+            }
+        }
     }
-    return 0;
+    return maxIndex;
 }
 
 // Clears up all space used
 bool bsa_free(bsa* b){
     //if b has been allocated space (!= NULL), then clear. if == NULL return false? check driver.c
     //first false
-    if (b->array == NULL || b->array->positionIndex == NULL){
+    if (b->array == NULL){
         printf("Does not need to be freed!"); //remove after
         return false;
     }
-    else{
-        free(b->array->positionIndex);
-        free(b->array);
-        free(b);
+    for (int k = 0; k < BSA_ROWS; k++){
+        if (b->array[k].positionIndex != NULL){
+            free(b->array[k].positionIndex);
+        }
     }
+    free(b->array);
+    free(b);
+    printf("freed\n");
+    
     return true;
 }
 
