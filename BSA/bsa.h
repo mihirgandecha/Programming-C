@@ -9,6 +9,7 @@
 #define BSA_ROWS 30
 #define MAXSTART_INDEX 536870911
 #define MAXEND_INDEX 1073741822
+// TODO 
 
 typedef struct bsa bsa;
 
@@ -43,6 +44,8 @@ bool bsa_free(bsa* b);
 // in the array. The user defined 'func' is passed a pointer to an int,
 // and maintains an accumulator of the result where required.
 void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc);
-
+//for loop that every item that is not empty do func
+//do func with 
+//each item 
 // You'll this to test the other functions you write
 void test(void);

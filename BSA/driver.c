@@ -18,7 +18,9 @@ int main(void)
    // Initialise
    bsa* b = bsa_init(); //initialising BSA (1D arr of 30 - yet no rows are initialised)
    assert(b);
-   bsa_set(b, 1073741823, 10);
+   bsa_set(b, 3, 10);
+   bsa_free(b);
+
 
    // assert(bsa_set(b, MAXEND_INDEX + 1, 4) == false); //index-0 to value 4
 
@@ -86,7 +88,7 @@ int main(void)
 //    assert(bsa_tostring(b, str));
 //    assert(strcmp(str, "")==0);
   
-//    bsa_free(b);
+   // bsa_free(b);
 
 //    // foreach - use it to compute product of numbers, and also to double each one
 //    b = bsa_init();

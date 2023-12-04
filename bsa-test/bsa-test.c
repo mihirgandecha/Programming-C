@@ -6,7 +6,6 @@ int main(void)
    bsa* b = bsa_init(); //initialising BSA (1D arr of 30 - yet no rows are initialised)
    assert(b);
    test();
-
 }
 
 bsa* bsa_init(void){
@@ -131,4 +130,111 @@ void test_krowNew(void){ //works
     assert(kth_row(30, &k) == 4); 
     k = 0;
     assert(kth_row(128, &k) == 7);
+}bool testInitialisation(bsa *b){
+    if (b == NULL || b->array == NULL){
+        return false;
+    }
+    return true;
+}
+
+// Set element at index indx (2^k) with value d i.e. b[i] = d;
+// May require an allocation if it's the first element in that row
+// bool bsa_set(bsa* b, int indx, int d){
+//     //Check that b has been initialised first as NULL return false indicates bsa allocation did not work 
+//     if (testInitialisation(b) == false){
+//         return false;
+//     }
+//     //first calculating kth row given the index
+//     int tempK = 0;
+//     int k = kth_row(indx, &tempK);
+//     //Check that kth row is in bound, false if 30 or higher
+//     if (k >= BSA_ROWS){
+//         return false;
+//     }
+//     //Calculate and return measurements dataset:
+//     b->array->kStart = index_start(k); //output 3
+//     b->array->kEnd = index_end(k); //output 6 - works
+//     //row size should be 4
+//     b->array->rowLen = (b->array->kEnd - b->array->kStart) + 1; //function? - want to make 4
+//     //check if row (2nd) at k has been created
+//     if (b->array[k].positionIndex == NULL){
+//         //create the row with the required size
+//         b->array[k].positionIndex = calloc(b->array->rowLen, sizeof(int));
+//         //check this works^
+//         if (b->array[k].positionIndex == NULL){
+//             return false;
+//         }
+//         //initialise the row with default values 'X'? or 0?
+//         for (int i = 0; i < b->array->rowLen; i++){
+//             b->array[k].positionIndex[i] = 0;
+//         }
+//     }
+//     //set value d into the created row - keep here
+//     b->array[k].positionIndex[indx - b->array->kStart] = d;
+//     return true; //works i think
+// }
+
+void kthRow_Helper(int indx, int *k){
+    if (*k >= BSA_ROWS){
+        return;
+    }
+    int iS = index_start(*k); //works
+    int iE = index_end(*k);
+    if(!(indx >= iS) && (indx <= iE)){
+        *k += 1;
+        kthRow_Helper(indx, k);
+    }
+}
+
+int kthRow_Main(int indx){
+    int k = 0;
+    kthRow_Helper(indx, &k);
+
+    if (k >= BSA_ROWS){
+        return OUTBOUND;
+    }
+    return k;
+}
+bool bsa_set(bsa* b, int indx, int d){
+    //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
+    if (indx >= (MAXEND_INDEX + 1) || (indx < 0)){
+        return false;
+    } 
+    if (testInitialisation(b) == false){
+        return false;
+    } //works
+    //first calculating kth row given the index
+    int tempK = 0;
+    int k = kth_row(indx, &tempK); //k to be 2
+    //Check that kth row is in bound, false if 30 or higher
+    if (testK(k) == false){
+        return false;
+    }
+    if (storeData(b, k) == false){
+        return false;
+    }
+    //set value d into the created row - keep here
+    int position = indx - b->array[k].kStart;
+    b->array[k].positionIndex[position] = d;
+    return true;
+}
+
+bool storeData(bsa* b, int k){
+    if ((testInitialisation(b) || testK(k)) == false){
+        return false;
+    }
+    b->array->kStart = index_start(k);
+    b->array->kEnd = index_end(k); 
+    b->array->rowLen = (b->array->kEnd - b->array->kStart) + 1; //function? - want to make 4 - works!
+
+    if (b->array[k].positionIndex == NULL){ //yessss
+        b->array[k].positionIndex = calloc(b->array->rowLen, sizeof(int));
+        if (b->array[k].positionIndex == NULL){
+            return false;
+        }
+        for (int i = 0; i < b->array->rowLen; i++){
+            b->array[k].positionIndex[i] = 0;
+        }
+    }
+    return true;
 }
