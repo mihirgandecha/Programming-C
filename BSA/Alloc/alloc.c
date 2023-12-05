@@ -42,83 +42,114 @@ bool bsa_set(bsa* b, int indx, int d){
         return false;
     } 
     //first calculating kth row given the index
-    int k = kth_row(indx); //remove
-    if (storeData(b, k) == false){
+    int k = OUTBOUND;
+    k = kth_row(indx, &k); //remove
+    printf("%d", k);
+    int rowLen = row_len(k);
+    if (allocateChild(b, k, rowLen) == false){
         return false;
     }
+    storeData(b, k, rowLen);
     //set value d into the created row - keep here
-    int position = indx - b->master[k]->kStart;
+    int position = indx - b->master[k]->kStart; //could this be an array of pointers?
     b->master[k]->child[position] = d;
     return true;
 }
 
-bool storeData(bsa* b, int k){
-    if (test_firstInit(b) == false){
+bool allocateChild(bsa* b, int k, int rowLen){
+    if (!test_firstInit(b)){
         return false;
     }
-    b->master[k]->kStart = index_start(k);
-    b->master[k]->kEnd = index_end(k); 
-    b->master[k]->rowLen = (b->master[k]->kEnd - b->master[k]->kStart) + 1; //function? - want to make 4 - works!
-
-    if (b->master[k]->child == NULL){ //yessss
-        b->master[k]->child = (int*)calloc(b->master[k]->rowLen, sizeof(int));
-        if (b->master[k]->child == NULL){
-            return false;
-        }  
+    if (!testK(k)){
+        return false;
     }
+    if (b->master[k] == NULL){ 
+        b->master[k] = (BSA_Row*)calloc(1, sizeof(BSA_Row)); //allocating memory for BSA structure for the pointer 
+        if (b->master[k] == NULL){
+            return false;
+        }
+    }
+    if (b->master[k]->child == NULL){
+        b->master[k]->child = (int*)calloc(rowLen, sizeof(int)); //allocating memory for BSA structure for the pointer
+    }
+    if (b->master[k]->child == NULL){
+        return false;
+    }  
     return true;
 }
 
-int kth_row(int index){ //pass b too?
+void storeData(bsa* b, int k, int rowLen){
+    b->master[k]->kthRow = k;
+    b->master[k]->kStart = index_start(k);
+    b->master[k]->kEnd = index_end(k); 
+    b->master[k]->rowLen = rowLen;
+    return;
+}
+
+int kth_row(int index, int *k){ 
     int iS = index_start(index); //works
     int iE = index_end(index);
 
     if((index >= iS) && (index <= iE)){
-        return index;
+        return *k;
     }
     else{
         index += 1;
-        return kth_row(index);
+        return kth_row(index, k);
     }
 }
+
+//want to calculate 2^k
+int row_len(int k){
+    if (k == 0){
+        return 1;
+    }
+    return (1L << k);
+}
+//testing given k, generates a row len of 2^k
+void test_int_rowLen(void){
+    assert(row_len(0) == 1);
+    assert(row_len(1) == 2);
+    assert(row_len(2) == 4);
+    assert(row_len(3) == 8);
+    //sep func: void test rowLen == below
+    // bsa* testBSA = bsa_init();
+    // int index = 5;
+    // int k = kth_row;
+    // int rowStart = index_start(k);
+    // int rowEnd = index_end(k);
+    // int rowLen = int rowLen(k);
+    // assert(rowLen == ((rowEnd - rowStart) + 1));
+}
+
+
 // void test_storeData(void){
 //     bsa* testBSA = bsa_init();
 //     int k = 0;
 
 // }
 
-// void test_krowNew(void){ //works
-//     int k;
-//     k = 0;
-//     assert(kth_row(0, &k) == 0);
-//     k = 0;
-//     assert(kth_row(1, &k) == 1);
-//     k = 0;
-//     assert(kth_row(2, &k) == 1);
-//     k = 0;
-//     assert(kth_row(3, &k) == 2);//works now
-//     k = 0;
-//     assert(kth_row(6, &k) == 2); 
-//     k = 0;
-//     assert(kth_row(7, &k) == 3); 
-//     k = 0;
-//     assert(kth_row(14, &k) == 3);
-//     k = 0;
-//     assert(kth_row(30, &k) == 4); 
-//     k = 0;
-//     assert(kth_row(128, &k) == 7);
-// }
 
 void test_kRow(void){ //works
-    assert(kth_row(0) == 0);
-    assert(kth_row(1) == 1);
-    assert(kth_row(2) == 1);
-    assert(kth_row(3) == 2);//works now
-    assert(kth_row(6) == 2); 
-    assert(kth_row(7) == 3); 
-    assert(kth_row(14) == 3);
-    assert(kth_row(30) == 4); 
-    assert(kth_row(128) == 7);
+    int k;
+    k = 0;
+    assert(kth_row(0, &k) == 0);
+    k = 0;
+    assert(kth_row(1, &k) == 1);
+    k = 0;
+    assert(kth_row(2, &k) == 1);
+    k = 0;
+    assert(kth_row(3, &k) == 2);//works now
+    k = 0;
+    assert(kth_row(6, &k) == 2); 
+    k = 0;
+    assert(kth_row(7, &k) == 3); 
+    k = 0;
+    assert(kth_row(14, &k) == 3);
+    k = 0;
+    assert(kth_row(30, &k) == 4); 
+    k = 0;
+    assert(kth_row(128, &k) == 7);
 }
 
 // int kth_row(int index, int *k){ //pass b too?
@@ -323,6 +354,8 @@ bool bsa_free(bsa* b){
 // }
 
 // // You'll this to test the other functions you write
+// TODO: Does software turn off house style when function test are declared? 
+
 void test(void){
     // bsa* testArray = bsa_init();
     // for (int testcolP = 0; testcolP < BSA_ROWS; testcolP++){

@@ -3,6 +3,7 @@
 #include "../bsa.h"
 
 #define OUTBOUND -1
+//TODO: magic number:
 #define MAXSTART_INDEX 536870911
 #define MAXEND_INDEX 1073741822
 #define OUTBOUND_END 1073741823
@@ -25,16 +26,20 @@ bool test_firstInit(bsa *b);
 // void assert_firstInit(void);
 
 
-bool storeData(bsa* b, int k);
+// bool storeData(bsa* b, int k);
+bool allocateChild(bsa* b, int k, int rowLen);
+void storeData(bsa* b, int k, int rowLen);
 // bool bsa_set2(bsa* b, int indx, int d);
 int find_masterrow(int k, int indx);
 
-int kth_row(int index);
+int kth_row(int index, int *k);
 void test_kRow(void);
 int index_start(int k);
 void testIstart(void);
 int index_end(int index_start);
 void testIend(void);
+int row_len(int k);
+void test_int_rowLen(void);
 
 //testing k
 bool testK(int k);
