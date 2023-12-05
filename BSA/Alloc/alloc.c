@@ -42,9 +42,8 @@ bool bsa_set(bsa* b, int indx, int d){
         return false;
     } 
     //first calculating kth row given the index
-    int k = OUTBOUND;
+    int k = 0;
     k = kth_row(indx, &k); //remove
-    printf("%d", k);
     int rowLen = row_len(k);
     if (allocateChild(b, k, rowLen) == false){
         return false;
@@ -86,17 +85,52 @@ void storeData(bsa* b, int k, int rowLen){
     return;
 }
 
-int kth_row(int index, int *k){ 
-    int iS = index_start(index); //works
-    int iE = index_end(index);
+// int kth_row(int index, int *k){ 
+//     int iS = index_start(index); //works
+//     int iE = index_end(index);
 
-    if((index >= iS) && (index <= iE)){
-        return *k;
+//     if((index >= iS) && (index <= iE)){
+//         return *k;
+//     }
+//     else{
+//         index += 1;
+//         return kth_row(index, k);
+//     }
+// }
+
+int kth_row(int index, int *k) { 
+    if (*k >= BSA_ROWS) {
+        return OUTBOUND; 
     }
-    else{
-        index += 1;
+    int iS = index_start(*k);
+    int iE = index_end(*k);
+    if ((index >= iS) && (index <= iE)) {
+        return *k;
+    } else {
+        (*k)++;
         return kth_row(index, k);
     }
+}
+
+void test_kRow(void){ //works
+    int k = 0;
+    assert(kth_row(0, &k) == 0);
+    k = 0;
+    assert(kth_row(1, &k) == 1);
+    k = 0;
+    assert(kth_row(2, &k) == 1);
+    k = 0;
+    assert(kth_row(3, &k) == 2);//works now
+    k = 0;
+    assert(kth_row(6, &k) == 2); 
+    k = 0;
+    assert(kth_row(7, &k) == 3); 
+    k = 0;
+    assert(kth_row(14, &k) == 3);
+    k = 0;
+    assert(kth_row(30, &k) == 4); 
+    k = 0;
+    assert(kth_row(128, &k) == 7);
 }
 
 //want to calculate 2^k
@@ -122,35 +156,6 @@ void test_int_rowLen(void){
     // assert(rowLen == ((rowEnd - rowStart) + 1));
 }
 
-
-// void test_storeData(void){
-//     bsa* testBSA = bsa_init();
-//     int k = 0;
-
-// }
-
-
-void test_kRow(void){ //works
-    int k;
-    k = 0;
-    assert(kth_row(0, &k) == 0);
-    k = 0;
-    assert(kth_row(1, &k) == 1);
-    k = 0;
-    assert(kth_row(2, &k) == 1);
-    k = 0;
-    assert(kth_row(3, &k) == 2);//works now
-    k = 0;
-    assert(kth_row(6, &k) == 2); 
-    k = 0;
-    assert(kth_row(7, &k) == 3); 
-    k = 0;
-    assert(kth_row(14, &k) == 3);
-    k = 0;
-    assert(kth_row(30, &k) == 4); 
-    k = 0;
-    assert(kth_row(128, &k) == 7);
-}
 
 // int kth_row(int index, int *k){ //pass b too?
 //     int iS = index_start(*k); //works

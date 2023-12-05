@@ -238,3 +238,17 @@ bool storeData(bsa* b, int k){
     }
     return true;
 }
+
+
+// int kth_row(int index, int *k){ 
+//     int iS = index_start(index); //works
+//     int iE = index_end(index);
+
+//     if((index >= iS) && (index <= iE)){
+//         return *k;
+//     }
+//     else{
+//         index += 1;
+//         return kth_row(index, k);
+//     }
+// }

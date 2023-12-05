@@ -34,10 +34,13 @@ int find_masterrow(int k, int indx);
 
 int kth_row(int index, int *k);
 void test_kRow(void);
+
 int index_start(int k);
 void testIstart(void);
+
 int index_end(int index_start);
 void testIend(void);
+
 int row_len(int k);
 void test_int_rowLen(void);
 
