@@ -13,6 +13,9 @@ driverbsa_s: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
 driverbsa: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
 	$(CC) driver.c Alloc/alloc.c -o driverbsa -I./Alloc $(PRODUCTION)
 
+driverbsa_v: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
+	$(CC) driver.c Alloc/alloc.c -o driverbsa_v -I./Alloc $(VALGRIND)
+
 fibmemo: bsa.h Alloc/specific.h Alloc/alloc.c fibmemo.c
 	$(CC) fibmemo.c Alloc/alloc.c -o fibmemo -I./Alloc $(PRODUCTION)
 

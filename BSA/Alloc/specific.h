@@ -7,17 +7,17 @@
 #define MAXEND_INDEX 1073741822
 #define OUTBOUND_END 1073741823
 
-typedef struct BSA_Col{
-    int* positionIndex; //the position of d within a row created
+typedef struct BSA_Row{
+    int* child; //the position of d within a row created
     int kthRow;
     int kStart;
     int kEnd;
     int rowLen; 
     int d;
-}BSA_Col;
+}BSA_Row;
 
 struct bsa { //whole bsa structure
-    BSA_Col* array; //1D array of pointers
+    BSA_Row* master[BSA_ROWS]; //1D array of pointers - change to just array of 30
 };
 
 //test if a bsa has been initialised, returning false if NULL 
@@ -26,6 +26,9 @@ void testInit(void);
 
 bool storeData(bsa* b, int k);
 // bool bsa_set2(bsa* b, int indx, int d);
+int find_masterrow(int k, int indx);
+
+int kth_row(int index);
 
 int kth_row(int index, int *k);
 int index_start(int k);

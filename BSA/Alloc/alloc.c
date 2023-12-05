@@ -1,15 +1,31 @@
 #include "specific.h"
 
-bsa* bsa_init(void){ //need conditional for if ==NULL
-    bsa* buildBSA = (bsa*) calloc(1, sizeof(bsa)); //created bsaCOL
-    if (buildBSA == NULL){
-        return NULL; //just return?
+bsa* bsa_init(void){
+    bsa* emptyBSA;
+    emptyBSA = (bsa*) calloc(1, sizeof(bsa)); //allocate one size for whole bsa structure
+    if (emptyBSA == NULL){
+        return NULL;
+    }    
+    for (int i = 0; i < BSA_ROWS; i++){
+        emptyBSA->master[i] = NULL;
     }
-    buildBSA->array = (BSA_Col*)calloc(BSA_ROWS, sizeof(BSA_Col)); //not for data points! just 1d array of pointers
-    if (buildBSA->array == NULL){
+    return emptyBSA;
+}
+
+bool testInitialisation(bsa *b){ //different function for testInit for Child?
+    if (b == NULL || b->master == NULL){
         return false;
     }
-    return buildBSA;
+    return true;
+}
+
+void testInit(void){
+    bsa *noAlloc = NULL;
+    assert(testInitialisation(noAlloc) == false);
+
+    bsa *allocated = bsa_init();
+    assert(testInitialisation(allocated) == true);
+    bsa_free(allocated);
 }
 
 // Set element at index indx (2^k) with value d i.e. b[i] = d;
@@ -19,43 +35,43 @@ bool bsa_set(bsa* b, int indx, int d){
     if (testInitialisation(b) == false){
         return false;
     } //works
-
     if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
         return false;
     } 
     //first calculating kth row given the index
-    int tempK = 0;
-    int k = kth_row(indx, &tempK); //k to be 2
-    //Check that kth row is in bound, false if 30 or higher
-    if (testK(k) == false){
-        return false;
-    }
+    int k = kth_row(indx);
     if (storeData(b, k) == false){
         return false;
     }
     //set value d into the created row - keep here
-    int position = indx - b->array[k].kStart;
-    b->array[k].positionIndex[position] = d;
+    int position = indx - b->master[k]->kStart;
+    b->master[k]->child[position] = d;
     return true;
 }
+
 
 bool storeData(bsa* b, int k){
     if (testInitialisation(b) == false){
         return false;
     }
-    b->array->kStart = index_start(k);
-    b->array->kEnd = index_end(k); 
-    b->array->rowLen = (b->array->kEnd - b->array->kStart) + 1; //function? - want to make 4 - works!
+    b->master[k]->kStart = index_start(k);
+    b->master[k]->kEnd = index_end(k); 
+    b->master[k]->rowLen = (b->master[k]->kEnd - b->master[k]->kStart) + 1; //function? - want to make 4 - works!
 
-    if (b->array[k].positionIndex == NULL){ //yessss
-        b->array[k].positionIndex = (int*)calloc(b->array->rowLen, sizeof(int));
-        if (b->array[k].positionIndex == NULL){
+    if (b->master[k]->child == NULL){ //yessss
+        b->master[k]->child = (int*)calloc(b->master[k]->rowLen, sizeof(int));
+        if (b->master[k]->child == NULL){
             return false;
         }  
     }
     return true;
 }
 
+// void test_storeData(void){
+//     bsa* testBSA = bsa_init();
+//     int k = 0;
+
+// }
 
 void test_krowNew(void){ //works
     int k;
@@ -79,17 +95,64 @@ void test_krowNew(void){ //works
     assert(kth_row(128, &k) == 7);
 }
 
-int kth_row(int index, int *k){ //pass b too?
-    int iS = index_start(*k); //works
-    int iE = index_end(*k);
+// int kth_row(int index, int *k){ //pass b too?
+//     int iS = index_start(*k); //works
+//     int iE = index_end(*k);
+
+//     if((index >= iS) && (index <= iE)){
+//         return *k;
+//     }
+//     else{
+//         *k += 1;
+//         return kth_row(index, k);
+//     }
+// }
+
+int kth_row(int index){ //pass b too?
+    int mastRow = OUTBOUND;
+    int iS = index_start(mastRow); //works
+    int iE = index_end(mastRow);
 
     if((index >= iS) && (index <= iE)){
-        return *k;
+        return mastRow;
     }
     else{
-        *k += 1;
-        return kth_row(index, k);
+        mastRow += 1;
+        return kth_row(index, mastRow);
     }
+}
+
+// int find_masterrow(int k, int indx){
+//     int tempK = kth_row(indx, &tempK); //k to be 2
+//     //Check that kth row is in bound, false if 30 or higher
+//     if (testK(k) == false){
+//         return OUTBOUND;
+//     }
+//     return tempK;
+// }
+
+bool is_indxInbound(int index, int rowStart, int rowEnd){
+    if ((index <= OUTBOUND) || (index >= OUTBOUND_END)){
+        return false;
+    }
+    if ((index <= rowStart) || (index >= rowEnd)){
+        return false;
+    }
+    return true;  
+}
+
+test_is_indxInbound(void){
+    int index = 0;
+    int masterRow = kth_row(index);
+    int rowStart = index_start(masterRow);
+    int rowEnd = index_end(masterRow);
+    assert(is_indxInbound(index, rowStart, rowEnd) == true);
+
+    int index2 = OUTBOUND_END;
+    int masterRow2 = kth_row(index2);
+    int rowStart2 = index_start(masterRow2);
+    int rowEnd2 = index_end(masterRow2);
+    assert(is_indxInbound(index2, rowStart2, rowEnd2) == true);
 }
 
 int index_start(int k){
@@ -151,12 +214,6 @@ void test_krow(void){
     assert(kth_row(128, &k) == 7);
 }
 
-bool testInitialisation(bsa *b){
-    if (b == NULL || b->array == NULL){
-        return false;
-    }
-    return true;
-}
 
 bool testK(int k){ //works
     if ((k < 0) || (k >= BSA_ROWS)){
@@ -174,25 +231,17 @@ void test_testK(void){ //works
     assert(testK(k) == false);
 }
 
-void testInit(void){
-    bsa *noAlloc = NULL;
-    assert(testInitialisation(noAlloc) == false);
-
-    bsa *allocated = bsa_init();
-    assert(testInitialisation(allocated) == true);
-    bsa_free(allocated);
-}
 // Return pointer to data at element b[i]
 // or NULL if element is unset, or part of a row that hasn't been allocated.
 int* bsa_get(bsa* b, int indx){ 
     if (testInitialisation(b) == false){
         return NULL;
     }
-    for (int y = 0; y < BSA_ROWS; y++){
-        if (b->array[y].positionIndex != NULL){
-            for (int x = 0; x < b->array[y].rowLen; x++){
-                if (b->array[y].positionIndex[x] == indx){
-                    return &(b->array[y].positionIndex[x]);
+    for (int y = 0; y < BSA_ROWS; y++){ //rename 
+        if (b->master[y]->child != NULL){
+            for (int x = 0; x < b->master[y]->rowLen; x++){
+                if (b->master[y]->child[x] == indx){
+                    return &(b->master[y]->child[x]);
                 }
             }
         }
@@ -204,7 +253,7 @@ int* bsa_get(bsa* b, int indx){
 // if that was the only cell in the row occupied.
 bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. Delete row if nothing is set
     return false;
-    if (b->array != NULL){
+    if (b->master != NULL){
         printf("%d", indx);
     }
     return true;
@@ -214,15 +263,15 @@ bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. De
 // -1 if no cells have been written to yet
 int bsa_maxindex(bsa* b){
     //base case (-1): does b->array.positionIndex == NULL? return
-    if ((b == NULL) || (b->array == NULL)){
+    if ((b == NULL) || (b->master == NULL)){
         return OUTBOUND;
     }
     int maxIndex = OUTBOUND;
     //loop through, calling kendindex to kstart, stopping at where a value != 0. have to call k fnctions then. easier way?
     for (int y = 0; y < BSA_ROWS; y++){
-        if ((b->array[y].positionIndex != NULL) && (b->array[y].kEnd >= b->array[y].kStart)){
-            for (int x = 0; x < b->array[y].rowLen; x++){
-                if ((b->array[y].positionIndex[x] != 0) && x > maxIndex){
+        if (b->master[y]->child != NULL){
+            for (int x = 0; x < b->master[y]->rowLen; x++){
+                if ((b->master[y]->child[x] != 0) && x > maxIndex){
                     maxIndex = x;
                 }
             }
@@ -235,19 +284,18 @@ int bsa_maxindex(bsa* b){
 bool bsa_free(bsa* b){
     //if b has been allocated space (!= NULL), then clear. if == NULL return false? check driver.c
     //first false
-    if (b->array == NULL){
+    if (b->master == NULL){
         printf("Does not need to be freed!"); //remove after
         return false;
     }
     for (int k = 0; k < BSA_ROWS; k++){
-        if (b->array[k].positionIndex != NULL){
-            free(b->array[k].positionIndex);
+        if (b->master[k]->child != NULL){
+            free(b->master[k]->child);
         }
     }
-    free(b->array);
+    free(b->master);
     free(b);
     printf("freed\n");
-    
     return true;
 }
 
