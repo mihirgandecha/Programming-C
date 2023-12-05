@@ -252,3 +252,36 @@ bool storeData(bsa* b, int k){
 //         return kth_row(index, k);
 //     }
 // }
+
+// void assert_firstInit(void){
+//     bsa *noAlloc = OUTBOUND;
+//     assert(test_firstInit(noAlloc) == false);
+
+//     bsa *allocated = bsa_init();
+//     assert(test_firstInit(allocated) == true);
+//     bsa_free(allocated);
+// }
+
+// bool is_indxInbound(int index, int rowStart, int rowEnd){
+//     if ((index <= OUTBOUND) || (index >= OUTBOUND_END)){
+//         return false;
+//     }
+//     if ((index <= rowStart) || (index >= rowEnd)){
+//         return false;
+//     }
+//     return true;  
+// }
+
+// void test_is_indxInbound(void){
+//     int index = 0;
+//     int masterRow = kth_row(index);
+//     int rowStart = index_start(masterRow);
+//     int rowEnd = index_end(masterRow);
+//     assert(is_indxInbound(index, rowStart, rowEnd) == true);
+
+//     int index2 = OUTBOUND_END;
+//     int masterRow2 = kth_row(index2);
+//     int rowStart2 = index_start(masterRow2);
+//     int rowEnd2 = index_end(masterRow2);
+//     assert(is_indxInbound(index2, rowStart2, rowEnd2) == true);
+// }

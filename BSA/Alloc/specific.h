@@ -3,10 +3,8 @@
 #include "../bsa.h"
 
 #define OUTBOUND -1
-//TODO: magic number:
-#define MAXSTART_INDEX 536870911
-#define MAXEND_INDEX 1073741822
 #define OUTBOUND_END 1073741823
+#define EMPTY 0
 
 typedef struct BSA_Row{
     int* child; //the position of d within a row created
@@ -23,11 +21,14 @@ struct bsa { //whole bsa structure
 
 //test if a bsa has been initialised, returning false if NULL 
 bool test_firstInit(bsa *b);
-// void assert_firstInit(void);
-
 
 // bool storeData(bsa* b, int k);
 bool allocateChild(bsa* b, int k, int rowLen);
+//Checking if BSA_Row structure has been allocated space, and 
+bool is_ChildAloocated(bsa* b, int k);
+//Check that the child has been allocated for rowspace
+bool isRowEmpty(bsa* b, int k, int rowLen);
+//Storing data into structure
 void storeData(bsa* b, int k, int rowLen);
 // bool bsa_set2(bsa* b, int indx, int d);
 int find_masterrow(int k, int indx);
@@ -41,10 +42,11 @@ void testIstart(void);
 int index_end(int index_start);
 void testIend(void);
 
+//testing given k, generates a row len of 2^k
 int row_len(int k);
 void test_int_rowLen(void);
 
-//testing k
+//Testing that k is within bounds of 0->29
 bool testK(int k);
 void test_testK(void);
 
