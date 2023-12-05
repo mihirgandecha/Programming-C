@@ -9,37 +9,40 @@ bsa* bsa_init(void){
     for (int i = 0; i < BSA_ROWS; i++){
         emptyBSA->master[i] = NULL;
     }
+    // if (test_firstInit(emptyBSA) == false){
+    //     return NULL;
+    // }
     return emptyBSA;
 }
 
-bool testInitialisation(bsa *b){ //different function for testInit for Child?
+bool test_firstInit(bsa *b){ //different function for testInit for Child?
     if (b == NULL || b->master == NULL){
         return false;
     }
     return true;
 }
 
-void testInit(void){
-    bsa *noAlloc = NULL;
-    assert(testInitialisation(noAlloc) == false);
+// void assert_firstInit(void){
+//     bsa *noAlloc = OUTBOUND;
+//     assert(test_firstInit(noAlloc) == false);
 
-    bsa *allocated = bsa_init();
-    assert(testInitialisation(allocated) == true);
-    bsa_free(allocated);
-}
+//     bsa *allocated = bsa_init();
+//     assert(test_firstInit(allocated) == true);
+//     bsa_free(allocated);
+// }
 
 // Set element at index indx (2^k) with value d i.e. b[i] = d;
 // May require an allocation if it's the first element in that row
 bool bsa_set(bsa* b, int indx, int d){
     //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
-    if (testInitialisation(b) == false){
+    if (test_firstInit(b) == false){
         return false;
     } //works
     if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
         return false;
     } 
     //first calculating kth row given the index
-    int k = kth_row(indx);
+    int k = kth_row(indx); //remove
     if (storeData(b, k) == false){
         return false;
     }
@@ -49,9 +52,8 @@ bool bsa_set(bsa* b, int indx, int d){
     return true;
 }
 
-
 bool storeData(bsa* b, int k){
-    if (testInitialisation(b) == false){
+    if (test_firstInit(b) == false){
         return false;
     }
     b->master[k]->kStart = index_start(k);
@@ -67,32 +69,56 @@ bool storeData(bsa* b, int k){
     return true;
 }
 
+int kth_row(int index){ //pass b too?
+    int iS = index_start(index); //works
+    int iE = index_end(index);
+
+    if((index >= iS) && (index <= iE)){
+        return index;
+    }
+    else{
+        index += 1;
+        return kth_row(index);
+    }
+}
 // void test_storeData(void){
 //     bsa* testBSA = bsa_init();
 //     int k = 0;
 
 // }
 
-void test_krowNew(void){ //works
-    int k;
-    k = 0;
-    assert(kth_row(0, &k) == 0);
-    k = 0;
-    assert(kth_row(1, &k) == 1);
-    k = 0;
-    assert(kth_row(2, &k) == 1);
-    k = 0;
-    assert(kth_row(3, &k) == 2);//works now
-    k = 0;
-    assert(kth_row(6, &k) == 2); 
-    k = 0;
-    assert(kth_row(7, &k) == 3); 
-    k = 0;
-    assert(kth_row(14, &k) == 3);
-    k = 0;
-    assert(kth_row(30, &k) == 4); 
-    k = 0;
-    assert(kth_row(128, &k) == 7);
+// void test_krowNew(void){ //works
+//     int k;
+//     k = 0;
+//     assert(kth_row(0, &k) == 0);
+//     k = 0;
+//     assert(kth_row(1, &k) == 1);
+//     k = 0;
+//     assert(kth_row(2, &k) == 1);
+//     k = 0;
+//     assert(kth_row(3, &k) == 2);//works now
+//     k = 0;
+//     assert(kth_row(6, &k) == 2); 
+//     k = 0;
+//     assert(kth_row(7, &k) == 3); 
+//     k = 0;
+//     assert(kth_row(14, &k) == 3);
+//     k = 0;
+//     assert(kth_row(30, &k) == 4); 
+//     k = 0;
+//     assert(kth_row(128, &k) == 7);
+// }
+
+void test_kRow(void){ //works
+    assert(kth_row(0) == 0);
+    assert(kth_row(1) == 1);
+    assert(kth_row(2) == 1);
+    assert(kth_row(3) == 2);//works now
+    assert(kth_row(6) == 2); 
+    assert(kth_row(7) == 3); 
+    assert(kth_row(14) == 3);
+    assert(kth_row(30) == 4); 
+    assert(kth_row(128) == 7);
 }
 
 // int kth_row(int index, int *k){ //pass b too?
@@ -108,19 +134,6 @@ void test_krowNew(void){ //works
 //     }
 // }
 
-int kth_row(int index){ //pass b too?
-    int mastRow = OUTBOUND;
-    int iS = index_start(mastRow); //works
-    int iE = index_end(mastRow);
-
-    if((index >= iS) && (index <= iE)){
-        return mastRow;
-    }
-    else{
-        mastRow += 1;
-        return kth_row(index, mastRow);
-    }
-}
 
 // int find_masterrow(int k, int indx){
 //     int tempK = kth_row(indx, &tempK); //k to be 2
@@ -131,29 +144,29 @@ int kth_row(int index){ //pass b too?
 //     return tempK;
 // }
 
-bool is_indxInbound(int index, int rowStart, int rowEnd){
-    if ((index <= OUTBOUND) || (index >= OUTBOUND_END)){
-        return false;
-    }
-    if ((index <= rowStart) || (index >= rowEnd)){
-        return false;
-    }
-    return true;  
-}
+// bool is_indxInbound(int index, int rowStart, int rowEnd){
+//     if ((index <= OUTBOUND) || (index >= OUTBOUND_END)){
+//         return false;
+//     }
+//     if ((index <= rowStart) || (index >= rowEnd)){
+//         return false;
+//     }
+//     return true;  
+// }
 
-test_is_indxInbound(void){
-    int index = 0;
-    int masterRow = kth_row(index);
-    int rowStart = index_start(masterRow);
-    int rowEnd = index_end(masterRow);
-    assert(is_indxInbound(index, rowStart, rowEnd) == true);
+// void test_is_indxInbound(void){
+//     int index = 0;
+//     int masterRow = kth_row(index);
+//     int rowStart = index_start(masterRow);
+//     int rowEnd = index_end(masterRow);
+//     assert(is_indxInbound(index, rowStart, rowEnd) == true);
 
-    int index2 = OUTBOUND_END;
-    int masterRow2 = kth_row(index2);
-    int rowStart2 = index_start(masterRow2);
-    int rowEnd2 = index_end(masterRow2);
-    assert(is_indxInbound(index2, rowStart2, rowEnd2) == true);
-}
+//     int index2 = OUTBOUND_END;
+//     int masterRow2 = kth_row(index2);
+//     int rowStart2 = index_start(masterRow2);
+//     int rowEnd2 = index_end(masterRow2);
+//     assert(is_indxInbound(index2, rowStart2, rowEnd2) == true);
+// }
 
 int index_start(int k){
     if (k == 0){
@@ -192,27 +205,27 @@ void testIend(void){
     assert(index_end(BSA_ROWS - 1) == MAXEND_INDEX);
 }
 
-void test_krow(void){
-    int k;
-    k = 0;
-    assert(kth_row(0, &k) == 0);
-    k = 0;
-    assert(kth_row(1, &k) == 1);
-    k = 0;
-    assert(kth_row(2, &k) == 1);
-    k = 0;
-    assert(kth_row(3, &k) == 2);//works now
-    k = 0;
-    assert(kth_row(6, &k) == 2); 
-    k = 0;
-    assert(kth_row(7, &k) == 3); 
-    k = 0;
-    assert(kth_row(14, &k) == 3);
-    k = 0;
-    assert(kth_row(30, &k) == 4); 
-    k = 0;
-    assert(kth_row(128, &k) == 7);
-}
+// void test_krow(void){
+//     int k;
+//     k = 0;
+//     assert(kth_row(0, &k) == 0);
+//     k = 0;
+//     assert(kth_row(1, &k) == 1);
+//     k = 0;
+//     assert(kth_row(2, &k) == 1);
+//     k = 0;
+//     assert(kth_row(3, &k) == 2);//works now
+//     k = 0;
+//     assert(kth_row(6, &k) == 2); 
+//     k = 0;
+//     assert(kth_row(7, &k) == 3); 
+//     k = 0;
+//     assert(kth_row(14, &k) == 3);
+//     k = 0;
+//     assert(kth_row(30, &k) == 4); 
+//     k = 0;
+//     assert(kth_row(128, &k) == 7);
+// }
 
 
 bool testK(int k){ //works
@@ -234,7 +247,7 @@ void test_testK(void){ //works
 // Return pointer to data at element b[i]
 // or NULL if element is unset, or part of a row that hasn't been allocated.
 int* bsa_get(bsa* b, int indx){ 
-    if (testInitialisation(b) == false){
+    if (test_firstInit(b) == false){
         return NULL;
     }
     for (int y = 0; y < BSA_ROWS; y++){ //rename 
@@ -317,7 +330,7 @@ void test(void){
     // }
     // free(testArray);
 
-    test_krow();
+    test_kRow();
     testIstart();
     testIend();
     

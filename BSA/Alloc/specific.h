@@ -21,26 +21,27 @@ struct bsa { //whole bsa structure
 };
 
 //test if a bsa has been initialised, returning false if NULL 
-bool testInitialisation(bsa *b);
-void testInit(void);
+bool test_firstInit(bsa *b);
+// void assert_firstInit(void);
+
 
 bool storeData(bsa* b, int k);
 // bool bsa_set2(bsa* b, int indx, int d);
 int find_masterrow(int k, int indx);
 
 int kth_row(int index);
-
-int kth_row(int index, int *k);
+void test_kRow(void);
 int index_start(int k);
-int index_end(int index_start);
-void test_krow(void);
 void testIstart(void);
+int index_end(int index_start);
 void testIend(void);
 
 //testing k
 bool testK(int k);
 void test_testK(void);
 
+// bool is_indxInbound(int index, int rowStart, int rowEnd);
+// void test_is_indxInbound(void);
 //new k:
 // void kthRow_Helper(int indx, int *k);
 // int kthRow_Main(int indx);
