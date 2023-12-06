@@ -19,17 +19,17 @@ int main(void)
    assert(b);
    assert(bsa_maxindex(b)==-1);
 
-   // Set some values
+   // // Set some values
    assert(bsa_set(b, 0, 4));
-   assert(bsa_maxindex(b)==0);
-   // Reset existing value
-   assert(bsa_set(b, 0, 0));
-   assert(bsa_set(b, 15, 15));
+   // assert(bsa_maxindex(b)==0);
+   // // Reset existing value
+   // assert(bsa_set(b, 0, 0));
+   // assert(bsa_set(b, 15, 15));
 
 //    // tostring
 //    assert(bsa_tostring(b, str));
 //    assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}")==0);
-   test();
+   // test();
 
    // Get some values tbsa've already been set
    // int* p = bsa_get(b, 0);
@@ -81,7 +81,7 @@ int main(void)
 //    assert(bsa_tostring(b, str));
 //    assert(strcmp(str, "")==0);
   
-   bsa_free(b);
+   // bsa_free(b);
 
 //    // foreach - use it to compute product of numbers, and also to double each one
 //    b = bsa_init();

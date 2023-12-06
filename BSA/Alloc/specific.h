@@ -8,7 +8,9 @@
 
 //typedef operations function?!can these test can only be for MasterRow?!!!
 typedef struct bsaOperations{
-    bool (*test_firstInit)(struct bsa*); //testing if 1 space created for b and ops & each has been set to 0!
+    bool result_bsainit; //testing if 1 space created for b and ops & each has been set to 0!
+    bool checkIndx;
+    bool* isD_Allocated;
 }bsaOperations;
 
 typedef struct BSA_Row{
@@ -25,8 +27,7 @@ struct bsa { //whole bsa structure
 
 //test if a bsa has been initialised, returning false if NULL 
 bool test_firstInit(bsa *b);
-//test and store the result of test_firstInit into structure
-bsa* initialiseOp1(void);
+
 
 // bool storeData(bsa* b, int k);
 bool allocateChild(bsa* b, int k, int rowLen);
@@ -34,6 +35,8 @@ bool allocateChild(bsa* b, int k, int rowLen);
 bool is_ChildAloocated(bsa* b, int k);
 //Check that the child has been allocated for rowspace
 bool isRowEmpty(bsa* b, int k, int rowLen);
+//Check if indx in bound:
+bool is_indxinBound(bsa* b, int indx);
 //Storing data into structure
 void storeData(bsa* b, int k, int rowLen);
 // bool bsa_set2(bsa* b, int indx, int d);

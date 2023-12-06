@@ -285,3 +285,26 @@ bool storeData(bsa* b, int k){
 //     int rowEnd2 = index_end(masterRow2);
 //     assert(is_indxInbound(index2, rowStart2, rowEnd2) == true);
 // }
+
+// bsa* initialiseOp1(void){
+//     bsa* bsaOp1 = bsa_init();
+//     // bool result = test_firstInit(bsaOp1);
+
+//     if (bsaOp1 == NULL){ //do i need to do this again?
+//         return NULL;
+//     }
+//     if ((bsaOp1->ops == NULL) || (bsaOp1->ops->test_firstInit == NULL)){
+//         //QLab: messing up order if freeing?
+//         free(bsaOp1);
+//         return NULL;
+//     }
+//     bool isInitSuccessful = bsaOp1->ops->test_firstInit(bsaOp1);
+//         if(!isInitSuccessful){
+//             //op1 was not successful and so not stored - free
+//             free(bsaOp1->ops);
+//             free(bsaOp1);
+//             return NULL;
+//         }
+//     //LabsQ: so it now means that bsa HAS TO BE initalised FIRST ALWAYS!!!
+//     return bsaOp1;
+// }

@@ -15,8 +15,7 @@ bsa* bsa_init(void){
     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
         emptyBSA->master[bsaRow] = NULL;
     }
-    //should store true - again added wednesday
-    emptyBSA->ops->test_firstInit = test_firstInit;
+    test_firstInit(emptyBSA);
     return emptyBSA;
 }
 
@@ -26,45 +25,34 @@ bool test_firstInit(bsa *b){ //different function for testInit for Child?
     }
     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++) {
         if (b->master[bsaRow] != NULL){
+            b->ops->result_bsainit = false;
             return false;
         }
     }
+    b->ops->result_bsainit = true;
     return true;
 }
 
-bsa* initialiseOp1(void){
-    bsa* bsaOp1 = bsa_init();
-    // bool result = test_firstInit(bsaOp1);
-
-    if (bsaOp1 == NULL){ //do i need to do this again?
-        return NULL;
+bool is_indxinBound(bsa* b, int indx){
+    if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
+        b->ops->checkIndx = false;
+        return false;
     }
-    if ((bsaOp1->ops == NULL) || (bsaOp1->ops->test_firstInit == NULL)){
-        //QLab: messing up order if freeing?
-        free(bsaOp1);
-        return NULL;
-    }
-    bool isInitSuccessful = bsaOp1->ops->test_firstInit(bsaOp1);
-        if(!isInitSuccessful){
-            //op1 was not successful and so not stored - free
-            free(bsaOp1->ops);
-            free(bsaOp1);
-            return NULL;
-        }
-    //LabsQ: so it now means that bsa HAS TO BE initalised FIRST ALWAYS!!!
-    return bsaOp1;
+    b->ops->checkIndx = true;
+    return true;
 }
 
 // Set element at index indx (2^k) with value d i.e. b[i] = d;
 // May require an allocation if it's the first element in that row
 bool bsa_set(bsa* b, int indx, int d){
     //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
-    if (test_firstInit(b) == false){
+    if ((b == NULL) || (b->master == NULL)){ //does it want us to reinitialise?
         b = bsa_init();
     } 
-    if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
+    if (!is_indxinBound(b, indx)){
         return false;
-    } 
+    }
+    printf("is indx in bound: %s\n", b->ops->checkIndx? "true" : "false");
     //first calculating kth row given the index
     int k = 0;
     k = kth_row(indx, &k); //remove
@@ -80,12 +68,6 @@ bool bsa_set(bsa* b, int indx, int d){
 }
 
 bool allocateChild(bsa* b, int k, int rowLen){
-    if (!test_firstInit(b)){
-        return false;
-    }
-    if (!testK(k)){
-        return false;
-    }
     if (b->master[k] == NULL){ 
         b->master[k] = (BSA_Row*)calloc(1, sizeof(BSA_Row)); //allocating memory for BSA structure for the pointer 
         if (b->master[k] == NULL){
@@ -146,7 +128,8 @@ int kth_row(int index, int *k) {
     }
     int iS = index_start(*k);
     int iE = index_end(*k);
-    if ((index >= iS) && (index <= iE)) {
+    if ((index >= iS) && (index <= iE)){
+        testK(*k);
         return *k;
     } 
     else {
@@ -306,11 +289,10 @@ bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. De
 // Returns maximum index written to so far or
 // -1 if no cells have been written to yet
 int bsa_maxindex(bsa* b){
-    if ((b == NULL) || (b->master == NULL)){
+    if ((b == NULL) || (b->ops->result_bsainit == false)){
         return OUTBOUND;
     }
     int maxIndex = OUTBOUND;
-    
     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
         if (b->master[bsaRow] != NULL && b->master[bsaRow]->child != NULL){
             for (int childRow = 0; childRow < b->master[bsaRow]->rowLen; childRow++){
@@ -365,7 +347,11 @@ void test(void){
     test_int_rowLen();
     test_testK();
 
-    bsa* testBsa = initialiseOp1();
-    bool result = testBsa->ops->test_firstInit(testBsa);
-    printf("Result: %d rmb:(1)True or (0) False\n", result);
+    // bsa* testBsa = bsa_init();
+    // bool result = test_firstInit(testBsa);
+    // printf("Your boolean variable is: %s\n", result ? "true" : "false");
+    
+    // bsa_free(testBsa);
+    // bool result2 = test_firstInit(testBsa);
+    // printf("Your boolean variable is: %s\n", result2 ? "true" : "false");   
 }
