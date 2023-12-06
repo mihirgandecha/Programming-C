@@ -32,22 +32,21 @@ int main(void)
    // test();
 
    // Get some values tbsa've already been set
-   // int* p = bsa_get(b, 0);
-   // assert(p);
-   // assert(*p == 0);
-   // p = bsa_get(b, 15);
-   // assert(p); // fails
-   // assert(*p == 15);
+   int* p = bsa_get(b, 0);
+   assert(p);
+   assert(*p == 0);
+   p = bsa_get(b, 15);
+   assert(p);
+   assert(*p == 15);
 
 //    // Get an unset value 
-//    p = bsa_get(b, 1);
-//    assert(!p);
-//    p = bsa_get(b, 1024);
-//    assert(!p);
+   p = bsa_get(b, 1);
+   assert(!p);
+   p = bsa_get(b, 1024);
+   assert(!p);
 
-//    // 
-//    assert(bsa_set(b, 100, 100));
-//    assert(bsa_maxindex(b)==100);
+   assert(bsa_set(b, 100, 100));
+   assert(bsa_maxindex(b)==100);
 //    // Once resized, using a get is OK
 //    p = bsa_get(b, 100);
 //    assert(p);

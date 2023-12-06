@@ -26,19 +26,26 @@ struct bsa { //whole bsa structure
 };
 
 //test if a bsa has been initialised, returning false if NULL 
+//First test for bsa_set
 bool test_firstInit(bsa *b);
 
 //Second Allocation - master[k]->child allocated 1 BSAROW Struct size 
+bool check_initial_conditions(bsa* b, int indx);
+
+bool handle_child_allocation(bsa* b, int k);
 bool allocate2_BSAROW(bsa* b, int k);
 void test_secondAlloc(void);
 
 //Third Allocation - rowlen calloced
+//Does it need to be allocated?
+bool handle_row_allocation(bsa* b, int k);
+//Allocate row
 bool allocate3_rowlen(bsa* b, int k);
+//test functions
 bool test_alloc3(bsa* b, int k);
 void test_ThirdAlloc(void);
-
-// bool storeData(bsa* b, int k);
-bool allocateChild(bsa* b, int k);
+//Set value d into row
+bool set_value(bsa* b, int indx, int d);
 //Checking if BSA_Row structure has been allocated space, and 
 bool is_ChildAloocated(bsa* b, int k);
 //Check that the child has been allocated for rowspace

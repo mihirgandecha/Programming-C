@@ -384,3 +384,30 @@ bool bsa_set(bsa* b, int indx, int d){
     return true;
 }
 
+bool allocateChild(bsa* b, int k){
+    if(!allocate2_BSAROW(b, k)){
+        return false;
+    }
+    if(!allocate3_rowlen(b, k)){
+        return false;
+    }
+    // if ((!test_firstInit(b)) || (!allocate2_BSAROW(b, k)) || (!allocate3_rowlen(b, k))){
+    //     return false;
+    // } 
+    return true;
+}
+
+// Return pointer to data at element b[i]
+// or NULL if element is unset, or part of a row that hasn't been allocated.
+int* bsa_get(bsa* b, int indx){
+    if (!check_initial_conditions(b, indx)) {
+        return NULL;
+    }
+    // for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){ //rename 
+    //     for (int row = 0; row < b->master[bsaRow]->rowLen; row++){
+    //         if ((b->master[bsaRow]->child != NULL) && (b->master[bsaRow]->child[row] == indx)){
+    //             return &(b->master[bsaRow]->child[row]);
+    //         }
+    //     }
+    // }
+    // return NULL;

@@ -1,5 +1,6 @@
 #include "specific.h"
 
+//start init func
 bsa* bsa_init(void){
     bsa* emptyBSA;
     //Allocate memory for 1 whole bsa structure
@@ -25,7 +26,9 @@ bool test_firstInit(bsa *b){ //different function for testInit for Child?
     }
     return true;
 }
+//end init func
 
+//check indx in bound
 bool is_indxinBound(int indx){
     if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
         return false;
@@ -37,79 +40,77 @@ void test_indxbound(void){
     int indx = 1073741824;
     assert(is_indxinBound(indx));
 }
+//end indx in bound
 
-// Set element at index indx (2^k) with value d i.e. b[i] = d;
-// May require an allocation if it's the first element in that row
-bool bsa_set(bsa* b, int indx, int d){
-    //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
-    if ((b == NULL) || (b->master == NULL)){ //does it want us to reinitialise?
-        return false;
-    } 
-    if (!is_indxinBound(indx)){
+//start here bsa_set
+bool bsa_set(bsa* b, int indx, int d) {
+    if (!check_initial_conditions(b, indx)) {
         return false;
     }
-    //first calculating kth row given the index
     int k = 0;
-    k = kth_row(indx, &k); //remove
-    int position = indx - b->master[k]->kStart;
-
-    if (b->master[k] == NULL){
-        if (!allocate2_BSAROW(b, k)){
-            return false;
-        }
+    k = kth_row(indx, &k);
+    if (!handle_row_allocation(b, k) || !handle_child_allocation(b, k)) {
+        return false;
     }
-
-    if (b->master[k]->child == NULL){
-        // int rowLen = row_len(k);
-        if (!allocate3_rowlen(b, k)){
-            return false;
-        }
-    }
-
-    b->master[k]->child[position] = d;
-    if (d != 0){
-        b->master[k]->size += 1;
-    }
-
-    return true;
+    return set_value(b, indx, d);
 }
 
-bool allocateChild(bsa* b, int k){
-    if(!allocate2_BSAROW(b, k)){
-        return false;
+bool check_initial_conditions(bsa* b, int indx){ 
+    return b != NULL && b->master != NULL && is_indxinBound(indx);
+}
+
+bool handle_row_allocation(bsa* b, int k) {
+    if (b->master[k] == NULL) {
+        return allocate2_BSAROW(b, k);
     }
-    if(!allocate3_rowlen(b, k)){
-        return false;
-    }
-    // if ((!test_firstInit(b)) || (!allocate2_BSAROW(b, k)) || (!allocate3_rowlen(b, k))){
-    //     return false;
-    // } 
     return true;
 }
 
 bool allocate2_BSAROW(bsa* b, int k){
-    // if ((test_firstInit(b) == true) && (b->master[k] == NULL)){
-    if (test_firstInit(b) == true){ 
-        b->master[k] = (BSA_Row*)calloc(1, sizeof(BSA_Row)); //allocating memory for BSA structure for the pointer 
+    // Allocate only if b->master[k] is NULL
+    if (b->master[k] == NULL){ 
+        b->master[k] = (BSA_Row*)calloc(1, sizeof(BSA_Row));
         if (b->master[k] == NULL){
-            return false;
+            return false; // Allocation failed
         }
     }
-    return true;   
+    return true; // Allocation succeeded or was not needed
+}
+
+bool handle_child_allocation(bsa* b, int k) {
+    if (b->master[k] != NULL && b->master[k]->child == NULL) {
+        return allocate3_rowlen(b, k);
+    }
+    return b->master[k] != NULL;
 }
 
 bool allocate3_rowlen(bsa* b, int k){
-    
     int rowLen = row_len(k);
     if (b->master[k]->child == NULL){
-        b->master[k]->child = (int*)calloc(rowLen, sizeof(int)); //allocating memory for BSA structure for the pointer
-        if (b->master[k] == NULL){
-            return false;
+        b->master[k]->child = (int*)calloc(rowLen, sizeof(int)); // Allocating memory for the child array
+        if (b->master[k]->child == NULL){ // Corrected check
+            return false; // Allocation failed
         }
     } 
+    return true; // Allocation succeeded or was not needed
+}
+
+bool set_value(bsa* b, int indx, int d) {
+    int k = 0;
+    k = kth_row(indx, &k);
+    b->master[k]->kStart = index_start(k);
+    b->master[k]->kEnd = index_end(k);
+    int rowLen = row_len(k);
+    b->master[k]->rowLen = rowLen;
+    int position = indx - b->master[k]->kStart;
+    if (position < 0 || position > b->master[k]->kEnd) {
+        return false;
+    }
+    b->master[k]->child[position] = d;
     return true;
 }
 
+//maybe redo or remove:
 void test_secondAlloc(void){ //works
     bsa* testBsa = bsa_init();
     int indx = 7;
@@ -118,7 +119,6 @@ void test_secondAlloc(void){ //works
     allocate2_BSAROW(testBsa, k);
     assert(testBsa->master[k] != NULL);
 }
-
 
 bool test_alloc3(bsa* b, int k){
     int rowLen = row_len(k);
@@ -144,6 +144,7 @@ void test_ThirdAlloc(void){
 }
 
 
+//do I need?
 bool is_ChildAloocated(bsa* b, int k){
     if ((test_firstInit(b) == false) && (b->master[k] == NULL) && (b->master[k]->child ==NULL)){
         return false;
@@ -287,18 +288,24 @@ void test_testK(void){
 // Return pointer to data at element b[i]
 // or NULL if element is unset, or part of a row that hasn't been allocated.
 int* bsa_get(bsa* b, int indx){
-    if (test_firstInit(b) == false){
+    if (!check_initial_conditions(b, indx)) {
         return NULL;
     }
-    for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){ //rename 
-        for (int row = 0; row < b->master[bsaRow]->rowLen; row++){
-            if ((b->master[bsaRow]->child != NULL) && (b->master[bsaRow]->child[row] == indx)){
-                return &(b->master[bsaRow]->child[row]);
-            }
-        }
+    int k = 0;
+    kth_row(indx, &k);
+    if (b->master[k] == NULL || b->master[k]->child == NULL) {
+        return NULL; // Row or child array not allocated
     }
-    return NULL;
+    // Calculate the position within the row
+    int position = indx - b->master[k]->kStart;
+    if (position < 0 || position >= b->master[k]->rowLen) {
+        // Position out of bounds
+        return NULL;
+    }
+    // Return the address of the element at the position
+    return &(b->master[k]->child[position]);
 }
+
 
 // Delete element at index indx - forces a shrink
 // if that was the only cell in the row occupied.
@@ -339,23 +346,6 @@ bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. De
 
 // Returns maximum index written to so far or
 // -1 if no cells have been written to yet
-// int bsa_maxindex(bsa* b){
-//     if ((b == NULL) || (b->master == NULL)){
-//         return OUTBOUND;
-//     }
-//     int maxIndex = OUTBOUND;
-//     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
-//         if (b->master[bsaRow] != NULL){
-//             for (int childRow = 0; childRow < b->master[bsaRow]->rowLen; childRow++){
-//                 if (b->master[bsaRow]->kEnd > maxIndex){
-//                     maxIndex = b->master[bsaRow]->kEnd;
-//                 }
-//             }
-//         }
-//     }
-//     return maxIndex;
-// }
-
 int bsa_maxindex(bsa* b){
     if ((b == NULL) || (b->master == NULL)){
         return OUTBOUND;
@@ -370,24 +360,6 @@ int bsa_maxindex(bsa* b){
     }
     return maxIndex;
 }
-
-
-// int bsa_maxindex(bsa* b){
-//     if ((b == NULL) || (b->master == NULL)){
-//         return OUTBOUND;
-//     }
-//     int maxIndex = OUTBOUND;
-//     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
-//         if (b->master[bsaRow] != NULL && b->master[bsaRow]->child != NULL){
-//             for (int childRow = 0; childRow < b->master[bsaRow]->rowLen; childRow++){
-//                 if (b->master[bsaRow]->child[childRow] != 0 && childRow > maxIndex){
-//                     maxIndex = childRow;
-//                 }
-//             }
-//         }
-//     }
-//     return maxIndex;
-// }
 
 // Clears up all space used
 bool bsa_free(bsa* b){
