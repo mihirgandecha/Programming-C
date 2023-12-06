@@ -45,7 +45,7 @@ void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc);
 //do func with 
 //each item
 // int *i;
-// int max_index = //from the max k and find max kEnd
+// int max_index = //from the max k and find max kEnd --ie go through k from 29->0, if been allocated, access and find max index
 // for (int i = 0; i < max_index; i++){
 //     i = bsa_get(b, i);
 //     if (q != NULL){

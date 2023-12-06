@@ -308,3 +308,25 @@ bool storeData(bsa* b, int k){
 //     //LabsQ: so it now means that bsa HAS TO BE initalised FIRST ALWAYS!!!
 //     return bsaOp1;
 // }
+
+bool allocateChild(bsa* b, int k, int rowLen){
+    // if (b->master[k] == NULL){ 
+    //     b->master[k] = (BSA_Row*)calloc(1, sizeof(BSA_Row)); //allocating memory for BSA structure for the pointer 
+    //     if (b->master[k] == NULL){
+    //         return false;
+    //     }
+    // }
+    if(!allocate2_BSAROW(b, k)){
+        return false;
+    }
+    if (b->master[k]->child == NULL){
+        b->master[k]->child = (int*)calloc(rowLen, sizeof(int)); //allocating memory for BSA structure for the pointer
+    }
+    if (is_ChildAloocated(b, k) == false){
+        return false;
+    }
+    if (isRowEmpty(b, k, rowLen) == false){
+        return false;
+    }
+    return true;
+}

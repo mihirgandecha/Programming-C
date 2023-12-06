@@ -7,36 +7,45 @@
 #define EMPTY 0
 
 //typedef operations function?!can these test can only be for MasterRow?!!!
-typedef struct bsaOperations{
-    bool result_bsainit; //testing if 1 space created for b and ops & each has been set to 0!
-    bool checkIndx;
-    bool* isD_Allocated;
-}bsaOperations;
+// typedef struct bsaOperations{
+//     bool result_bsainit; //testing if 1 space created for b and ops & each has been set to 0!
+//     bool* isD_Allocated;
+// }bsaOperations;
 
 typedef struct BSA_Row{
     int* child; //the position of d within a row created
     int kStart;
     int kEnd;
     int rowLen; 
+    int size;
 }BSA_Row;
 
 struct bsa { //whole bsa structure
     BSA_Row* master[BSA_ROWS]; //1D array of pointers - change to just array of 30
-    bsaOperations* ops;
+    // bsaOperations* ops;
 };
 
 //test if a bsa has been initialised, returning false if NULL 
 bool test_firstInit(bsa *b);
 
+//Second Allocation - master[k]->child allocated 1 BSAROW Struct size 
+bool allocate2_BSAROW(bsa* b, int k);
+void test_secondAlloc(void);
+
+//Third Allocation - rowlen calloced
+bool allocate3_rowlen(bsa* b, int k);
+bool test_alloc3(bsa* b, int k);
+void test_ThirdAlloc(void);
 
 // bool storeData(bsa* b, int k);
-bool allocateChild(bsa* b, int k, int rowLen);
+bool allocateChild(bsa* b, int k);
 //Checking if BSA_Row structure has been allocated space, and 
 bool is_ChildAloocated(bsa* b, int k);
 //Check that the child has been allocated for rowspace
 bool isRowEmpty(bsa* b, int k, int rowLen);
 //Check if indx in bound:
-bool is_indxinBound(bsa* b, int indx);
+bool is_indxinBound(int indx);
+void test_indxbound(void);
 //Storing data into structure
 void storeData(bsa* b, int k, int rowLen);
 // bool bsa_set2(bsa* b, int indx, int d);
