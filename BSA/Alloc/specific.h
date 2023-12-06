@@ -6,21 +6,27 @@
 #define OUTBOUND_END 1073741823
 #define EMPTY 0
 
+//typedef operations function?!can these test can only be for MasterRow?!!!
+typedef struct bsaOperations{
+    bool (*test_firstInit)(struct bsa*); //testing if 1 space created for b and ops & each has been set to 0!
+}bsaOperations;
+
 typedef struct BSA_Row{
     int* child; //the position of d within a row created
-    int kthRow;
     int kStart;
     int kEnd;
     int rowLen; 
-    int d;
 }BSA_Row;
 
 struct bsa { //whole bsa structure
     BSA_Row* master[BSA_ROWS]; //1D array of pointers - change to just array of 30
+    bsaOperations* ops;
 };
 
 //test if a bsa has been initialised, returning false if NULL 
 bool test_firstInit(bsa *b);
+//test and store the result of test_firstInit into structure
+bsa* initialiseOp1(void);
 
 // bool storeData(bsa* b, int k);
 bool allocateChild(bsa* b, int k, int rowLen);

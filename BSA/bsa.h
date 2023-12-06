@@ -43,6 +43,15 @@ bool bsa_free(bsa* b);
 void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc);
 //for loop that every item that is not empty do func
 //do func with 
-//each item 
+//each item
+// int *i;
+// int max_index = //from the max k and find max kEnd
+// for (int i = 0; i < max_index; i++){
+//     i = bsa_get(b, i);
+//     if (q != NULL){
+//         func(q, acc);
+//     }
+// }
+//get max  
 // You'll this to test the other functions you write
 void test(void);

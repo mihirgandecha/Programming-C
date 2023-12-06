@@ -2,18 +2,26 @@
 
 bsa* bsa_init(void){
     bsa* emptyBSA;
-    emptyBSA = (bsa*) calloc(1, sizeof(bsa)); //allocate one size for whole bsa structure
+    //Allocate memory for 1 whole bsa structure
+    emptyBSA = (bsa*) calloc(1, sizeof(bsa)); 
     if (emptyBSA == NULL){
         return NULL;
-    }    
-    for (int i = 0; i < BSA_ROWS; i++){
-        emptyBSA->master[i] = NULL;
     }
+    //just added today (wednesday):
+    emptyBSA->ops = (bsaOperations*)calloc(1, sizeof(bsaOperations));
+    if(emptyBSA->ops == NULL){
+        return false;
+    }
+    for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
+        emptyBSA->master[bsaRow] = NULL;
+    }
+    //should store true - again added wednesday
+    emptyBSA->ops->test_firstInit = test_firstInit;
     return emptyBSA;
 }
 
 bool test_firstInit(bsa *b){ //different function for testInit for Child?
-    if (b == NULL){
+    if (b == NULL || b->ops == NULL){  
         return false;
     }
     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++) {
@@ -22,6 +30,29 @@ bool test_firstInit(bsa *b){ //different function for testInit for Child?
         }
     }
     return true;
+}
+
+bsa* initialiseOp1(void){
+    bsa* bsaOp1 = bsa_init();
+    // bool result = test_firstInit(bsaOp1);
+
+    if (bsaOp1 == NULL){ //do i need to do this again?
+        return NULL;
+    }
+    if ((bsaOp1->ops == NULL) || (bsaOp1->ops->test_firstInit == NULL)){
+        //QLab: messing up order if freeing?
+        free(bsaOp1);
+        return NULL;
+    }
+    bool isInitSuccessful = bsaOp1->ops->test_firstInit(bsaOp1);
+        if(!isInitSuccessful){
+            //op1 was not successful and so not stored - free
+            free(bsaOp1->ops);
+            free(bsaOp1);
+            return NULL;
+        }
+    //LabsQ: so it now means that bsa HAS TO BE initalised FIRST ALWAYS!!!
+    return bsaOp1;
 }
 
 // Set element at index indx (2^k) with value d i.e. b[i] = d;
@@ -82,7 +113,7 @@ bool is_ChildAloocated(bsa* b, int k){
 
 bool isRowEmpty(bsa* b, int k, int rowLen){
     for (int i = 0; i < rowLen; i++){
-        if(b->master[k]->child[i] != 0){
+        if(b->master[k]->child[i] != 0){ //could store value 0, TODO: Create another array for bool all[], dosent matter for d, says if allocated or not.
             return false;
         }
     }
@@ -103,7 +134,6 @@ bool testall(bsa* b, int k, int rowLen){
 }
 
 void storeData(bsa* b, int k, int rowLen){
-    b->master[k]->kthRow = k;
     b->master[k]->kStart = index_start(k);
     b->master[k]->kEnd = index_end(k); 
     b->master[k]->rowLen = rowLen;
@@ -118,7 +148,8 @@ int kth_row(int index, int *k) {
     int iE = index_end(*k);
     if ((index >= iS) && (index <= iE)) {
         return *k;
-    } else {
+    } 
+    else {
         (*k)++;
         return kth_row(index, k);
     }
@@ -255,7 +286,7 @@ bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. De
     int counter = 0;
     if(!isRowEmpty(b, k, b->master[k]->rowLen)){
         for(int rowIndex = 0; rowIndex < b->master[k]->rowLen; rowIndex++){
-            if(b->master[k]->child[rowIndex] != EMPTY){
+            if(b->master[k]->child[rowIndex] != EMPTY){ //0 can be allocated!
                 counter++;
             }
         }
@@ -292,7 +323,6 @@ int bsa_maxindex(bsa* b){
     return maxIndex;
 }
 
-
 // Clears up all space used
 bool bsa_free(bsa* b){
     if (b == NULL){
@@ -310,7 +340,7 @@ bool bsa_free(bsa* b){
         }
     }
     free(b); // Free the bsa structure itself
-    printf("bsa structure freed\n");
+    // printf("bsa structure freed\n");
     return true;
 }
 
@@ -328,17 +358,14 @@ bool bsa_free(bsa* b){
 // TODO: Does software turn off house style when function test are declared? 
 
 void test(void){
-    // bsa* testArray = bsa_init();
-    // for (int testcolP = 0; testcolP < BSA_ROWS; testcolP++){
-    //     assert(&testArray->array[testcolP] == NULL);
-    // }
-    // free(testArray);
-
     test_kRow();
     testIstart();
     testIend();
-    
+    test_testK();
+    test_int_rowLen();
     test_testK();
 
-    // bsa_set2(testArray, (MAXEND_INDEX + 1), 10);    
+    bsa* testBsa = initialiseOp1();
+    bool result = testBsa->ops->test_firstInit(testBsa);
+    printf("Result: %d rmb:(1)True or (0) False\n", result);
 }
