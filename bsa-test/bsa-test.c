@@ -330,3 +330,57 @@ bool allocateChild(bsa* b, int k, int rowLen){
     }
     return true;
 }
+
+
+bool bsa_set(bsa* b, int indx, int d){
+    //Check that b has been initialised first as NULL return false indicates bsa allocation did not work
+    if ((b == NULL) || (b->master == NULL)){ //does it want us to reinitialise?
+        return false;
+    } 
+    if (!is_indxinBound(indx)){
+        return false;
+    }
+    //first calculating kth row given the index
+    int k = 0;
+    k = kth_row(indx, &k); //remove
+    // if (allocateChild(b, k) == false){
+    //     return false;
+    // }
+    // int rowLen = row_len(k);
+    // storeData(b, k, rowLen);
+    // //set value d into the created row - keep here
+    // // for (int i = 0; i < rowLen; i++){
+    // //     if (b->master[k]->child[i] )
+
+    // // }
+    // if (b->master[k]->size == 0){
+    //     if (!allocateChild(b, k)){
+    //         return false;
+    //     }
+    // }
+    // int position = indx - b->master[k]->kStart; //could this be an array of pointers?
+    // b->master[k]->child[position] = d;
+    // b->master[k]->size += 1;
+
+    if (b->master[k] == NULL){
+        if (!allocate2_BSAROW(b, k)){
+            return false;
+        }
+    }
+
+    if (b->master[k]->child == NULL){
+        // int rowLen = row_len(k);
+        if (!allocate3_rowlen(b, k)){
+            return false;
+        }
+    }
+
+    int position = indx - b->master[k]->kStart;
+    b->master[k]->child[position] = d;
+    if (d != 0){
+        b->master[k]->size += 1;
+    }
+
+    return true;
+}
+
