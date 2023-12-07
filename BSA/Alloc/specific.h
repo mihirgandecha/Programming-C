@@ -18,6 +18,7 @@ typedef struct BSA_Row{
     int kEnd;
     int rowLen; 
     int size;
+    int* isAllocated; //but then memory has to be allocated
 }BSA_Row;
 
 struct bsa { //whole bsa structure
@@ -58,6 +59,7 @@ void storeData(bsa* b, int k, int rowLen);
 // bool bsa_set2(bsa* b, int indx, int d);
 int find_masterrow(int k, int indx);
 
+//calculates what masterRow given the index
 int kth_row(int index, int *k);
 void test_kRow(void);
 
