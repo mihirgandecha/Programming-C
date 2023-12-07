@@ -93,7 +93,8 @@ bool allocate3_rowlen(bsa* b, int k){
             return false; // Allocation failed
         }
         b->master[k]->isAllocated = (int*)calloc(rowLen, sizeof(int));
-        if (b->master[k]->child == NULL){ // Corrected check
+        if (b->master[k]->isAllocated == NULL){ // Corrected check
+            free(b->master[k]->child); // Free previously allocated memory
             return false; // Allocation failed
         }
         for (int i = 0; i < rowLen; i++){
@@ -130,15 +131,6 @@ void asserttest_secondAlloc(void){ //works
     bsa_free(testBsa);
 }
 
-// bool test_alloc3(bsa* b, int k){
-//     int rowLen = row_len(k);
-//     for (int i = 0; i < rowLen; i++){
-//         if(b->master[k]->child[i] != 0){ //could store value 0, TODO: Create another array for bool all[], dosent matter for d, says if allocated or not.
-//             return false;
-//         }
-//     }
-//     return true;
-// }
 
 void asserttest_ThirdAlloc(void){
     bsa* testBsa = bsa_init();
@@ -294,23 +286,15 @@ int* bsa_get(bsa* b, int indx){
     return &(b->master[k]->child[position]);
 }
 
-// int rowlenAllocated(bsa* b, int k){
-//     is
-//     int cellsAllocated = 0;
 
-
-//     for (int i = 0; i < BSA_ROWS; i++) {
-//         if (b->master[i] != NULL) {
-//             cellsAllocated += b->master[i]->size;
-//         }
-//     }
-//     return cellsAllocated;
-// }
+int find_child_position(bsa* b, int k, int indx) {
+    if (b == NULL || b->master[k] == NULL || indx < b->master[k]->kStart || indx >= b->master[k]->kStart + b->master[k]->rowLen) {
+        return OUTBOUND;
+    }
+    return indx - b->master[k]->kStart;
+}
 
 bool bsa_delete(bsa* b, int indx) {
-    // if((b == NULL) && (b->master == NULL)){
-    //     return false;
-    // }
     if (check_initial_conditions(b, indx) == false){ //return b != NULL && b->master != NULL && is_indxinBound(indx);
         return false;
     }
@@ -319,47 +303,16 @@ bool bsa_delete(bsa* b, int indx) {
     if(b->master[k]->child == NULL){
         return false;
     }
-    int prevIndex = -1;
-    for (int i = 0; i < b->master[k]->rowLen; i++) {
-        if (b->master[k]->isAllocated[i] == 1){
-            if (prevIndex != -1 && i != prevIndex + 1) {
-            return false;
-        }
-        prevIndex = i;
-    }
-}
-    //need to loop through and find where isAllocated == 1, if the indx isnt equal to one above return false
-    // if(b->master[k]->child[indx] == NULL){
-    //     return false;
-    // }
-    // int rowLen = b->master[k]->rowLen;
-    // for(int i = 0; i < rowLen; i++){
-    //     if(b->master[k]->isAllocated[i] == 1){
-    //         return true;
-    //     }
-    //     if(i == rowLen - 1){
-    //         return false;
-    //     }
-    // }
-    
-    int cellCurrent = indx - b->master[k]->kStart;
-    int cellsAllocated = b->master[k]->size;
-
-    if(b->master[k]->isAllocated[cellCurrent] == 0){
+    int currentPosition = find_child_position(b, k, indx);
+    if (b->master[k]->isAllocated[currentPosition] == 0){
         return false;
     }
-    
-    if (cellsAllocated > 1){
-        b->master[k]->child[cellCurrent] = EMPTY;
-        b->master[k]->isAllocated[cellCurrent] = 0;
-        b->master[k]->size -= 1;
-        return true;
-    }
-
+    int cellsAllocated = b->master[k]->size;
+//another function
     if (cellsAllocated == 1){
         if(b->master[k]->child != NULL){
             free(b->master[k]->child);
-            b->master[k]->child = NULL;
+            // b->master[k]->child = NULL;
         }
         if(b->master[k]->isAllocated != NULL){
             free(b->master[k]->isAllocated);
@@ -370,7 +323,36 @@ bool bsa_delete(bsa* b, int indx) {
         return true;
     }
 
+//one function
+    if (cellsAllocated > 1){
+        b->master[k]->child[currentPosition] = EMPTY;
+        b->master[k]->isAllocated[currentPosition] = 0;
+        b->master[k]->size -= 1;
+        return true;
+    }
     return false;
+}
+
+bool bsa_free(bsa* b) {
+    if (b == NULL) {
+        return false;
+    }
+    for (int i = 0; i < BSA_ROWS; i++) {
+        if (b->master[i] != NULL) {
+            if(b->master[i]->child != NULL){
+                free(b->master[i]->child);
+                b->master[i]->child = NULL;
+            }
+            if(b->master[i]->isAllocated != NULL){
+                free(b->master[i]->isAllocated);
+                b->master[i]->isAllocated = NULL;
+            }
+            free(b->master[i]);
+            b->master[i] = NULL;
+        }
+    }
+    free(b);
+    return true;
 }
 
 // Returns maximum index written to so far or
@@ -392,42 +374,6 @@ int bsa_maxindex(bsa* b){
     return OUTBOUND;
 }
 
-// // Clears up all space used
-// bool bsa_free(bsa* b){
-//     if (b == NULL){
-//         // printf("bsa not init\n");
-//         return false;
-//     }
-//     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
-//         if (b->master[bsaRow] != NULL){
-//             if (b->master[bsaRow]->child != NULL){
-//                 free(b->master[bsaRow]->child);
-//                 // printf("contents of row freed\n");
-//                 free(b->master[bsaRow]->isAllocated);
-//                 // printf("isAlloc freed\n");
-//             }
-//             free(b->master[bsaRow]);
-//             // printf("the bsa_row struct has been freed within row\n");
-//         }
-//     }
-//     free(b); // Free the bsa structure itself
-//     // printf("bsa structure freed\n");
-//     return true;
-// }
-
-
-bool bsa_free(bsa* b) {
-    if (b == NULL) {
-        return false;
-    }
-    int max_index = bsa_maxindex(b);
-    for (int i = max_index; i >= 0; i--) {
-        bsa_delete(b, i);
-    }
-    free(b);
-    return true;
-}
-
 bool bsa_tostring(bsa* b, char* str){
     if ((b == NULL) || (str == NULL)){
         return false;
@@ -437,28 +383,28 @@ bool bsa_tostring(bsa* b, char* str){
         strcpy(str, "");
         return true;
     }
-    int bsaRowEnd = 0;
-    bsaRowEnd = kth_row(maxIndex, &bsaRowEnd);
     str[0] = '\0';
-    for (int bsaRow = 0; bsaRow <= bsaRowEnd; bsaRow++){
-        if (b->master[bsaRow] == NULL){
-            strcat(str, "{}");
-        }
-        else{
-            bsa_tostring_row(b, bsaRow, str);
-        }
+    int k = 0;
+    k = kth_row(maxIndex, &k);
+    for (int bsaRow = 0; bsaRow <= k; bsaRow++){
+        bsa_tostring_row(b, bsaRow, str);
     }
     return true;
 }
 
 void bsa_tostring_row(bsa* b, int bsaRow, char* str){
-    strcat(str, "{");
-    int cellStart = b->master[bsaRow]->kStart;
-    int cellEnd = b->master[bsaRow]->kEnd; 
-    for(int currentPosition = cellStart; currentPosition <= cellEnd; currentPosition++){
-        bsa_tostring_cell(b, bsaRow, currentPosition, str);
+    if (b->master[bsaRow] == NULL){
+        strcat(str, "{}");
     }
-    strcat(str, "}"); //{[0]=0} works
+    else{
+        int cellStart = b->master[bsaRow]->kStart;
+        int cellEnd = b->master[bsaRow]->kEnd; 
+        strcat(str, "{");
+        for(int currentPosition = cellStart; currentPosition <= cellEnd; currentPosition++){
+            bsa_tostring_cell(b, bsaRow, currentPosition, str);
+        }
+        strcat(str, "}");
+    }
 }
 
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str){
@@ -467,6 +413,9 @@ void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str){
         char temp[1000]; 
         sprintf(temp, "[%d]=%d", currentPosition, b->master[bsaRow]->child[cellDifference]);
         strcat(str, temp);
+        if (currentPosition != b->master[bsaRow]->kEnd && b->master[bsaRow]->isAllocated[cellDifference + 1] == 1){
+            strcat(str, " ");
+        }
     }
 }
 
@@ -477,6 +426,7 @@ void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
     //from the max k and find max kEnd --ie go through k from 29->0, if been allocated, access and find max index
     int max_index = bsa_maxindex(b);
     for (int i = 0; i <= max_index; i++){
+        //performing for each bsa_get works for
         int* q = bsa_get(b, i);
         if (q != NULL){
             func(q, acc);
@@ -485,9 +435,6 @@ void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
 }
 
 
-// // You'll this to test the other functions you write
-// TODO: Does software turn off house style when function test are declared? 
-
 void test(void){
     test_kRow();
     testIstart();
@@ -495,12 +442,5 @@ void test(void){
     test_testK();
     test_int_rowLen();
     test_testK();
-
-    // bsa* testBsa = bsa_init();
-    // bool result = test_firstInit(testBsa);
-    // printf("Your boolean variable is: %s\n", result ? "true" : "false");
-    
-    // bsa_free(testBsa);
-    // bool result2 = test_firstInit(testBsa);
-    // printf("Your boolean variable is: %s\n", result2 ? "true" : "false");   
+  
 }
