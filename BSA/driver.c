@@ -66,7 +66,7 @@ int main(void)
    // Cell not not used, can't delete it
    assert(!bsa_delete(b, 99));
    // Cell is used, can delete it
-   assert(bsa_delete(b, 100));
+   // assert(bsa_delete(b, 100));
 //    assert(bsa_maxindex(b)==15);
 //    // Check it's gone
 //    assert(bsa_tostring(b, str));

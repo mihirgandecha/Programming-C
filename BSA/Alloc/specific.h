@@ -78,6 +78,7 @@ void test_int_rowLen(void);
 bool testK(int k);
 void test_testK(void);
 
+// int rowlenAllocated(bsa* b);
 // bool is_indxInbound(int index, int rowStart, int rowEnd);
 // void test_is_indxInbound(void);
 //new k:

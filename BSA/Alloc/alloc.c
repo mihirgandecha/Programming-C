@@ -294,44 +294,60 @@ int* bsa_get(bsa* b, int indx){
     return &(b->master[k]->child[position]);
 }
 
+// int rowlenAllocated(bsa* b, int k){
+//     is
+//     int cellsAllocated = 0;
 
-// Delete element at index indx - forces a shrink
-// if that was the only cell in the row occupied.
-// bool bsa_delete(bsa* b, int indx){ //del after: use free function for delete. Delete row if nothing is set
-//     //has bsa been allocated
-//     int k = 0;
-//     k = kth_row(indx, &k);
-//     if ((!check_initial_conditions(b, indx)) && (!is_ChildRowAloc(b, k))) {
-//         return false;
-//     }
-//     int cellCurrent = indx - b->master[k]->kStart;
-//     int cellsAllocated = b->master[k]->size;
-    
-//     if (cellsAllocated > 1){
-//         b->master[k]->child[cellCurrent] = EMPTY;
-//         b->master[k]->isAllocated[cellCurrent] = 0;
-//         b->master[k]->size -= 1;
-//         return true;
-//     }
 
-//     if (cellsAllocated >= 1){
-//         free(b->master[k]->child);
-//         if(b->master[k]->child == NULL){
-//             return true;
+//     for (int i = 0; i < BSA_ROWS; i++) {
+//         if (b->master[i] != NULL) {
+//             cellsAllocated += b->master[i]->size;
 //         }
 //     }
-
-//     return false;
+//     return cellsAllocated;
 // }
 
 bool bsa_delete(bsa* b, int indx) {
-    int k = 0;
-    k = kth_row(indx, &k);
-    if ((!check_initial_conditions(b, indx)) || (!is_ChildRowAloc(b, k))) {
+    // if((b == NULL) && (b->master == NULL)){
+    //     return false;
+    // }
+    if (check_initial_conditions(b, indx) == false){ //return b != NULL && b->master != NULL && is_indxinBound(indx);
         return false;
     }
+    int k = 0;
+    k = kth_row(indx, &k);
+    if(b->master[k]->child == NULL){
+        return false;
+    }
+    int prevIndex = -1;
+    for (int i = 0; i < b->master[k]->rowLen; i++) {
+        if (b->master[k]->isAllocated[i] == 1){
+            if (prevIndex != -1 && i != prevIndex + 1) {
+            return false;
+        }
+        prevIndex = i;
+    }
+}
+    //need to loop through and find where isAllocated == 1, if the indx isnt equal to one above return false
+    // if(b->master[k]->child[indx] == NULL){
+    //     return false;
+    // }
+    // int rowLen = b->master[k]->rowLen;
+    // for(int i = 0; i < rowLen; i++){
+    //     if(b->master[k]->isAllocated[i] == 1){
+    //         return true;
+    //     }
+    //     if(i == rowLen - 1){
+    //         return false;
+    //     }
+    // }
+    
     int cellCurrent = indx - b->master[k]->kStart;
     int cellsAllocated = b->master[k]->size;
+
+    if(b->master[k]->isAllocated[cellCurrent] == 0){
+        return false;
+    }
     
     if (cellsAllocated > 1){
         b->master[k]->child[cellCurrent] = EMPTY;
@@ -399,29 +415,6 @@ int bsa_maxindex(bsa* b){
 //     return true;
 // }
 
-// Clears up all space used
-// bool bsa_free(bsa* b){
-//     if (b == NULL){
-//         // printf("bsa not init\n");
-//         return false;
-//     }
-//     bsa_maxindex(b);
-//     if ((test_firstInit(b) == true) && (b->master != NULL) && (b->master[k]->child ==NULL)){
-//         return false;
-//     }
-//     return true;
-//     if(is_ChildRowAloc())
-//     free(b);
-//     // return true;
-//     // for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
-//     //     if (b->master[bsaRow] != NULL){
-//     //         free(b->master[bsaRow]);
-//     //     }
-//     // }
-//     // free(b); // Free the bsa structure itself
-//     // printf("bsa structure freed\n");
-//     return true;
-// }
 
 bool bsa_free(bsa* b) {
     if (b == NULL) {
@@ -432,6 +425,7 @@ bool bsa_free(bsa* b) {
         bsa_delete(b, i);
     }
     free(b);
+    return true;
 }
 
 bool bsa_tostring(bsa* b, char* str){
@@ -475,7 +469,6 @@ void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str){
         strcat(str, temp);
     }
 }
-
 
 // Allow a user-defined function to be applied to each (valid) value 
 // in the array. The user defined 'func' is passed a pointer to an int,
