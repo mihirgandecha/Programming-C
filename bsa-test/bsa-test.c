@@ -411,3 +411,5 @@ int* bsa_get(bsa* b, int indx){
     //     }
     // }
     // return NULL;
+
+    

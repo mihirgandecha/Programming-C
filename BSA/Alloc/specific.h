@@ -5,6 +5,7 @@
 #define OUTBOUND -1
 #define OUTBOUND_END 1073741823
 #define EMPTY 0
+#define MAX_MASTERROW 29
 
 //typedef operations function?!can these test can only be for MasterRow?!!!
 // typedef struct bsaOperations{
@@ -14,11 +15,11 @@
 
 typedef struct BSA_Row{
     int* child; //the position of d within a row created
+    int* isAllocated; //array indicating after child row is allocated, 0 represents if d has been written into, or 1 if it has
     int kStart;
     int kEnd;
     int rowLen; 
     int size;
-    int* isAllocated; //but then memory has to be allocated
 }BSA_Row;
 
 struct bsa { //whole bsa structure
@@ -36,6 +37,7 @@ bool check_initial_conditions(bsa* b, int indx);
 bool handle_child_allocation(bsa* b, int k);
 bool allocate2_BSAROW(bsa* b, int k);
 void test_secondAlloc(void);
+void asserttest_secondAlloc(void);
 
 //Third Allocation - rowlen calloced
 //Does it need to be allocated?
@@ -43,19 +45,18 @@ bool handle_row_allocation(bsa* b, int k);
 //Allocate row
 bool allocate3_rowlen(bsa* b, int k);
 //test functions
-bool test_alloc3(bsa* b, int k);
-void test_ThirdAlloc(void);
+// bool test_alloc3(bsa* b, int k);
+void asserttest_ThirdAlloc(void);
 //Set value d into row
 bool set_value(bsa* b, int indx, int d);
 //Checking if BSA_Row structure has been allocated space, and 
-bool is_ChildAloocated(bsa* b, int k);
+bool is_ChildRowAloc(bsa* b, int k);
 //Check that the child has been allocated for rowspace
-bool isRowEmpty(bsa* b, int k, int rowLen);
+// bool isRowEmpty(bsa* b, int k, int rowLen);
 //Check if indx in bound:
 bool is_indxinBound(int indx);
-void test_indxbound(void);
-//Storing data into structure
-void storeData(bsa* b, int k, int rowLen);
+void asserttest_indxbound(void);
+
 // bool bsa_set2(bsa* b, int indx, int d);
 int find_masterrow(int k, int indx);
 
@@ -83,3 +84,5 @@ void test_testK(void);
 // void kthRow_Helper(int indx, int *k);
 // int kthRow_Main(int indx);
 // void test_krowNew(void);
+void bsa_tostring_row(bsa* b, int bsaRow, char* str);
+void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str);

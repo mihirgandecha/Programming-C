@@ -27,8 +27,9 @@ int main(void)
    assert(bsa_set(b, 15, 15));
 
    // tostring
-   // assert(bsa_tostring(b, str));
-   // assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}")==0);
+   assert(bsa_tostring(b, str));
+   printf("%s\n", str);
+   assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}")==0);
       // test();
 
    // Get some values tbsa've already been set
@@ -39,7 +40,7 @@ int main(void)
    assert(p);
    assert(*p == 15);
 
-//    // Get an unset value 
+   // Get an unset value 
    p = bsa_get(b, 1);
    assert(!p);
    p = bsa_get(b, 1024);
@@ -48,24 +49,24 @@ int main(void)
    assert(bsa_set(b, 100, 100));
    printf("%d\n", bsa_maxindex(b));
    assert(bsa_maxindex(b)==100);
-//    // Once resized, using a get is OK
-//    p = bsa_get(b, 100);
-//    assert(p);
-//    assert(*p == 100);
-//    // Retest values from BSA before resize
-//    p = bsa_get(b, 15);
-//    assert(p);
-//    assert(*p == 15);
+   // Once resized, using a get is OK
+   p = bsa_get(b, 100);
+   assert(p);
+   assert(*p == 100);
+   // Retest values from BSA before resize
+   p = bsa_get(b, 15);
+   assert(p);
+   assert(*p == 15);
 
-//    assert(bsa_tostring(b, str));
-//    assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}{}{[100]=100}")==0);
+   assert(bsa_tostring(b, str));
+   assert(strcmp(str, "{[0]=0}{}{}{}{[15]=15}{}{[100]=100}")==0);
 
    // Let's do some deleting
 
    // Cell not not used, can't delete it
-   // assert(!bsa_delete(b, 99));
+   assert(!bsa_delete(b, 99));
    // Cell is used, can delete it
-   // assert(bsa_delete(b, 100));
+   assert(bsa_delete(b, 100));
 //    assert(bsa_maxindex(b)==15);
 //    // Check it's gone
 //    assert(bsa_tostring(b, str));
