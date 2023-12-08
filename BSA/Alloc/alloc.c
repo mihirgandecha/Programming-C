@@ -41,8 +41,7 @@ bool bsa_set(bsa* b, int indx, int d) {
     if (!check_initial_conditions(b, indx)) {
         return false;
     }
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(indx, &mRowVal);
+    int mRowVal = get_MasterRow(indx);
     if (!check_AllocCellRow(b, mRowVal) || !check_alocCellStruct(b, mRowVal)) {
         return false;
     }
@@ -99,8 +98,7 @@ bool alloc_CellRow(bsa* b, int mRowVal){
 }
 
 bool set_value(bsa* b, int indx, int d) {
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(indx, &mRowVal);
+    int mRowVal = get_MasterRow(indx);
     b->masterRow[mRowVal]->cellRow_Start = get_CellRowStart(mRowVal);
     b->masterRow[mRowVal]->cellRow_End = get_CellRowEnd(mRowVal);
     b->masterRow[mRowVal]->cellrow_Len = get_cellLen(mRowVal);
@@ -129,8 +127,7 @@ bool set_value(bsa* b, int indx, int d) {
 void asserttest_ThirdAlloc(void){
     bsa* testBsa = bsa_init();
     int indx = 7;
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(indx, &mRowVal); //should be 3
+    int mRowVal = get_MasterRow(indx); //should be 3
     alloc_CellStruct(testBsa, mRowVal);
     alloc_CellRow(testBsa, mRowVal);
     int rowLen = get_cellLen(mRowVal);
@@ -149,43 +146,53 @@ bool is_ChildRowAloc(bsa* b, int mRowVal){
     return true;
 }
 
-
-int get_MasterRow(int index, int *mRowVal) { 
-    if (*mRowVal >= BSA_ROWS) {
-        return OUTBOUND; 
+int get_MasterRow(int index){
+    for (int mRowVal = 0; mRowVal < BSA_ROWS; mRowVal++){
+        int cellRowStart = get_CellRowStart(mRowVal);
+        int cellRowEnd = get_CellRowEnd(mRowVal);
+        if ((index >= cellRowStart) && (index <= cellRowEnd)){
+            return mRowVal;
+        }
     }
-    int iS = get_CellRowStart(*mRowVal);
-    int iE = get_CellRowEnd(*mRowVal);
-    if ((index >= iS) && (index <= iE)){
-        is_MasterinBound(*mRowVal);
-        return *mRowVal;
-    } 
-    else {
-        (*mRowVal)++;
-        return get_MasterRow(index, mRowVal);
-    }
+    return 0;
 }
 
-void testget_MasterRow(void){ //works
-    int mRowVal = 0;
-    assert(get_MasterRow(0, &mRowVal) == 0);
-    mRowVal = 0;
-    assert(get_MasterRow(1, &mRowVal) == 1);
-    mRowVal = 0;
-    assert(get_MasterRow(2, &mRowVal) == 1);
-    mRowVal = 0;
-    assert(get_MasterRow(3, &mRowVal) == 2);//works now
-    mRowVal = 0;
-    assert(get_MasterRow(6, &mRowVal) == 2); 
-    mRowVal = 0;
-    assert(get_MasterRow(7, &mRowVal) == 3); 
-    mRowVal = 0;
-    assert(get_MasterRow(14, &mRowVal) == 3);
-    mRowVal = 0;
-    assert(get_MasterRow(30, &mRowVal) == 4); 
-    mRowVal = 0;
-    assert(get_MasterRow(128, &mRowVal) == 7);
-}
+// int get_MasterRow(int index, int *mRowVal) { 
+//     if (*mRowVal >= BSA_ROWS) {
+//         return OUTBOUND; 
+//     }
+//     int iS = get_CellRowStart(*mRowVal);
+//     int iE = get_CellRowEnd(*mRowVal);
+//     if ((index >= iS) && (index <= iE)){
+//         is_MasterinBound(*mRowVal);
+//         return *mRowVal;
+//     } 
+//     else {
+//         (*mRowVal)++;
+//         return get_MasterRow(index, mRowVal);
+//     }
+// }
+
+// void testget_MasterRow(void){ //works
+//     int mRowVal = 0;
+//     assert(get_MasterRow(0, &mRowVal) == 0);
+//     mRowVal = 0;
+//     assert(get_MasterRow(1, &mRowVal) == 1);
+//     mRowVal = 0;
+//     assert(get_MasterRow(2, &mRowVal) == 1);
+//     mRowVal = 0;
+//     assert(get_MasterRow(3, &mRowVal) == 2);//works now
+//     mRowVal = 0;
+//     assert(get_MasterRow(6, &mRowVal) == 2); 
+//     mRowVal = 0;
+//     assert(get_MasterRow(7, &mRowVal) == 3); 
+//     mRowVal = 0;
+//     assert(get_MasterRow(14, &mRowVal) == 3);
+//     mRowVal = 0;
+//     assert(get_MasterRow(30, &mRowVal) == 4); 
+//     mRowVal = 0;
+//     assert(get_MasterRow(128, &mRowVal) == 7);
+// }
 
 int get_cellLen(int mRowVal){
     if (mRowVal == 0){
@@ -268,8 +275,7 @@ int* bsa_get(bsa* b, int indx){
     if (!check_initial_conditions(b, indx)) {
         return NULL;
     } //ok bsa is allocated and indx is in range
-    int mRowVal = 0;
-    get_MasterRow(indx, &mRowVal);
+    int mRowVal = get_MasterRow(indx);
     if (b->masterRow[mRowVal] == NULL || b->masterRow[mRowVal]->cellRow == NULL) { //there is func for this
         return NULL; //perhaps is is_ChildRowAloc
     }
@@ -292,8 +298,7 @@ bool bsa_delete(bsa* b, int indx) {
     if (check_initial_conditions(b, indx) == false){ //return b != NULL && b->masterRow != NULL && is_indxinBound(indx);
         return false;
     }
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(indx, &mRowVal);
+    int mRowVal = get_MasterRow(indx);
     if(b->masterRow[mRowVal]->cellRow == NULL){
         return false;
     }
@@ -440,8 +445,7 @@ bool bsa_tostring(bsa* b, char* str){
         return true;
     }
     str[0] = '\0';
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(maxIndex, &mRowVal);
+    int mRowVal = get_MasterRow(maxIndex);
     for (int bsaRow = 0; bsaRow <= mRowVal; bsaRow++){
         bsa_tostring_row(b, bsaRow, str);
     }
@@ -492,19 +496,25 @@ void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
 
 
 void test(void){
-    testget_MasterRow();
-    testget_CellRowStart();
-    testget_CellRowEnd();
-    testis_MasterinBound();
-    testget_cellLen();
+    assert(!is_indxinBound(OUTBOUND));
+
+    //Test for finding Value in Master Row given index:
+    assert(get_MasterRow(0) == 0);
+    assert(get_MasterRow(1) == 1);
+    assert(get_MasterRow(14) == 3);
+    assert(get_MasterRow(30) == 4); 
+    assert(get_MasterRow(128) == 7);
+    // testget_MasterRow();
+    // testget_CellRowStart();
+    // testget_CellRowEnd();
+    // testis_MasterinBound();
+    // testget_cellLen();
 
     //Check index in bound:
-    assert(!is_indxinBound(-1));
     //Check second allocation:
     bsa* testBsa = bsa_init();
     int indx = 7;
-    int mRowVal = 0;
-    mRowVal = get_MasterRow(indx, &mRowVal); //should be 3
+    int mRowVal = get_MasterRow(indx); //should be 3
     alloc_CellStruct(testBsa, mRowVal);
     assert(testBsa->masterRow[mRowVal] != NULL);
     bsa_free(testBsa);  

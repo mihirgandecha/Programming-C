@@ -54,7 +54,7 @@ bool bsa_freeData(bsa* b, int bsaRow);
 
 //General Helper Functions:
 //Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?
-int get_MasterRow(int index, int *mRowVal);
+int get_MasterRow(int index);
 void testget_MasterRow(void);
 //Calculates the Cell Row Starting Index given masterRow:
 int get_CellRowStart(int mRowVal);
