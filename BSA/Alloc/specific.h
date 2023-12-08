@@ -6,18 +6,18 @@
 #define OUTBOUND_END 1073741823
 #define EMPTY 0
 #define MAX_MASTERROW 29
-
-typedef struct BSA_Row{
-    int* child; //the position of d within a row created rowCells
-    int* isAllocated; //change to bool
-    int kStart;
-    int kEnd;
-    int rowLen; 
-    int size;
-}BSA_Row;
+//renamed variables
+typedef struct Cell_Row{
+    int* cellRow; //Working! Changed var name
+    bool* isD_Allocated; //Working! Changed var name
+    int cellRow_Start;
+    int cellRow_End;
+    int cellrow_Len; 
+    int dAllocSize;
+}Cell_Row;
 
 struct bsa { //whole bsa structure
-    BSA_Row* master[BSA_ROWS]; //1D array of pointers - change to just array of 30
+    Cell_Row* masterRow[BSA_ROWS]; //Working! Changed var name!
     // bsaOperations* ops;
 };
 
