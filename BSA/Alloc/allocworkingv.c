@@ -400,6 +400,7 @@ int bsa_maxindex(bsa* b){
     return OUTBOUND;
 }
 
+
 bool bsa_tostring(bsa* b, char* str){
     if ((b == NULL) || (str == NULL)){
         return false;

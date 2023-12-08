@@ -8,11 +8,11 @@
 //renamed variables
 typedef struct Cell_Row{
     int* cellRow;
-    bool* isD_Allocated; 
-    int cellRow_Start;
-    int cellRow_End;
-    int cellrow_Len; 
-    int dAllocSize;
+    bool* inUse; 
+    int start;
+    int end;
+    int length; 
+    int size;
 }Cell_Row;
 
 struct bsa {
@@ -48,7 +48,7 @@ bool is_ChildRowAloc(bsa* b, int mRowVal);
 
 //Helper functions for bsa_tostring:
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
-void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str);
+void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str);
 
 bool bsa_freeData(bsa* b, int bsaRow);
 
@@ -72,3 +72,5 @@ bool is_indxinBound(int indx);
 bool is_MasterinBound(int mRowVal);
 void testis_MasterinBound(void);
 
+bool bsa_freerow(bsa* b, int mRowVal);
+void delete_helper(bsa* b, int currentPosition, int mRowVal);

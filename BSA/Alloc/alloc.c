@@ -85,13 +85,13 @@ bool alloc_CellRow(bsa* b, int mRowVal){
         if (b->masterRow[mRowVal]->cellRow == NULL){ // Corrected check
             return false; // Allocation failed
         }
-        b->masterRow[mRowVal]->isD_Allocated = (bool*)calloc(rowLen, sizeof(bool));
-        if (b->masterRow[mRowVal]->isD_Allocated == NULL){ // Corrected check
+        b->masterRow[mRowVal]->inUse = (bool*)calloc(rowLen, sizeof(bool));
+        if (b->masterRow[mRowVal]->inUse == NULL){ // Corrected check
             // free(b->masterRow[mRowVal]->cellRow); // Free previously allocated memory TODO
             return false;
         }
         for (int i = 0; i < rowLen; i++){
-            b->masterRow[mRowVal]->isD_Allocated[i] = false;
+            b->masterRow[mRowVal]->inUse[i] = false;
         }
     } 
     return true; // Allocation succeeded or was not needed
@@ -99,16 +99,16 @@ bool alloc_CellRow(bsa* b, int mRowVal){
 
 bool set_value(bsa* b, int indx, int d) {
     int mRowVal = get_MasterRow(indx);
-    b->masterRow[mRowVal]->cellRow_Start = get_CellRowStart(mRowVal);
-    b->masterRow[mRowVal]->cellRow_End = get_CellRowEnd(mRowVal);
-    b->masterRow[mRowVal]->cellrow_Len = get_cellLen(mRowVal);
-    int position = indx - b->masterRow[mRowVal]->cellRow_Start;
-    if (position < 0 || position > b->masterRow[mRowVal]->cellRow_End) {
+    b->masterRow[mRowVal]->start = get_CellRowStart(mRowVal);
+    b->masterRow[mRowVal]->end = get_CellRowEnd(mRowVal);
+    b->masterRow[mRowVal]->length = get_cellLen(mRowVal);
+    int position = indx - b->masterRow[mRowVal]->start;
+    if (position < 0 || position > b->masterRow[mRowVal]->end) {
         return false;
     }
     b->masterRow[mRowVal]->cellRow[position] = d;
-    b->masterRow[mRowVal]->isD_Allocated[position] = true;
-    b->masterRow[mRowVal]->dAllocSize += 1;
+    b->masterRow[mRowVal]->inUse[position] = true;
+    b->masterRow[mRowVal]->size += 1;
     return true;
 }
 
@@ -157,63 +157,11 @@ int get_MasterRow(int index){
     return 0;
 }
 
-// int get_MasterRow(int index, int *mRowVal) { 
-//     if (*mRowVal >= BSA_ROWS) {
-//         return OUTBOUND; 
-//     }
-//     int iS = get_CellRowStart(*mRowVal);
-//     int iE = get_CellRowEnd(*mRowVal);
-//     if ((index >= iS) && (index <= iE)){
-//         is_MasterinBound(*mRowVal);
-//         return *mRowVal;
-//     } 
-//     else {
-//         (*mRowVal)++;
-//         return get_MasterRow(index, mRowVal);
-//     }
-// }
-
-// void testget_MasterRow(void){ //works
-//     int mRowVal = 0;
-//     assert(get_MasterRow(0, &mRowVal) == 0);
-//     mRowVal = 0;
-//     assert(get_MasterRow(1, &mRowVal) == 1);
-//     mRowVal = 0;
-//     assert(get_MasterRow(2, &mRowVal) == 1);
-//     mRowVal = 0;
-//     assert(get_MasterRow(3, &mRowVal) == 2);//works now
-//     mRowVal = 0;
-//     assert(get_MasterRow(6, &mRowVal) == 2); 
-//     mRowVal = 0;
-//     assert(get_MasterRow(7, &mRowVal) == 3); 
-//     mRowVal = 0;
-//     assert(get_MasterRow(14, &mRowVal) == 3);
-//     mRowVal = 0;
-//     assert(get_MasterRow(30, &mRowVal) == 4); 
-//     mRowVal = 0;
-//     assert(get_MasterRow(128, &mRowVal) == 7);
-// }
-
 int get_cellLen(int mRowVal){
     if (mRowVal == 0){
         return 1;
     }
     return (1L << mRowVal);
-}
-
-void testget_cellLen(void){
-    assert(get_cellLen(0) == 1);
-    assert(get_cellLen(1) == 2);
-    assert(get_cellLen(2) == 4);
-    assert(get_cellLen(3) == 8);
-    //sep func: void test rowLen == below
-    // bsa* testBSA = bsa_init();
-    // int index = 5;
-    // int mRowVal = get_MasterRow;
-    // int rowStart = get_CellRowStart(mRowVal);
-    // int rowEnd = get_CellRowEnd(mRowVal);
-    // int rowLen = int rowLen(mRowVal);
-    // assert(rowLen == ((rowEnd - rowStart) + 1));
 }
 
 int get_CellRowStart(int mRowVal){
@@ -241,17 +189,6 @@ int get_CellRowEnd(int mRowVal){
     return (1L << (mRowVal + 1)) - 2;
 }
 
-void testget_CellRowEnd(void){
-    assert(get_CellRowEnd(0) == 0);
-    assert(get_CellRowEnd(1) == 2);
-    assert(get_CellRowEnd(2) == 6);
-    assert(get_CellRowEnd(7) == 254);
-    assert(get_CellRowEnd(8) == 510);
-    assert(get_CellRowEnd(9) == 1022);
-    assert(get_CellRowEnd(10) == 2046);
-    assert(get_CellRowEnd(11) == 4094);
-    assert(get_CellRowEnd(BSA_ROWS - 1) == 1073741822);
-}
 
 bool is_MasterinBound(int mRowVal){ 
     if ((mRowVal < 0) || (mRowVal >= BSA_ROWS)){
@@ -279,8 +216,8 @@ int* bsa_get(bsa* b, int indx){
     if (b->masterRow[mRowVal] == NULL || b->masterRow[mRowVal]->cellRow == NULL) { //there is func for this
         return NULL; //perhaps is is_ChildRowAloc
     }
-    int position = indx - b->masterRow[mRowVal]->cellRow_Start;
-    if (position < 0 || position >= b->masterRow[mRowVal]->cellrow_Len) {
+    int position = indx - b->masterRow[mRowVal]->start;
+    if (position < 0 || position >= b->masterRow[mRowVal]->length) {
         return NULL;
     }
     return &(b->masterRow[mRowVal]->cellRow[position]);
@@ -288,146 +225,88 @@ int* bsa_get(bsa* b, int indx){
 
 
 int find_child_position(bsa* b, int mRowVal, int indx) {
-    if (b == NULL || b->masterRow[mRowVal] == NULL || indx < b->masterRow[mRowVal]->cellRow_Start || indx >= b->masterRow[mRowVal]->cellRow_Start + b->masterRow[mRowVal]->cellrow_Len) {
+    int cellStart = b->masterRow[mRowVal]->start;
+    int cellLen = b->masterRow[mRowVal]->length;
+    if (b == NULL || b->masterRow[mRowVal] == NULL || indx < cellStart || indx >= cellStart + cellLen) {
         return OUTBOUND;
     }
-    return indx - b->masterRow[mRowVal]->cellRow_Start;
+    return indx - b->masterRow[mRowVal]->start;
 }
 
-bool bsa_delete(bsa* b, int indx) {
-    if (check_initial_conditions(b, indx) == false){ //return b != NULL && b->masterRow != NULL && is_indxinBound(indx);
+bool bsa_delete(bsa* b, int indx){
+    if (check_initial_conditions(b, indx) == false){
         return false;
     }
     int mRowVal = get_MasterRow(indx);
-    if(b->masterRow[mRowVal]->cellRow == NULL){
-        return false;
-    }
     int currentPosition = find_child_position(b, mRowVal, indx);
-    if (b->masterRow[mRowVal]->isD_Allocated[currentPosition] == false){
+    if (!b->masterRow[mRowVal]->inUse[currentPosition]){
         return false;
     }
-    int cellsAllocated = b->masterRow[mRowVal]->dAllocSize;
-//another function
-    if (cellsAllocated == 1){
-        if(b->masterRow[mRowVal]->cellRow != NULL){
-            free(b->masterRow[mRowVal]->cellRow);
-            // b->masterRow[mRowVal]->cellRow = NULL;
+    if (b->masterRow[mRowVal]->size == 1){
+        if(!bsa_freerow(b, mRowVal)){
+            return false;
         }
-        if(b->masterRow[mRowVal]->isD_Allocated != NULL){
-            free(b->masterRow[mRowVal]->isD_Allocated);
-            b->masterRow[mRowVal]->isD_Allocated = NULL;
-        }
+        return true;
+    }
+    if (b->masterRow[mRowVal]->size > 1){
+        delete_helper(b, currentPosition, mRowVal);
+        return true;
+    }
+    return false;
+}
+
+bool bsa_freerow(bsa* b, int mRowVal){
+    if(b->masterRow[mRowVal]->cellRow != NULL){
+        free(b->masterRow[mRowVal]->cellRow);
+        b->masterRow[mRowVal]->cellRow = NULL;
+        free(b->masterRow[mRowVal]->inUse);
+        b->masterRow[mRowVal]->inUse = NULL;
         free(b->masterRow[mRowVal]);
         b->masterRow[mRowVal] = NULL;
         return true;
     }
-
-//one function
-    if (cellsAllocated > 1){
-        b->masterRow[mRowVal]->cellRow[currentPosition] = 0;
-        b->masterRow[mRowVal]->isD_Allocated[currentPosition] = false;
-        b->masterRow[mRowVal]->dAllocSize -= 1;
-        return true;
-    }
     return false;
+}
+
+void delete_helper(bsa* b, int currentPosition, int mRowVal){
+    b->masterRow[mRowVal]->cellRow[currentPosition] = 0;
+    b->masterRow[mRowVal]->inUse[currentPosition] = false;
+    b->masterRow[mRowVal]->size -= 1;
 }
 
 bool bsa_free(bsa* b) {
     if (b == NULL) {
         return false;
     }
-    for (int i = 0; i < BSA_ROWS; i++) {
-        if (b->masterRow[i] != NULL) {
-            if(b->masterRow[i]->cellRow != NULL){
-                free(b->masterRow[i]->cellRow);
-                b->masterRow[i]->cellRow = NULL;
+    for (int mRowVal = 0; mRowVal < BSA_ROWS; mRowVal++) {
+        if (b->masterRow[mRowVal] != NULL) {
+            if(b->masterRow[mRowVal]->cellRow != NULL){
+                free(b->masterRow[mRowVal]->cellRow);
+                b->masterRow[mRowVal]->cellRow = NULL;
             }
-            if(b->masterRow[i]->isD_Allocated != NULL){
-                free(b->masterRow[i]->isD_Allocated);
-                b->masterRow[i]->isD_Allocated = NULL;
+            if(b->masterRow[mRowVal]->inUse != NULL){
+                free(b->masterRow[mRowVal]->inUse);
+                b->masterRow[mRowVal]->inUse = NULL;
             }
-            free(b->masterRow[i]);
-            b->masterRow[i] = NULL;
+            free(b->masterRow[mRowVal]);
+            b->masterRow[mRowVal] = NULL;
         }
     }
     free(b);
     return true;
 }
-// bool bsa_free(bsa* b) {
-//     if (b == NULL) {
-//         return false;
-//     }
-//     for (int i = 0; i < BSA_ROWS; i++){
-//         if((b->masterRow != NULL) && (b->masterRow[i] != NULL)){
-//             bsa_freeData(b, i);
-//         }
-//         else if (b->masterRow[i] != NULL){
-//             free(b->masterRow[i]);
-//                 if (b->masterRow[i] != NULL){
-//                     return false; // Allocation failed
-//                 }
-//         }
-//     }
-//     free(b);
-//     return true;
-// }
 
-// bool bsa_freeData(bsa* b, int bsaRow){
-//     // if(b->masterRow == NULL){
-//     //     return false;
-//     // }
-//     // if(b->masterRow[bsaRow] == NULL){
-//     //     return false;
-//     // }
-//     // int rowLen = b->masterRow[bsaRow]->rowLen;
-//     // for (int currentPosition = b->masterRow[bsaRow]->cellRow_Start; currentPosition < rowLen; currentPosition++){
-//     //     free(&b->masterRow[bsaRow]->cellRow[currentPosition]);
-//     //     free(&b->masterRow[bsaRow]->isD_Allocated[currentPosition]);
-//     // }
-//     free(b->masterRow[bsaRow]->isD_Allocated);
-//     free(b->masterRow[bsaRow]->cellRow);
-//     // if (b->masterRow[bsaRow]->cellRow != NULL){
-//     //     return false; // Allocation failed
-//     // }
-//     free(b->masterRow);
-//     return true;
-// }
-
-
-// bool bsa_free(bsa* b) {
-//     if (b == NULL){
-//         return false;
-//     }
-//     for (int bsaPointer = 0; bsaPointer < BSA_ROWS; bsaPointer++){
-//         if (b->masterRow[bsaPointer] == NULL){
-//             free(b->masterRow[bsaPointer]);
-//             return true;
-//         }
-//         if ((b->masterRow[bsaPointer] != NULL) && (b->masterRow[bsaPointer]->cellRow != NULL)){
-//             free(b->masterRow[bsaPointer]->cellRow);
-//         }
-//         else if(b->masterRow[bsaPointer]->isD_Allocated != NULL){
-//             free(b->masterRow[bsaPointer]->isD_Allocated);
-//         }
-//     }
-//     free(b);
-//     return true;
-// }
-
-// Returns maximum index written to so far or
-// -1 if no cells have been written to yet
 int bsa_maxindex(bsa* b){
-    if ((b == NULL) || (b->masterRow == NULL)){
+    if (!b || !b->masterRow){
         return OUTBOUND;
     }
-    for (int bsaRow = MAX_MASTERROW; bsaRow >= 0; bsaRow--){
-        if (b->masterRow[bsaRow] != NULL){
-            //make int variables
-            // printf("bsaRow: %i, Kstart: %i, Kend: %i\n", bsaRow, b->masterRow[bsaRow]->cellRow_Start, b->masterRow[bsaRow]->cellRow_End);
-            for(int maxIndex = b->masterRow[bsaRow]->cellRow_End; maxIndex >= b->masterRow[bsaRow]->cellRow_Start; maxIndex--){
-                if(b->masterRow[bsaRow]->isD_Allocated[maxIndex - b->masterRow[bsaRow]->cellRow_Start] == true){
-                    return maxIndex;
-                } 
+    for (int rowY = MAX_MASTERROW; rowY >= 0; rowY--){
+        if (b->masterRow[rowY] != NULL){ 
+            int cellStart = b->masterRow[rowY]->start;
+            for(int rowXMax = b->masterRow[rowY]->end; rowXMax >= cellStart; rowXMax--){
+                if(b->masterRow[rowY]->inUse[rowXMax - cellStart]){
+                    return rowXMax;
+                }
             }
         }
     }
@@ -457,23 +336,23 @@ void bsa_tostring_row(bsa* b, int bsaRow, char* str){
         strcat(str, "{}");
     }
     else{
-        int cellStart = b->masterRow[bsaRow]->cellRow_Start;
-        int cellEnd = b->masterRow[bsaRow]->cellRow_End; 
+        int cellStart = b->masterRow[bsaRow]->start;
+        int cellEnd = b->masterRow[bsaRow]->end; 
         strcat(str, "{");
-        for(int currentPosition = cellStart; currentPosition <= cellEnd; currentPosition++){
-            bsa_tostring_cell(b, bsaRow, currentPosition, str);
+        for(int i = cellStart; i <= cellEnd; i++){
+            bsa_tostring_cell(b, bsaRow, i, cellEnd, str);
         }
         strcat(str, "}");
     }
 }
 
-void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str){
-    int cellDifference = currentPosition - b->masterRow[bsaRow]->cellRow_Start;
-    if(b->masterRow[bsaRow]->isD_Allocated[cellDifference] == 1){
+void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str){
+    int cellDifference = currentPosition - b->masterRow[bsaRow]->start;
+    if(b->masterRow[bsaRow]->inUse[cellDifference] == 1){
         char temp[1000]; 
         sprintf(temp, "[%d]=%d", currentPosition, b->masterRow[bsaRow]->cellRow[cellDifference]);
         strcat(str, temp); //make variable below
-        if (currentPosition != b->masterRow[bsaRow]->cellRow_End && b->masterRow[bsaRow]->isD_Allocated[cellDifference + 1] == true){
+        if (currentPosition != cellEnd && b->masterRow[bsaRow]->inUse[cellDifference + 1] == true){
             strcat(str, " ");
         }
     }
@@ -483,7 +362,7 @@ void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str){
 // in the array. The user defined 'func' is passed a pointer to an int,
 // and maintains an accumulator of the result where required.
 void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
-    //from the max mRowVal and find max cellRow_End --ie go through mRowVal from 29->0, if been allocated, access and find max index
+    //from the max mRowVal and find max end --ie go through mRowVal from 29->0, if been allocated, access and find max index
     int max_index = bsa_maxindex(b);
     for (int i = 0; i <= max_index; i++){
         //performing for each bsa_get works for
@@ -504,11 +383,18 @@ void test(void){
     assert(get_MasterRow(14) == 3);
     assert(get_MasterRow(30) == 4); 
     assert(get_MasterRow(128) == 7);
-    // testget_MasterRow();
-    // testget_CellRowStart();
-    // testget_CellRowEnd();
-    // testis_MasterinBound();
-    // testget_cellLen();
+
+    //Cell Length Tests:
+    assert(get_cellLen(0) == 1);
+    assert(get_cellLen(1) == 2);
+    assert(get_cellLen(2) == 4);
+    assert(get_cellLen(3) == 8);
+
+    //Test Cell Row Length:
+    assert(get_CellRowStart(4) == 15);
+    assert(get_CellRowStart(5) == 31);
+    assert(get_CellRowStart(6) == 63);
+    assert(get_CellRowStart(BSA_ROWS - 1) == 536870911); //last row 29
 
     //Check index in bound:
     //Check second allocation:
