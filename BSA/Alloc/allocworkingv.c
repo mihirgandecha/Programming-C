@@ -312,7 +312,7 @@ bool bsa_delete(bsa* b, int indx) {
     if (cellsAllocated == 1){
         if(b->master[k]->child != NULL){
             free(b->master[k]->child);
-            // b->master[k]->child = NULL;
+            b->master[k]->child = NULL;
         }
         if(b->master[k]->isAllocated != NULL){
             free(b->master[k]->isAllocated);
@@ -333,6 +333,29 @@ bool bsa_delete(bsa* b, int indx) {
     return false;
 }
 
+bool bsa_free(bsa* b) {
+    if (b == NULL) {
+        return false;
+    }
+    for (int i = 0; i < BSA_ROWS; i++) {
+        if (b->master[i] != NULL) {
+            if(b->master[i]->child != NULL){
+                free(b->master[i]->child);
+                b->master[i]->child = NULL;
+            }
+            if(b->master[i]->isAllocated != NULL){
+                free(b->master[i]->isAllocated);
+                b->master[i]->isAllocated = NULL;
+            }
+            free(b->master[i]);
+            b->master[i] = NULL;
+        }
+    }
+    free(b);
+    return true;
+}
+
+
 // bool bsa_free(bsa* b) {
 //     if (b == NULL) {
 //         return false;
@@ -343,10 +366,12 @@ bool bsa_delete(bsa* b, int indx) {
 //                 free(b->master[i]->child);
 //                 b->master[i]->child = NULL;
 //             }
+//             //else if
 //             if(b->master[i]->isAllocated != NULL){
 //                 free(b->master[i]->isAllocated);
 //                 b->master[i]->isAllocated = NULL;
 //             }
+//             //else if
 //             free(b->master[i]);
 //             b->master[i] = NULL;
 //         }
@@ -354,66 +379,6 @@ bool bsa_delete(bsa* b, int indx) {
 //     free(b);
 //     return true;
 // }
-bool bsa_free(bsa* b) {
-    if (b == NULL) {
-        return false;
-    }
-    for (int i = 0; i < BSA_ROWS; i++){
-        if((b->master != NULL) && (b->master[i] != NULL)){
-            bsa_freeData(b, i);
-        }
-        else if (b->master[i] != NULL){
-            free(b->master[i]);
-                if (b->master[i] != NULL){
-                    return false; // Allocation failed
-                }
-        }
-    }
-    free(b);
-    return true;
-}
-
-bool bsa_freeData(bsa* b, int bsaRow){
-    // if(b->master == NULL){
-    //     return false;
-    // }
-    // if(b->master[bsaRow] == NULL){
-    //     return false;
-    // }
-    // int rowLen = b->master[bsaRow]->rowLen;
-    // for (int currentPosition = b->master[bsaRow]->kStart; currentPosition < rowLen; currentPosition++){
-    //     free(&b->master[bsaRow]->child[currentPosition]);
-    //     free(&b->master[bsaRow]->isAllocated[currentPosition]);
-    // }
-    free(b->master[bsaRow]->isAllocated);
-    free(b->master[bsaRow]->child);
-    // if (b->master[bsaRow]->child != NULL){
-    //     return false; // Allocation failed
-    // }
-    free(b->master);
-    return true;
-}
-
-
-bool bsa_free(bsa* b) {
-    if (b == NULL){
-        return false;
-    }
-    for (int bsaPointer = 0; bsaPointer < BSA_ROWS; bsaPointer++){
-        if (b->master[bsaPointer] == NULL){
-            free(b->master[bsaPointer]);
-            return true;
-        }
-        if ((b->master[bsaPointer] != NULL) && (b->master[bsaPointer]->child != NULL)){
-            free(b->master[bsaPointer]->child);
-        }
-        else if(b->master[bsaPointer]->isAllocated != NULL){
-            free(b->master[bsaPointer]->isAllocated);
-        }
-    }
-    free(b);
-    return true;
-}
 
 // Returns maximum index written to so far or
 // -1 if no cells have been written to yet

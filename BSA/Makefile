@@ -10,6 +10,11 @@ all: driverbsa_s driverbsa fibmemo sieve_s sieve_v isfactorial # extfibmemo_s
 driverbsa_s: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
 	$(CC) driver.c Alloc/alloc.c -o driverbsa_s -I./Alloc $(SANITIZE)
 
+driverbsa_v: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
+	$(CC) driver.c Alloc/alloc.c -o driverbsa_v -I./Alloc $(VALGRIND)
+
+driverbsa_prof: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
+	$(CC) -pg driver.c Alloc/alloc.c -o driverbsa -I./Alloc $(COMMON)
 driverbsa: bsa.h Alloc/specific.h Alloc/alloc.c driver.c
 	$(CC) driver.c Alloc/alloc.c -o driverbsa -I./Alloc $(PRODUCTION)
 

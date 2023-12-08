@@ -81,5 +81,3 @@ void test_testK(void);
 // void test_krowNew(void);
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str);
-
-bool bsa_freeData(bsa* b, int bsaRow);

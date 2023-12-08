@@ -1,1 +1,7 @@
 submit at zip file, alloc.c and specific.c
+
+1. quick or slow and lookup. 
+2. time statistics + memory
+3. why is it better or worse.
+4. Big O complexity
+5. compile without optimiser, then compile with -ph, gprof EXEC gmon.out
