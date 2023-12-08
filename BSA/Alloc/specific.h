@@ -4,82 +4,71 @@
 
 #define OUTBOUND -1
 #define OUTBOUND_END 1073741823
-#define EMPTY 0
 #define MAX_MASTERROW 29
 //renamed variables
 typedef struct Cell_Row{
-    int* cellRow; //Working! Changed var name
-    bool* isD_Allocated; //Working! Changed var name
+    int* cellRow;
+    bool* isD_Allocated; 
     int cellRow_Start;
     int cellRow_End;
     int cellrow_Len; 
     int dAllocSize;
 }Cell_Row;
 
-struct bsa { //whole bsa structure
-    Cell_Row* masterRow[BSA_ROWS]; //Working! Changed var name!
-    // bsaOperations* ops;
+struct bsa {
+    Cell_Row* masterRow[BSA_ROWS]; 
 };
 
-//test if a bsa has been initialised, returning false if NULL 
-//First test for bsa_set
+//Helper function to bsa_init:
 bool test_firstInit(bsa *b);
 
-//Second Allocation - master[k]->child allocated 1 BSAROW Struct size 
+//General Helper Function: Checks bsa_init and index in bound 
 bool check_initial_conditions(bsa* b, int indx);
 
-bool handle_child_allocation(bsa* b, int k);
-bool allocate2_BSAROW(bsa* b, int k);
-void test_secondAlloc(void);
-void asserttest_secondAlloc(void);
-
+//Helper functions to bsa_set:
+bool alloc_CellStruct(bsa* b, int mRowVal);
+bool check_alocCellStruct(bsa* b, int mRowVal);
 //Third Allocation - rowlen calloced
 //Does it need to be allocated?
-bool handle_row_allocation(bsa* b, int k);
-//Allocate row
-bool allocate3_rowlen(bsa* b, int k);
+bool check_AllocCellRow(bsa* b, int mRowVal);
+//Allocate Cell Row for rowlen and allocate bool array
+bool alloc_CellRow(bsa* b, int mRowVal);
+
+// void asserttest_secondAlloc(void);
+void asserttest_ThirdAlloc(void); //TODO: Put in last test()
+
 //test functions
-// bool test_alloc3(bsa* b, int k);
-void asserttest_ThirdAlloc(void);
+// bool test_alloc3(bsa* b, int masterR);
 //Set value d into row
 bool set_value(bsa* b, int indx, int d);
 //Checking if BSA_Row structure has been allocated space, and 
-bool is_ChildRowAloc(bsa* b, int k);
+bool is_ChildRowAloc(bsa* b, int mRowVal);
 //Check that the child has been allocated for rowspace
-// bool isRowEmpty(bsa* b, int k, int rowLen);
-//Check if indx in bound:
-bool is_indxinBound(int indx);
-void asserttest_indxbound(void);
 
-// bool bsa_set2(bsa* b, int indx, int d);
-int find_masterrow(int k, int indx);
 
-//calculates what masterRow given the index
-int kth_row(int index, int *k);
-void test_kRow(void);
-
-int index_start(int k);
-void testIstart(void);
-
-int index_end(int index_start);
-void testIend(void);
-
-//testing given k, generates a row len of 2^k
-int row_len(int k);
-void test_int_rowLen(void);
-
-//Testing that k is within bounds of 0->29
-bool testK(int k);
-void test_testK(void);
-
-// int rowlenAllocated(bsa* b);
-// bool is_indxInbound(int index, int rowStart, int rowEnd);
-// void test_is_indxInbound(void);
-//new k:
-// void kthRow_Helper(int indx, int *k);
-// int kthRow_Main(int indx);
-// void test_krowNew(void);
+//Helper functions for bsa_tostring:
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, char* str);
 
 bool bsa_freeData(bsa* b, int bsaRow);
+
+//General Helper Functions:
+//Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?
+int get_MasterRow(int index, int *mRowVal);
+void testget_MasterRow(void);
+//Calculates the Cell Row Starting Index given masterRow:
+int get_CellRowStart(int mRowVal);
+void testget_CellRowStart(void);
+//Calculates the Cell Row Ending Index given masterRow:
+int get_CellRowEnd(int index_start);
+void testget_CellRowEnd(void);
+//Calculates the Cell Row Length given masterRow:
+int get_cellLen(int mRowVal);
+void test_int_rowLen(void);
+//General Checking Functions:
+//Checks if index is in bound by calculating its masterRow
+bool is_indxinBound(int indx);
+//Testing that masterR is within bounds of 0->29
+bool is_MasterinBound(int mRowVal);
+void testis_MasterinBound(void);
+
