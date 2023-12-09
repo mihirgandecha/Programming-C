@@ -22,29 +22,15 @@ struct bsa {
 //Helper function to bsa_init:
 bool test_firstInit(bsa *b);
 
-//General Helper Function: Checks bsa_init and index in bound 
-bool check_initial_conditions(bsa* b, int indx);
-
-//Helper functions to bsa_set:
-bool alloc_CellStruct(bsa* b, int mRowVal);
+//Helper functions to bsa_set, split by check then performing functionality:
+//Second Allocation (after whole bsa struct initalised), allocating Cell Struct
 bool check_alocCellStruct(bsa* b, int mRowVal);
-//Third Allocation - rowlen calloced
-//Does it need to be allocated?
+bool alloc_CellStruct(bsa* b, int mRowVal);
+//Third Allocation - Cell row array calloced according to rowlen
 bool check_AllocCellRow(bsa* b, int mRowVal);
-//Allocate Cell Row for rowlen and allocate bool array
 bool alloc_CellRow(bsa* b, int mRowVal);
-
-// void asserttest_secondAlloc(void);
-void asserttest_ThirdAlloc(void); //TODO: Put in last test()
-
-//test functions
-// bool test_alloc3(bsa* b, int masterR);
-//Set value d into row
+//Final helper, setting value d and signalling its allocation
 bool set_value(bsa* b, int indx, int d);
-//Checking if BSA_Row structure has been allocated space, and 
-bool is_ChildRowAloc(bsa* b, int mRowVal);
-//Check that the child has been allocated for rowspace
-
 
 //Helper functions for bsa_tostring:
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
@@ -52,25 +38,29 @@ void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, cha
 
 bool bsa_freeData(bsa* b, int bsaRow);
 
-//General Helper Functions:
+//Helper function for bsa_delete:
+void delete_helper(bsa* b, int currentPosition, int mRowVal);
+
+//Helper function for bsa_free:
+bool bsa_freerow(bsa* b, int mRowVal);
+
+//Calculation Functions:
 //Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?
 int get_MasterRow(int index);
 void testget_MasterRow(void);
 //Calculates the Cell Row Starting Index given masterRow:
 int get_CellRowStart(int mRowVal);
-void testget_CellRowStart(void);
 //Calculates the Cell Row Ending Index given masterRow:
 int get_CellRowEnd(int index_start);
 void testget_CellRowEnd(void);
 //Calculates the Cell Row Length given masterRow:
 int get_cellLen(int mRowVal);
 void test_int_rowLen(void);
-//General Checking Functions:
+
+//Checking Helper Function: 
+//Checks bsa_init and index in bound 
+bool check_initial_conditions(bsa* b, int indx);
+//Checking if cell structure has been allocated space
+bool is_ChildRowAloc(bsa* b, int mRowVal);
 //Checks if index is in bound by calculating its masterRow
 bool is_indxinBound(int indx);
-//Testing that masterR is within bounds of 0->29
-bool is_MasterinBound(int mRowVal);
-void testis_MasterinBound(void);
-
-bool bsa_freerow(bsa* b, int mRowVal);
-void delete_helper(bsa* b, int currentPosition, int mRowVal);
