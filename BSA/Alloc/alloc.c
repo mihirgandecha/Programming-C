@@ -1,6 +1,5 @@
 #include "specific.h"
 
-//start init func
 bsa* bsa_init(void){
     bsa* emptyBSA;
     //Allocate memory for 1 whole bsa structure
@@ -8,7 +7,7 @@ bsa* bsa_init(void){
     if (emptyBSA == NULL){
         return NULL;
     }
-    //Set pointers 0-29 to NULL (delete and free func reasons) TODO: does malloc decrease functin lines?
+    //Set pArray 0-29 to NULL
     for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
         emptyBSA->masterRow[bsaRow] = NULL;
     }
@@ -20,7 +19,7 @@ bool test_firstInit(bsa *b){
     if (b == NULL){  
         return false;
     }
-    for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++) {
+    for (int bsaRow = 0; bsaRow < BSA_ROWS; bsaRow++){
         if (b->masterRow[bsaRow] != NULL){
             return false;
         }
@@ -28,7 +27,6 @@ bool test_firstInit(bsa *b){
     return true;
 }
 
-//check indx in bound
 bool is_indxinBound(int indx){
     if ((indx >= OUTBOUND_END) || (indx <= OUTBOUND)){
         return false;
@@ -36,8 +34,7 @@ bool is_indxinBound(int indx){
     return true;
 }
 
-//start here bsa_set
-bool bsa_set(bsa* b, int indx, int d) {
+bool bsa_set(bsa* b, int indx, int d){
     if (!indxallocCheck(b, indx)){
         return false;
     }
@@ -60,7 +57,7 @@ bool indxallocCheck(bsa* b, int indx){
 }
 
 bool check_AllocCellRow(bsa* b, int mRowVal) {
-    if (b->masterRow[mRowVal] == NULL) {
+    if (b->masterRow[mRowVal] == NULL){
         return alloc_CellStruct(b, mRowVal);
     }
     return true;
@@ -68,7 +65,7 @@ bool check_AllocCellRow(bsa* b, int mRowVal) {
 
 bool alloc_CellStruct(bsa* b, int mRowVal){
     if (b->masterRow[mRowVal] == NULL){ 
-        b->masterRow[mRowVal] = (Cell_Row*)calloc(1, sizeof(Cell_Row)); //TODO DK how to condense
+        b->masterRow[mRowVal] = (Cell_Row*)calloc(1, sizeof(Cell_Row));
         if (b->masterRow[mRowVal] == NULL){
             return false;
         }
@@ -110,8 +107,8 @@ bool set_value(bsa* b, int indx, int d) {
     b->masterRow[mRowVal]->start = get_CellRowStart(mRowVal);
     b->masterRow[mRowVal]->end = get_CellRowEnd(mRowVal);
     b->masterRow[mRowVal]->length = get_cellLen(mRowVal);
-    int position = indx - b->masterRow[mRowVal]->start;
-    if (position < 0 || position > b->masterRow[mRowVal]->end) {
+    int position = get_CellPos(indx);;
+    if (position < 0 || position > b->masterRow[mRowVal]->end){
         return false;
     }
     b->masterRow[mRowVal]->cellRow[position] = d;
@@ -150,6 +147,16 @@ int get_CellRowEnd(int mRowVal){
         return 0;
     } 
     return (1L << (mRowVal + 1)) - 2; //TODO DO YOU HAVE TO #define 2?
+
+}
+
+int get_CellPos(int indx){
+    int mRowVal = get_MasterRow(indx);
+    int base = (1L << mRowVal) - 1;
+    if (indx < base) {
+        return OUTBOUND;
+    }
+    return indx - base;
 }
 
 int* bsa_get(bsa* b, int indx){
@@ -160,7 +167,7 @@ int* bsa_get(bsa* b, int indx){
     if (!b->masterRow[mRowVal] || !b->masterRow[mRowVal]->cellRow){
         return NULL;
     }
-    int position = indx - b->masterRow[mRowVal]->start;
+    int position = get_CellPos(indx);;
     int cellLen = b->masterRow[mRowVal]->length;
     if (position < 0 || position >= cellLen){
         return NULL;
@@ -168,38 +175,26 @@ int* bsa_get(bsa* b, int indx){
     return &(b->masterRow[mRowVal]->cellRow[position]);
 }
 
-int find_child_position(bsa* b, int mRowVal, int indx){
-    int cellStart = b->masterRow[mRowVal]->start;
-    int cellLen = b->masterRow[mRowVal]->length;
-    if (b == NULL || b->masterRow[mRowVal] == NULL || indx < cellStart || indx >= cellStart + cellLen){
-        return OUTBOUND;
-    }
-    return indx - b->masterRow[mRowVal]->start;
-}
-
 bool bsa_delete(bsa* b, int indx){
-    if (indxallocCheck(b, indx) == false){
-        return false;
-    }
     int mRowVal = get_MasterRow(indx);
-    int currentPosition = find_child_position(b, mRowVal, indx);
-    if (!b->masterRow[mRowVal]->inUse[currentPosition]){
+    int position = get_CellPos(indx);
+    if (!indxallocCheck(b, indx) || !b->masterRow[mRowVal]->inUse[position]){
         return false;
     }
     if (b->masterRow[mRowVal]->size == 1){
-        if(!bsa_freerow(b, mRowVal)){
+        if(!bsa_Delrow(b, mRowVal)){
             return false;
         }
         return true;
     }
     if (b->masterRow[mRowVal]->size > 1){
-        delete_helper(b, currentPosition, mRowVal);
+        bsa_DelCell(b, position, mRowVal);
         return true;
     }
     return false;
 }
 
-bool bsa_freerow(bsa* b, int mRowVal){
+bool bsa_Delrow(bsa* b, int mRowVal){
     if(b->masterRow[mRowVal]->cellRow != NULL){
         free(b->masterRow[mRowVal]->cellRow);
         b->masterRow[mRowVal]->cellRow = NULL;
@@ -212,7 +207,7 @@ bool bsa_freerow(bsa* b, int mRowVal){
     return false;
 }
 
-void delete_helper(bsa* b, int currentPosition, int mRowVal){
+void bsa_DelCell(bsa* b, int currentPosition, int mRowVal){
     b->masterRow[mRowVal]->cellRow[currentPosition] = 0;
     b->masterRow[mRowVal]->inUse[currentPosition] = false;
     b->masterRow[mRowVal]->size -= 1;
@@ -265,7 +260,6 @@ int bsa_maxindex(bsa* b){
     return OUTBOUND;
 }
 
-//To String Function:
 bool bsa_tostring(bsa* b, char* str){
     if ((b == NULL) || (str == NULL)){
         return false;
@@ -299,28 +293,25 @@ void bsa_tostring_row(bsa* b, int bsaRow, char* str){
 }
 
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str){
-    int cellDifference = currentPosition - b->masterRow[bsaRow]->start;
-    if(b->masterRow[bsaRow]->inUse[cellDifference] == 1){
+    int cellPos = get_CellPos(currentPosition);
+    int nextCell = cellPos + 1;
+    if(b->masterRow[bsaRow]->inUse[cellPos] == true){
         char temp[1000]; 
-        sprintf(temp, "[%d]=%d", currentPosition, b->masterRow[bsaRow]->cellRow[cellDifference]);
-        strcat(str, temp); //make variable below
-        if (currentPosition != cellEnd && b->masterRow[bsaRow]->inUse[cellDifference + 1] == true){
+        int d = b->masterRow[bsaRow]->cellRow[cellPos];
+        sprintf(temp, "[%d]=%d", currentPosition, d);
+        strcat(str, temp);
+        if (currentPosition != cellEnd && b->masterRow[bsaRow]->inUse[nextCell] == true){
             strcat(str, " ");
         }
     }
 }
 
-// Allow a user-defined function to be applied to each (valid) value 
-// in the array. The user defined 'func' is passed a pointer to an int,
-// and maintains an accumulator of the result where required.
 void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
-    //from the max mRowVal and find max end --ie go through mRowVal from 29->0, if been allocated, access and find max index
     int max_index = bsa_maxindex(b);
     for (int rowX = 0; rowX <= max_index; rowX++){
-        //performing for each bsa_get works for
-        int* q = bsa_get(b, rowX);
-        if (q != NULL){
-            func(q, acc);
+        int* pCell = bsa_get(b, rowX);
+        if (pCell != NULL){
+            func(pCell, acc);
         }
     }
 }
@@ -349,7 +340,18 @@ void test(void){
     assert(get_CellRowStart(5) == 31);
     assert(get_CellRowStart(6) == 63);
     assert(get_CellRowStart(BSA_ROWS - 1) == 536870911); //last row 29
-    
+
+    //Test Cell Row Ending Index:
+    assert(get_CellRowEnd(4) == 30);
+    assert(get_CellRowEnd(5) == 62);
+    assert(get_CellRowEnd(6) == 126);
+    assert(get_CellRowEnd(BSA_ROWS - 1) == 1073741822); //last row 29
+
+    //Test generate position given indx:
+    assert(get_CellPos(7) == 0);
+    assert(get_CellPos(15) == 0);
+    assert(get_CellPos(16) == 1);
+    assert(get_CellPos(31) == 0);
     //Testing by comparing that results of testBsa (each function passed) == testcompareBSA
     //Testing Function 1: bsa_init:
     bsa* testBsa = bsa_init();
@@ -377,9 +379,45 @@ void test(void){
         assert(testBsa->masterRow[mRowVal]->cellRow[rowX] == 0);
         assert(testBsa->masterRow[mRowVal]->inUse[rowX] == false);
     }
-    
-    assert(testBsa->masterRow[mRowVal]->cellRow[0] == 50); //TODO: Func for getting index pos in cellRow?
+    set_value(testBsa, indx, d);    
     assert(testBsa->masterRow[mRowVal]->inUse[0] == true);
+    assert(testBsa->masterRow[mRowVal]->cellRow[0] == 50);
+
+    // Testing Function 3: bsa_get:
+    int* p = bsa_get(testBsa, 7);
+    assert(*p == 50);
+
+    // Testing Function 4: bsa_delete:
+    bsa_set(testBsa, 8, 60);
+    assert(bsa_delete(testBsa, 7) == true);
+    assert(!testBsa->masterRow[mRowVal]);
+
+    // Testing Function 4: bsa_Delrow:
+    bsa_Delrow(testBsa, mRowVal);
+    assert(testBsa->masterRow[mRowVal] == NULL);
+
+// // Testing Function 5: bsa_DelCell:
+// bsa_DelCell(testBsa, mRowVal);
+// assert(testBsa->masterRow[mRowVal]->cellRow == NULL);
+
+// // Testing Function 6: free_cellRow:
+// free_cellRow(testBsa->masterRow[mRowVal]);
+// assert(testBsa->masterRow[mRowVal]->cellRow == NULL);
+
+// // Testing Function 7: free_inUse:
+// free_inUse(testBsa->masterRow[mRowVal]);
+// assert(testBsa->masterRow[mRowVal]->inUse == NULL);
+
+// // Testing Function 8: bsa_maxindex:
+// assert(bsa_maxindex(testBsa) == 7);
+
+// // Testing Function 9: bsa_tostring, bsa_tostring_row, bsa_tostring_cell:
+// char* str = bsa_tostring(testBsa);
+// assert(strcmp(str, "[7]=50") == 0);
+// free(str);
+
+// // Testing Function 10: bsa_foreach:
+// bsa_foreach(testBsa, print_value);
 
     bsa_free(testBsa); 
     bsa_free(testcompareBSA);

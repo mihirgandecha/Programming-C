@@ -21,6 +21,10 @@ struct bsa {
 
 //Helper function to bsa_init:
 bool test_firstInit(bsa *b);
+//Checks if index is in bound by calculating its masterRow
+bool is_indxinBound(int indx);
+//Checks bsa_init and index in bound 
+bool indxallocCheck(bsa* b, int indx);
 
 //Helper functions to bsa_set, split by check then performing functionality:
 //Second Allocation (after whole bsa struct initalised), allocating Cell Struct
@@ -36,32 +40,26 @@ bool set_value(bsa* b, int indx, int d);
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str);
 
-bool bsa_freeData(bsa* b, int bsaRow);
 
 //Helper function for bsa_delete:
-void delete_helper(bsa* b, int currentPosition, int mRowVal);
+bool bsa_Delrow(bsa* b, int mRowVal);
+void bsa_DelCell(bsa* b, int currentPosition, int mRowVal);
 
 //Helper function for bsa_free:
-bool bsa_freerow(bsa* b, int mRowVal);
+bool bsa_freeData(bsa* b, int bsaRow);
+void free_inUse(Cell_Row* row);
+void free_cellRow(Cell_Row* row);
 
 //Calculation Functions:
 //Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?
 int get_MasterRow(int index);
-void testget_MasterRow(void);
 //Calculates the Cell Row Starting Index given masterRow:
 int get_CellRowStart(int mRowVal);
 //Calculates the Cell Row Ending Index given masterRow:
 int get_CellRowEnd(int index_start);
-void testget_CellRowEnd(void);
 //Calculates the Cell Row Length given masterRow:
 int get_cellLen(int mRowVal);
-void test_int_rowLen(void);
+//Calculates the position within a Cell Array:
+int get_CellPos(int indx);
 
-//Checking Helper Function: 
-//Checks bsa_init and index in bound 
-bool indxallocCheck(bsa* b, int indx);
-//Checks if index is in bound by calculating its masterRow
-bool is_indxinBound(int indx);
 
-void free_inUse(Cell_Row* row);
-void free_cellRow(Cell_Row* row);
