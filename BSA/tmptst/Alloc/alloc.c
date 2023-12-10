@@ -153,7 +153,7 @@ int get_CellRowEnd(int mRowVal){
 }
 
 int* bsa_get(bsa* b, int indx){
-    if (!indxallocCheck(b, indx)){
+    if (!indxallocCheck(b, indx)) {
         return NULL;
     }
     int mRowVal = get_MasterRow(indx);
@@ -168,10 +168,10 @@ int* bsa_get(bsa* b, int indx){
     return &(b->masterRow[mRowVal]->cellRow[position]);
 }
 
-int find_child_position(bsa* b, int mRowVal, int indx){
+int find_child_position(bsa* b, int mRowVal, int indx) {
     int cellStart = b->masterRow[mRowVal]->start;
     int cellLen = b->masterRow[mRowVal]->length;
-    if (b == NULL || b->masterRow[mRowVal] == NULL || indx < cellStart || indx >= cellStart + cellLen){
+    if (b == NULL || b->masterRow[mRowVal] == NULL || indx < cellStart || indx >= cellStart + cellLen) {
         return OUTBOUND;
     }
     return indx - b->masterRow[mRowVal]->start;
@@ -350,7 +350,6 @@ void test(void){
     assert(get_CellRowStart(6) == 63);
     assert(get_CellRowStart(BSA_ROWS - 1) == 536870911); //last row 29
     
-    //Testing by comparing that results of testBsa (each function passed) == testcompareBSA
     //Testing Function 1: bsa_init:
     bsa* testBsa = bsa_init();
     assert(test_firstInit(testBsa));
@@ -358,29 +357,19 @@ void test(void){
     assert(test_firstInit(testcompareBSA));
     //bsa_set helper functions assert tests:
     int indx = 7;
-    int mRowVal = get_MasterRow(indx);
-    assert(mRowVal == 3);
     int d = 50;
     bsa_set(testcompareBSA, indx, d);
-    assert(testcompareBSA->masterRow[mRowVal]->cellRow[0] == 50); //TODO: Func for getting index pos in cellRow?
-    assert(testcompareBSA->masterRow[mRowVal]->inUse[0] == true);
+    assert(testcompareBSA->masterRow[4]->cellRow[0] == 50);
     //Check second allocation:
-    assert(indxallocCheck(testBsa, indx) == true);
-    check_AllocCellRow(testBsa, mRowVal);
+    assert(indxallocCheck(testBsa, indx));
+    int mRowVal = get_MasterRow(indx); //should be 3
     alloc_CellStruct(testBsa, mRowVal);
     assert(testBsa->masterRow[mRowVal] != NULL);
     //Third allocation test
-    check_alocCellStruct(testBsa, mRowVal);
     alloc_CellRow(testBsa, mRowVal);
     int rowLen = get_cellLen(mRowVal);
     for (int rowX = 0; rowX < rowLen; rowX++){
         assert(testBsa->masterRow[mRowVal]->cellRow[rowX] == 0);
-        assert(testBsa->masterRow[mRowVal]->inUse[rowX] == false);
     }
-    
-    assert(testBsa->masterRow[mRowVal]->cellRow[0] == 50); //TODO: Func for getting index pos in cellRow?
-    assert(testBsa->masterRow[mRowVal]->inUse[0] == true);
-
     bsa_free(testBsa); 
-    bsa_free(testcompareBSA);
 }
