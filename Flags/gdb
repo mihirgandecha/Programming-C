@@ -8,3 +8,5 @@ malloc:
 x/5i arr1 -- shows the machine instructions
 x/5d arr1 -- shows the data
 
+python3 ./n2.py Alloc/alloc.c
+valgrind ./_v file

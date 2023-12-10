@@ -35,20 +35,22 @@ bool check_AllocCellRow(bsa* b, int mRowVal);
 bool alloc_CellRow(bsa* b, int mRowVal);
 //Final helper, setting value d and signalling its allocation
 bool set_value(bsa* b, int indx, int d);
+//Helper function for bsa_delete:
+bool bsa_Delrow(bsa* b, int mRowVal);
+void bsa_DelCell(bsa* b, int currentPosition, int mRowVal);
+//Helper for bsa_maxindx - finding X given Y found:
+int findX(bsa* b, int rowY);
+//Helper function for bsa_free:
+bool bsa_freeData(bsa* b, int bsaRow);
+void free_inUse(Cell_Row* row);
+void free_cellRow(Cell_Row* row);
 
 //Helper functions for bsa_tostring:
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str);
 
 
-//Helper function for bsa_delete:
-bool bsa_Delrow(bsa* b, int mRowVal);
-void bsa_DelCell(bsa* b, int currentPosition, int mRowVal);
 
-//Helper function for bsa_free:
-bool bsa_freeData(bsa* b, int bsaRow);
-void free_inUse(Cell_Row* row);
-void free_cellRow(Cell_Row* row);
 
 //Calculation Functions:
 //Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?

@@ -91,7 +91,7 @@ bool alloc_CellRow(bsa* b, int mRowVal){
             return false;
         }
         //Allocating memory for the bool inUse array
-        b->masterRow[mRowVal]->inUse = (bool*)calloc(rowLen, sizeof(bool)); //TODO: dk how to condense
+        b->masterRow[mRowVal]->inUse = (bool*)calloc(rowLen, sizeof(bool));
         if (b->masterRow[mRowVal]->inUse == NULL){ 
             return false;
         }
@@ -146,8 +146,7 @@ int get_CellRowEnd(int mRowVal){
     if (mRowVal == 0){
         return 0;
     } 
-    return (1L << (mRowVal + 1)) - 2; //TODO DO YOU HAVE TO #define 2?
-
+    return (1L << (mRowVal + 1)) - 2;
 }
 
 int get_CellPos(int indx){
@@ -213,7 +212,33 @@ void bsa_DelCell(bsa* b, int currentPosition, int mRowVal){
     b->masterRow[mRowVal]->size -= 1;
 }
 
-bool bsa_free(bsa* b) {
+int bsa_maxindex(bsa* b){
+    if (!b || !b->masterRow){
+        return OUTBOUND;
+    }
+    for (int rowY = MAX_MASTERROW; rowY >= 0; rowY--){
+        if (b->masterRow[rowY] != NULL){ 
+            int lastUsedCell = findX(b, rowY);
+            if (lastUsedCell != OUTBOUND){
+                return lastUsedCell;
+            }
+        }
+    }
+    return OUTBOUND;
+}
+
+int findX(bsa* b, int rowY){
+    int cellStart = b->masterRow[rowY]->start;
+    int rowXMax = b->masterRow[rowY]->end;
+    for(int rowX = rowXMax; rowX >= cellStart; rowX--){
+        if(b->masterRow[rowY]->inUse[rowX - cellStart]){
+            return rowX;
+        }
+    }
+    return OUTBOUND;
+}
+
+bool bsa_free(bsa* b){
     if (b == NULL){
         return false;
     }
@@ -241,23 +266,6 @@ void free_inUse(Cell_Row* row){
         free(row->inUse);
         row->inUse = NULL;
     }
-}
-
-int bsa_maxindex(bsa* b){
-    if (!b || !b->masterRow){
-        return OUTBOUND;
-    }
-    for (int rowY = MAX_MASTERROW; rowY >= 0; rowY--){
-        if (b->masterRow[rowY] != NULL){ 
-            int cellStart = b->masterRow[rowY]->start;
-            for(int rowXMax = b->masterRow[rowY]->end; rowXMax >= cellStart; rowXMax--){
-                if(b->masterRow[rowY]->inUse[rowXMax - cellStart]){
-                    return rowXMax;
-                }
-            }
-        }
-    }
-    return OUTBOUND;
 }
 
 bool bsa_tostring(bsa* b, char* str){
@@ -316,7 +324,6 @@ void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
     }
 }
 
-
 void test(void){
     //Test for index is in bound:
     assert(!is_indxinBound(OUTBOUND));
@@ -366,6 +373,11 @@ void test(void){
     bsa_set(testcompareBSA, indx, d);
     assert(testcompareBSA->masterRow[mRowVal]->cellRow[0] == 50); //TODO: Func for getting index pos in cellRow?
     assert(testcompareBSA->masterRow[mRowVal]->inUse[0] == true);
+    assert(testcompareBSA->masterRow[mRowVal]->size == 1);
+    bsa_set(testcompareBSA, 8, 101);
+    assert(testcompareBSA->masterRow[mRowVal]->size == 2);
+    bsa_delete(testcompareBSA, 7);
+    assert(testcompareBSA->masterRow[mRowVal]->size == 1);
     //Check second allocation:
     assert(indxallocCheck(testBsa, indx) == true);
     check_AllocCellRow(testBsa, mRowVal);
@@ -387,38 +399,62 @@ void test(void){
     int* p = bsa_get(testBsa, 7);
     assert(*p == 50);
 
-    // Testing Function 4: bsa_delete:
+    // Testing Function 4: bsa_delete (delete one cell):
     bsa_set(testBsa, 8, 60);
-    assert(bsa_delete(testBsa, 7) == true);
+    int pos = get_CellPos(8);
+    assert(pos == 1);
+    int mRow4 = get_MasterRow(8);
+    assert(mRow4 == 3);
+    bsa_DelCell(testBsa, pos, mRow4);
+    assert(testBsa->masterRow[mRow4]->inUse[pos] == false);
+    assert(testBsa->masterRow[mRow4]->size == 1);
+
+    // Testing Function 4: bsa_delete (delete row):
+    bsa_Delrow(testBsa, mRow4);
     assert(!testBsa->masterRow[mRowVal]);
 
-    // Testing Function 4: bsa_Delrow:
-    bsa_Delrow(testBsa, mRowVal);
-    assert(testBsa->masterRow[mRowVal] == NULL);
+    // Testing Function 6: free_cellRow:
+    bsa_set(testBsa, 10, 20);
+    bsa_set(testBsa, 11, 22);
+    free_cellRow(testBsa->masterRow[mRowVal]);
+    assert(!testBsa->masterRow[mRowVal]->cellRow);
 
-// // Testing Function 5: bsa_DelCell:
-// bsa_DelCell(testBsa, mRowVal);
-// assert(testBsa->masterRow[mRowVal]->cellRow == NULL);
+    // Testing Function 7: free_inUse:
+    bsa_set(testBsa, 20, 40);
+    int mRow = get_MasterRow(20);
+    int pos20 = get_CellPos(20);
+    assert(mRow == 4);
+    assert(pos20 == 5);
+    assert(testBsa->masterRow[mRow]->inUse[pos20] == true);
+    free_inUse(testBsa->masterRow[mRow]);
+    assert(!testBsa->masterRow[mRow]->inUse);
 
-// // Testing Function 6: free_cellRow:
-// free_cellRow(testBsa->masterRow[mRowVal]);
-// assert(testBsa->masterRow[mRowVal]->cellRow == NULL);
+    // Testing Function 8: bsa_maxindex + helper:
+    bsa_set(testcompareBSA, 17, 30);
+    assert(findX(testcompareBSA, mRow) == 17);
+    bsa_set(testcompareBSA, 18, 50);
+    assert(bsa_maxindex(testcompareBSA) == 18);
 
-// // Testing Function 7: free_inUse:
-// free_inUse(testBsa->masterRow[mRowVal]);
-// assert(testBsa->masterRow[mRowVal]->inUse == NULL);
+    // Testing Function 9: bsa_tostring, bsa_tostring_row, bsa_tostring_cell:
+    char str[1000] = "";
+    bsa_tostring(testcompareBSA, str);
+    assert(strcmp(str, "{}{}{}{[8]=101}{[17]=30 [18]=50}") == 0);
 
-// // Testing Function 8: bsa_maxindex:
-// assert(bsa_maxindex(testBsa) == 7);
+    // Testing Function: bsa_tostring_row
+    char rowStr[1000] = "";
+    bsa_tostring_row(testcompareBSA, 4, rowStr);
+    assert(strstr(rowStr, "[17]=30 [18]=50") != NULL);
 
-// // Testing Function 9: bsa_tostring, bsa_tostring_row, bsa_tostring_cell:
-// char* str = bsa_tostring(testBsa);
-// assert(strcmp(str, "[7]=50") == 0);
-// free(str);
-
-// // Testing Function 10: bsa_foreach:
-// bsa_foreach(testBsa, print_value);
+    // Testing Function: bsa_tostring_cell
+    char cellStr[1000] = "";
+    int pos8MR = get_MasterRow(8);
+    int pos8end = get_CellRowEnd(8);
+    assert(testcompareBSA->masterRow[pos8MR]->cellRow[1] == 101);
+    assert(testcompareBSA->masterRow[pos8MR]->inUse[1] == true);
+    bsa_tostring_cell(testcompareBSA, pos8MR, 8, pos8end, cellStr);
+    assert(strcmp(cellStr, "[8]=101") == 0);
 
     bsa_free(testBsa); 
     bsa_free(testcompareBSA);
 }
+
