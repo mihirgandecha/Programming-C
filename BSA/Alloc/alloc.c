@@ -38,13 +38,18 @@ bool is_indxinBound(int indx){
 
 //start here bsa_set
 bool bsa_set(bsa* b, int indx, int d) {
-    if (!check_initial_conditions(b, indx)) {
+    if (!check_initial_conditions(b, indx)){
         return false;
     }
     int mRowVal = get_MasterRow(indx);
-    if (!check_AllocCellRow(b, mRowVal) || !check_alocCellStruct(b, mRowVal)) {
+    bool isRowAlloc = check_AllocCellRow(b, mRowVal);
+    bool isStructAlloc = check_alocCellStruct(b, mRowVal);
+    if (!isStructAlloc || !isRowAlloc){
         return false;
     }
+    // if (!check_AllocCellRow(b, mRowVal) || !check_alocCellStruct(b, mRowVal)){
+    //     return false;
+    // }
     return set_value(b, indx, d);
 }
 
@@ -147,8 +152,8 @@ int get_CellRowStart(int mRowVal){
 int get_CellRowEnd(int mRowVal){
     if (mRowVal == 0){
         return 0;
-    }
-    return (1L << (mRowVal + 1)) - 2;
+    } 
+    return (1L << (mRowVal + 1)) - 2; //TODO DO YOU HAVE TO #define 2?
 }
 
 int* bsa_get(bsa* b, int indx){
