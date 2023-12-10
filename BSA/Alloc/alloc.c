@@ -146,7 +146,7 @@ int get_CellRowEnd(int mRowVal){
     if (mRowVal == 0){
         return 0;
     } 
-    return (1L << (mRowVal + 1)) - 2;
+    return (1L << (mRowVal + 1)) - SHIFT_ADJUST;
 }
 
 int get_CellPos(int indx){

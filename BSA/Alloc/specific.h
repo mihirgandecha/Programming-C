@@ -5,7 +5,8 @@
 #define OUTBOUND -1
 #define OUTBOUND_END 1073741823
 #define MAX_MASTERROW 29
-//renamed variables
+#define SHIFT_ADJUST 2
+
 typedef struct Cell_Row{
     int* cellRow;
     bool* inUse; 
@@ -49,9 +50,6 @@ void free_cellRow(Cell_Row* row);
 void bsa_tostring_row(bsa* b, int bsaRow, char* str);
 void bsa_tostring_cell(bsa* b, int bsaRow, int currentPosition, int cellEnd, char* str);
 
-
-
-
 //Calculation Functions:
 //Calculates what masterRow given the Index and returns pointer TODO: Remove masterR?
 int get_MasterRow(int index);
@@ -63,5 +61,4 @@ int get_CellRowEnd(int index_start);
 int get_cellLen(int mRowVal);
 //Calculates the position within a Cell Array:
 int get_CellPos(int indx);
-
 
