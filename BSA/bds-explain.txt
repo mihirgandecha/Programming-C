@@ -1,7 +1,57 @@
-submit at zip file, alloc.c and specific.c
+Reasoning for Linked List:
+The reasoning behind a linked list implementation was so that the dataset could be expanded
+past 29, being a fixed size memory allocation. This was particularly significant for the 
+Fibonacci calculations where the value depends on the previous two. Therefore for my program
+the fourth calculation struggled to compute. 
 
-1. quick or slow and lookup. 
-2. time statistics + memory
-3. why is it better or worse.
-4. Big O complexity
-5. compile without optimiser, then compile with -ph, gprof EXEC gmon.out
+Time Complexity:
+I found that for the array and linked list, they both had time complexity of 0.01s running 
+gprof:
+
+alloc.c gprof profiler:
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00      118     0.00     0.00  bsa_init
+  0.00      0.00     0.00       45     0.00     0.00  fib_memo
+  0.00      0.00     0.00       40     0.00     0.00  main
+  0.00      0.00     0.00        3     0.00     0.00  bsa_set
+  0.00      0.00     0.00        1     0.00     0.00  check_AllocCellRow
+  0.00      0.00     0.00        1     0.00     0.00  test_firstInit
+
+ extension.c:
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00      118     0.00     0.00  bsa_get
+  0.00      0.00     0.00       43     0.00     0.00  bsa_set
+  0.00      0.00     0.00       40     0.00     0.00  fib_memo
+  0.00      0.00     0.00        2     0.00     0.00  bsa_free
+  0.00      0.00     0.00        2     0.00     0.00  bsa_init
+  0.00      0.00     0.00        1     0.00     0.00  bsa_delete
+  0.00      0.00     0.00        1     0.00     0.00  bsa_maxindex
+  0.00      0.00     0.00        1     0.00     0.00  test
+
+Initial thoughts:
+I found the results to be surprising, with both measuring 0.01s. I expected the linked list
+to have a higher execution time as it had to shift elements.
+
+Time Complexity:
+We are taught that linked list has time compelxity of O(n), compared to the array of O(1),
+however I believe that due to the size of data being extremely small and the executables
+being extremely fast at 0.01s, I believe it is too difficult to make accurate presumptions 
+about time complexity.
+
+Conclusion:
+To conclude, I chose a linked list approach initially due to wanting to overcome the fixed 
+nature of the alloc BSA, which was achieved. However, the performance difference was minimal
+in terms of time complexity. However, for the future it would be useful to perhaps also make
+more comparisons between a variety of data sets (perhaps using isfactorial), and also implement
+more functions to test time complexity such as time.h (recently researched) or perf for some 
+visualisations. I had tried these however due to the limited time I was not able to conduct 
+this research. However perf started to indicate how much power each function was taking (in
+machine code format) which would be a good incator for the next ADT research.

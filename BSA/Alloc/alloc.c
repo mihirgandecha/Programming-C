@@ -125,7 +125,7 @@ int get_MasterRow(int index){
             return mRowVal;
         }
     }
-    return 0;
+    return OUTBOUND;
 }
 
 int get_cellLen(int mRowVal){
