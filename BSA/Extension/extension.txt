@@ -1,0 +1,67 @@
+Motivations for Linked List:
+I decided to implement a linked list in order to expand the dataset beyond the fixed size 
+of 29 elements inherent in the original array-based BSA structure. 
+This constraint became more evident during Fibonacci computations, in which each number depends on the two before it. 
+The fixed array size made computation difficult after the fourth Fibonacci number, demanding a more flexible data structure. 
+
+Time Complexity:
+I observed the same time complexity of 0.01s when profiling both the array and linked list implementations with gprof. 
+This result surprised me because I expected the linked list to take longer to execute due to its element-shifting operations.
+
+alloc.c gprof profiler:
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00      118     0.00     0.00  bsa_init
+  0.00      0.00     0.00       45     0.00     0.00  fib_memo
+  0.00      0.00     0.00       40     0.00     0.00  main
+  0.00      0.00     0.00        3     0.00     0.00  bsa_set
+  0.00      0.00     0.00        1     0.00     0.00  check_AllocCellRow
+  0.00      0.00     0.00        1     0.00     0.00  test_firstInit
+
+ extension.c:
+Each sample counts as 0.01 seconds.
+ no time accumulated
+
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00      118     0.00     0.00  bsa_get
+  0.00      0.00     0.00       43     0.00     0.00  bsa_set
+  0.00      0.00     0.00       40     0.00     0.00  fib_memo
+  0.00      0.00     0.00        2     0.00     0.00  bsa_free
+  0.00      0.00     0.00        2     0.00     0.00  bsa_init
+  0.00      0.00     0.00        1     0.00     0.00  bsa_delete
+  0.00      0.00     0.00        1     0.00     0.00  bsa_maxindex
+  0.00      0.00     0.00        1     0.00     0.00  test
+
+^Note that there was no time result in the profiler output in terms of how long each function took
+
+Initial thoughts:
+Despite my original predictions, both implementations' equivalent time performance indicates that 
+the O(1) time complexity of the array and O(n) time complexity of the linked list 
+does not have an effect for small datasets and fast-executing algorithms.
+
+
+Time Complexity:
+We are taught that linked list has time compelxity of O(n), compared to the array of O(1),
+however I believe that due to the size of data being extremely small and the executables
+being extremely fast at 0.01s, I believe it is too difficult to make accurate presumptions 
+about time complexity.
+
+Conclusion:
+Firstly, my original decision to implement a linked list due to the alloc.c BSA fixed memory allocation 
+was my original motivation - and had been achieved! Although this objective was accomplished, 
+there was very little performance difference in terms of time complexity under the evaluated circumstances. 
+My future research on ADT should include exploring a wider range of diverse datasets to measure the effectiveness 
+of different ADT's. In addition, I should possibly consider utilising and exploring more time complexity analysis, 
+as that had been most difficult for this task. For instance, where to look next to get deeper insight into the 0.01second result. 
+Towards the end, I started exploring more instruments, like time.h for more precise timing or perf for in-depth function-level 
+analysis (which had experienced package problems). Despite the restricted scope of my attempts with perf, 
+its suggestions (eventually in machine code format) regarding the resource utilisation of each function are 
+promising for what I can explore during the Christmas Project.
+
+Appendix:
+[1] Grammarly - As per my Study Support Plan (University Aware).
+
