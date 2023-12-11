@@ -371,7 +371,7 @@ void test(void){
     assert(mRowVal == 3);
     int d = 50;
     bsa_set(testcompareBSA, indx, d);
-    assert(testcompareBSA->masterRow[mRowVal]->cellRow[0] == 50); //TODO: Func for getting index pos in cellRow?
+    assert(testcompareBSA->masterRow[mRowVal]->cellRow[0] == 50);
     assert(testcompareBSA->masterRow[mRowVal]->inUse[0] == true);
     assert(testcompareBSA->masterRow[mRowVal]->size == 1);
     bsa_set(testcompareBSA, 8, 101);
