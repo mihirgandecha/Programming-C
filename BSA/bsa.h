@@ -41,17 +41,6 @@ bool bsa_free(bsa* b);
 // in the array. The user defined 'func' is passed a pointer to an int,
 // and maintains an accumulator of the result where required.
 void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc);
-//for loop that every item that is not empty do func
-//do func with 
-//each item
-// int *i;
-// int max_index = //from the max k and find max kEnd --ie go through k from 29->0, if been allocated, access and find max index
-// for (int i = 0; i < max_index; i++){
-//     i = bsa_get(b, i);
-//     if (q != NULL){
-//         func(q, acc);
-//     }
-// }
-//get max  
+
 // You'll this to test the other functions you write
 void test(void);
