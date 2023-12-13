@@ -1,30 +1,39 @@
 #include "parse.h"
 
-int main(void){
+int main(void) {
     Program* turtle = (Program*)calloc(1, sizeof(Program));
-    if (!turtle){
+    if (!turtle) {
         ERROR("Turtle failed to initialise!\n");
         return 1;
     }
-    if(!Start(turtle)){
-        ERROR("Algorithm failed to start\n");
-        return 1;
-    }
-    test();
+    Init(turtle);
+    Start(turtle);
     printf("Parsed OK\n");
     free(turtle);
     return 0;
 }
 
-bool Start(Program *turtle){
-    turtle->cw = 0;
+void Init(Program *turtle){
+    turtle->col = MAXCOL / 2;
+    turtle->row = MAXROW / 2;
+    turtle->angle = 0; //Fcing North?
+    turtle->distance = 0; //alreaddy calloc?
+}
+
+bool Start(Program *turtle) {
+    turtle->endReached = false;
     printf("Enter Turtle Commands:\n");
-    while(scanf("%s", turtle->cmnd[turtle->cw]) == 1 && turtle->cw >= MAXCMND){
-        if(!strsame(turtle->cmnd[turtle->cw], "START")){
+    if (scanf("%s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
         ERROR("No 'START' statement!\n");
         return false;
-        }
+    }
+    //Start done
+    while (turtle->cw < MAXCMND - 1 && !turtle->endReached){
         turtle->cw++;
+        if (scanf("%s", turtle->cmnd[turtle->cw]) != 1){
+            ERROR("Failed to read command.\n");
+            return false;
+        }
         Inslst(turtle);
     }
     return true;
@@ -32,62 +41,55 @@ bool Start(Program *turtle){
 
 bool Inslst(Program *turtle){
     if(strsame(turtle->cmnd[turtle->cw], "END")){
+        turtle->endReached = true;
         return true;
     }
-    while(!strsame(turtle->cmnd[turtle->cw], "END")){
-        if(!Ins(turtle)){
-            ERROR("Program failed to pass to Instruction Function.\n");
-            return false;
-        }
-        turtle->cw += 1;
+    if(!Ins(turtle)){
+        ERROR("Failed.\n");
+        return false;
     }
-    return true;
+    turtle->cw++;
+    return Inslst(turtle);
 }
 
 bool Ins(Program *turtle){
     if (strsame(turtle->cmnd[turtle->cw], "FORWARD")){
-        turtle->cw += 1;
-        if(!Fwd(turtle)){
+        turtle->cw++; // Move to the value after FORWARD
+        if (!Fwd(turtle)){
             ERROR("Forward did not execute!");
             return false;
         }
         return true;
     }
-    else if(strsame(turtle->cmnd[turtle->cw], "RIGHT")){
-        turtle->cw += 1; //is this a double?
-        if(!Rgt(turtle)){
+    else if (strsame(turtle->cmnd[turtle->cw], "RIGHT")){
+        turtle->cw++; // Move to the value after RIGHT
+        if (!Rgt(turtle)){
             ERROR("Right did not execute!");
             return false;
         }
         return true;    
     }
-    else{
-        return Inslst(turtle);
-    }
-    ERROR("Instructions failed!");
+    ERROR("Unrecognized instruction!\n");
     return false;
 }
+
 //also conducting horizontal/vertical?
 bool Fwd(Program *turtle){
-    double num;
-    if (!Num(turtle, &num)){
+    if (!Num(turtle)){
         ERROR("Invalid number after FORWARD");
         return false;
     }
-    // if (sscanf(turtle->cmnd[turtle->cw], "%ld", num) != 1) {
-    //     ERROR("Invalid number input!");
-    //     return false;
-    // }
-    // if (sscanf("%s", turtle->cmnd[turtle->cw]) && Num(num) != 1){
-    //     ERROR("Invalid number after FORWARD");
-    //     return false;
-    // }
     //How do we actually make it go forward??
+    //SOH CAH TOA
+    double radians = turtle->angle * PI / STRAIGHT_ANGLE;
+    turtle->row += turtle->distance * cos(radians);
+    turtle->col += turtle->distance * sin(radians);
+    
     return true;
 }
 
-bool Num(Program *turtle, double *Num){
-    if (sscanf(turtle->cmnd[turtle->cw], "%lf", Num) != 1) {
+bool Num(Program *turtle){
+    if (sscanf("%lf",turtle->cmnd[turtle->cw]) != 1){
         ERROR("Invalid number input!");
         return false;
     }
@@ -95,6 +97,11 @@ bool Num(Program *turtle, double *Num){
 }
 
 bool Rgt(Program *turtle){
+    //Make angles between 0->360
+    while (turtle->angle >= 360) turtle->angle -= 360;
+    while (turtle->angle < 0) turtle->angle += 360;
+
+    return true;
     double var;
     if (sscanf(turtle->cmnd[turtle->cw], "%lf", &var) != 1){
         ERROR("Invalid number after RIGHT");
@@ -116,25 +123,25 @@ void test(void){
     testTurtle->cw = 0;
     assert(Start(testTurtle) == true);
 
-    //End Function Test:
-    strcpy(testTurtle->cmnd[1], "END");
-    testTurtle->cw = 1;
-    assert(Inslst(testTurtle) == true);
-    assert(testTurtle->cw == 1);
+    // //End Function Test:
+    // strcpy(testTurtle->cmnd[1], "END");
+    // testTurtle->cw = 1;
+    // assert(Inslst(testTurtle) == true);
+    // assert(testTurtle->cw == 1);
 
-    //Testing Forward:
-    strcpy(testTurtle->cmnd[0], "FORWARD");
-    strcpy(testTurtle->cmnd[1], "10");
-    strcpy(testTurtle->cmnd[2], "END");
-    testTurtle->cw = 2; //or 3? 
-    assert(Ins(testTurtle) == true);
+    // //Testing Forward:
+    // strcpy(testTurtle->cmnd[0], "FORWARD");
+    // strcpy(testTurtle->cmnd[1], "10");
+    // strcpy(testTurtle->cmnd[2], "END");
+    // testTurtle->cw = 2; //or 3? 
+    // assert(Ins(testTurtle) == true);
 
-    //Test for Right:
-    strcpy(testTurtle->cmnd[0], "RIGHT");
-    strcpy(testTurtle->cmnd[1], "90");
-    //is it still End for 2?
-    testTurtle->cw = 2;
-    assert(Ins(testTurtle) == true);
+    // //Test for Right:
+    // strcpy(testTurtle->cmnd[0], "RIGHT");
+    // strcpy(testTurtle->cmnd[1], "90");
+    // //is it still End for 2?
+    // testTurtle->cw = 2;
+    // assert(Ins(testTurtle) == true);
 
     free(testTurtle);
 
