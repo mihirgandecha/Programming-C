@@ -8,9 +8,21 @@ int main(void) {
     }
     Init(turtle);
     Start(turtle);
+    printf("Enter Turtle Commands:\n");
+    // if (scanf("%s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
+    //     ERROR("No 'START' statement!\n");
+    //     return false;
+    // }
     printf("Parsed OK\n");
     free(turtle);
     return 0;
+}
+
+void Input(FILE ttl, Program *turtle){
+    //Need to strip the null character
+    while(fscanf("%s", turtle->cmnd[turtle->cw++]) != 1){
+        
+    }
 }
 
 void Init(Program *turtle){
@@ -22,11 +34,6 @@ void Init(Program *turtle){
 
 bool Start(Program *turtle) {
     turtle->endReached = false;
-    printf("Enter Turtle Commands:\n");
-    if (scanf("%s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
-        ERROR("No 'START' statement!\n");
-        return false;
-    }
     //Start done
     while (turtle->cw < MAXCMND - 1 && !turtle->endReached){
         turtle->cw++;
