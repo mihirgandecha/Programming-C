@@ -7,23 +7,23 @@ int main(void) {
         return 1;
     }
     Init(turtle);
-    Start(turtle);
     printf("Enter Turtle Commands:\n");
-    // if (scanf("%s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
-    //     ERROR("No 'START' statement!\n");
-    //     return false;
-    // }
+    if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
+        ERROR("No 'START' statement!\n");
+        return false;
+    }
+    Start(turtle);
     printf("Parsed OK\n");
     free(turtle);
     return 0;
 }
 
-void Input(FILE ttl, Program *turtle){
-    //Need to strip the null character
-    while(fscanf("%s", turtle->cmnd[turtle->cw++]) != 1){
+// void Input(FILE ttl, Program *turtle){
+//     //Need to strip the null character
+//     while(fscanf("%s", turtle->cmnd[turtle->cw++]) != 1){
         
-    }
-}
+//     }
+// }
 
 void Init(Program *turtle){
     turtle->col = MAXCOL / 2;

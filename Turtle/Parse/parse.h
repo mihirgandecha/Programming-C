@@ -26,7 +26,7 @@ struct prog{
    double distance;
    double angle;
    bool endReached;
-   FILETYPE file;
+   // FILETYPE file;
 };
 typedef struct prog Program;
 
