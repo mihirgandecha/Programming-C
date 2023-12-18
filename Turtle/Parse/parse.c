@@ -12,7 +12,7 @@ int main(void){
         ERROR("No 'START' statement!\n");
         return false;
     }
-    Start(turtle);
+    Prog(turtle);
     printf("Parsed OK\n");
     free(turtle);
     return 0;
@@ -33,9 +33,9 @@ void Init(Program *turtle){
     turtle->distance = 0; //alreaddy calloc?
 }
 
-bool Start(Program *turtle) {
+bool Prog(Program *turtle) {
     turtle->endReached = false;
-    //Start done
+    //Prog done
     while (turtle->cw < MAXCMND - 1 && !turtle->endReached){
         turtle->cw++;
         if (scanf("%s", turtle->cmnd[turtle->cw]) != 1){
@@ -121,7 +121,7 @@ bool Rgt(Program *turtle){
 
 
 void test(void){
-    //Start Function Test;
+    //Prog Function Test;
     Program* testTurtle = (Program*)calloc(1, sizeof(Program));
     if (!testTurtle){
         ERROR("Turtle Tests failed to initialise!\n");
@@ -129,7 +129,7 @@ void test(void){
 
     strcpy(testTurtle->cmnd[0], "START");
     testTurtle->cw = 0;
-    assert(Start(testTurtle) == true);
+    assert(Prog(testTurtle) == true);
 
     // //End Function Test:
     // strcpy(testTurtle->cmnd[1], "END");

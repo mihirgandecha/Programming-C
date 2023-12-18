@@ -36,7 +36,7 @@ typedef struct prog Program;
 // typedef struct board Board;
 
 // bool TurtleInit(Program *turtle);
-bool Start(Program *turtle);
+bool Prog(Program *turtle);
 void Init(Program *turtle);
 bool Inslst(Program *turtle);
 bool Ins(Program *turtle);
