@@ -1,0 +1,11 @@
+{
+  "silence": false,
+  "terminals": [
+    {
+      "name": "MyTerminals",
+      "icon": "star-empty",
+      "color": "terminal.ansiYellow",
+      "message": "You are using MyTerminals"
+    }
+  ]
+}

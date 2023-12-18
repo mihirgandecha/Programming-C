@@ -1,8 +1,8 @@
 #include "parse.h"
 
-int main(void) {
+int main(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
-    if (!turtle) {
+    if (!turtle){
         ERROR("Turtle failed to initialise!\n");
         return 1;
     }
@@ -18,6 +18,7 @@ int main(void) {
     return 0;
 }
 
+//Need to first know how to take ttl and run
 // void Input(FILE ttl, Program *turtle){
 //     //Need to strip the null character
 //     while(fscanf("%s", turtle->cmnd[turtle->cw++]) != 1){
