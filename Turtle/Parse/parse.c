@@ -1,7 +1,7 @@
 #include "parse.h"
 
 int main(int argc, char* argv[]){
-    if(argc != 3){
+    if(argc != 2){
         ERROR("Error on argv[0]\n");
         exit(EXIT_FAILURE);
     }
@@ -17,36 +17,139 @@ int main(int argc, char* argv[]){
         fclose(fttl);
         exit(EXIT_FAILURE);
     }
-    while((turtle->cmnd[turtle->cmnd] = fgetc(fttl)) != EOF){
-        turtle->cw++;
+    int i = 0;
+    while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
+        i++;
     }
-    printf("Parsed OK\n");
+    printf("%s\n", turtle->wds[turtle->cw]);
+    printf("%d\n", turtle->cw);
+    if(!Prog(turtle)){
+        ERROR("Prog did not work");
+        return 1;
+    }
+    printf("%s\n", turtle->wds[turtle->cw]);
+    printf("%d\n", turtle->cw);
+    puts("OK dokey");
     fclose(fttl);
-
-    Prog(turtle);
-
     free(turtle);
+    test();
     return 0;
 }
 
 bool Prog(Program *turtle){
-    if (scanf("%s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
+    if (!strsame(turtle->wds[turtle->cw], "START")){
+        printf("%s\n", turtle->wds[turtle->cw]);
         ERROR("No 'START' statement!\n");
         return false;
+    }
+    turtle->cw++;
+    return Inslst(turtle);
+}
+
+bool Inslst(Program *turtle){
+    turtle->endReached = false;
+    if(strsame(turtle->wds[turtle->cw], "END")){
+        turtle->endReached = true;
+        return true;
+    }
+    if(!Ins(turtle)){
+        ERROR("Failed.\n");
+        return false;
+    }
+    turtle->cw++;
+    return Inslst(turtle);
+}
+
+bool Ins(Program *turtle){
+    //Forward
+    if (Fwd(turtle)){
+        return true;
+    }
+    
+    if (!Rgt(turtle)){
+        ERROR("Right did not execute!\n");
+        return false;
+    }
+
+    return true;
+}
+
+bool Fwd(Program *turtle){
+    if (!strsame(turtle->wds[turtle->cw], "FORWARD")){
+        ERROR("Forward did not execute!\n");
+        return false;
+    }
+    else{
+        turtle->cw++;
+        double num;
+        if(!Num(turtle, &num)){
+            ERROR("Wrong integer input.\n");
+            return false;
+        }
     }
     return true;
 }
 
-// bool Inslst(Program *turtle){
-//     turtle->endReached = false;
-//     //Prog done
-//     while (turtle->cw < MAXCMND - 1 && !turtle->endReached){
-//         turtle->cw++;
-//         if (scanf("%s", turtle->cmnd[turtle->cw]) != 1){
-//             ERROR("Failed to read command.\n");
-//             return false;
-//         }
-//         Inslst(turtle);
-//     }
-//     return true;
-// }
+bool Rgt(Program *turtle){
+    if (strsame(turtle->wds[turtle->cw], "RIGHT")){
+        turtle->cw++;
+        double num;
+        if(!Num(turtle, &num)){
+            ERROR("Wrong integer input.\n");
+            return false;
+        }
+        return true;
+    }
+    else{
+        ERROR("Invalid instruction. Expected RIGHT.\n");
+        return false;
+    }
+}
+
+bool Num(Program *turtle, double *num){
+    char *number = turtle->wds[turtle->cw];
+    char *endptr;
+
+    *num = strtod(number, &endptr);
+    if (*endptr == '\0'){
+        return true;
+    }
+    else{
+        ERROR("Invalid Number\n");
+        return false;
+    }
+}
+
+
+void test(void){
+    //Prog Function Test;
+    Program* testTurtle = (Program*)calloc(1, sizeof(Program));
+    if (!testTurtle){
+        ERROR("Turtle Tests failed to initialise!\n");
+    }
+    //Testing for Start
+    strcpy(testTurtle->wds[0], "START");
+    assert(Prog(testTurtle) == true);
+    //Testing for End:
+    strcpy(testTurtle->wds[1], "END");
+    assert(Inslst(testTurtle) == true);
+
+    //Testing for Ins
+    strcpy(testTurtle->wds[2], "FORWARD");
+    strcpy(testTurtle->wds[3], "10");
+    testTurtle->cw = 2;
+    assert(Ins(testTurtle) == true);
+
+    //Testing for Fwd
+    strcpy(testTurtle->wds[2], "FORWARD");
+    strcpy(testTurtle->wds[3], "10");
+    testTurtle->cw = 2;
+    assert(Fwd(testTurtle) == true);
+
+    //Testing for Num
+    strcpy(testTurtle->wds[2], "10");
+    testTurtle->cw = 2;
+    double num;
+    assert(Num(testTurtle, &num) == true);
+    free(testTurtle);
+}

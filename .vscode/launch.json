@@ -1,52 +1,24 @@
 {
     "configurations": [
         {
-            "name": "(gdb) BSA",
+            "name": "(gdb) Turtle",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/BSA/driverbsa_s",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "program": "${workspaceFolder}/Turtle/parse_s",
+            "args": ["${workspaceFolder}/TTLs/forward.ttl"],
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
                 }
             ]
-        },
-    {
-        "name": "(gdb) Turtle",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceFolder}/Turtle/parse_s",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${fileDirname}",
-        "environment": [],
-        "externalConsole": false,
-        "MIMode": "gdb",
-        "setupCommands": [
-            {
-                "description": "Enable pretty-printing for gdb",
-                "text": "-enable-pretty-printing",
-                "ignoreFailures": true
-            },
-            {
-                "description": "Set Disassembly Flavor to Intel",
-                "text": "-gdb-set disassembly-flavor intel",
-                "ignoreFailures": true
-            }
-        ]
-    }
+            // Removed "preLaunchTask"
+        }
     ]
 }

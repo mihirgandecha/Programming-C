@@ -1,5 +1,14 @@
 #include "parse.h"
+#include <math.h>
 
+
+#define MAXCMND 100
+#define MAXTOKENSIZE 20
+#define MAXCOL 33
+#define MAXROW 51
+#define PI 3.14159265358979323846
+#define STRAIGHT_ANGLE 180.00
+#define OUTBOUND -1
 // int main(void){
 //     Program* turtle = (Program*)calloc(1, sizeof(Program));
 //     if (!turtle){
@@ -19,7 +28,7 @@
 // }
 
 int main(int argc, char* argv[]){
-    if(argc != 2){
+    if(argc != 3){
         ERROR("Error", argv[0]);
         exit(EXIT_FAILURE);
     }
