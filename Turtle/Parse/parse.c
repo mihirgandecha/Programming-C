@@ -1,13 +1,34 @@
 #include "parse.h"
 
-int main(void){
+// int main(void){
+//     Program* turtle = (Program*)calloc(1, sizeof(Program));
+//     if (!turtle){
+//         ERROR("Turtle failed to initialise!\n");
+//         return 1;
+//     }
+//     Init(turtle);
+//     printf("Enter Turtle Commands:\n");
+//     // if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
+//     //     ERROR("No 'START' statement!\n");
+//     //     return false;
+//     // }
+//     Prog(turtle);
+//     printf("Parsed OK\n");
+//     free(turtle);
+//     return 0;
+// }
+
+int main(int argc, char* argv[]){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
     if (!turtle){
         ERROR("Turtle failed to initialise!\n");
         return 1;
     }
-    Init(turtle);
-    printf("Enter Turtle Commands:\n");
+    FILE* fttl = fopen(argv[1], "r");
+    if(!fttl){
+        
+    }
+    // Init(turtle);
     // if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
     //     ERROR("No 'START' statement!\n");
     //     return false;
