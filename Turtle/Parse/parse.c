@@ -8,10 +8,10 @@ int main(void){
     }
     Init(turtle);
     printf("Enter Turtle Commands:\n");
-    if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
-        ERROR("No 'START' statement!\n");
-        return false;
-    }
+    // if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
+    //     ERROR("No 'START' statement!\n");
+    //     return false;
+    // }
     Prog(turtle);
     printf("Parsed OK\n");
     free(turtle);
@@ -83,10 +83,10 @@ bool Ins(Program *turtle){
 
 //also conducting horizontal/vertical?
 bool Fwd(Program *turtle){
-    if (!Num(turtle)){
-        ERROR("Invalid number after FORWARD");
-        return false;
-    }
+    // if (!Num(turtle)){
+    //     ERROR("Invalid number after FORWARD");
+    //     return false;
+    // }
     //How do we actually make it go forward??
     //SOH CAH TOA
     double radians = turtle->angle * PI / STRAIGHT_ANGLE;
@@ -96,13 +96,13 @@ bool Fwd(Program *turtle){
     return true;
 }
 
-bool Num(Program *turtle){
-    if (sscanf("%lf",turtle->cmnd[turtle->cw]) != 1){
-        ERROR("Invalid number input!");
-        return false;
-    }
-    return true;
-}
+// bool Num(Program *turtle){
+//     if (sscanf("%lf",turtle->cmnd[turtle->cw]) != 1){
+//         ERROR("Invalid number input!");
+//         return false;
+//     }
+//     return true;
+// }
 
 bool Rgt(Program *turtle){
     //Make angles between 0->360
