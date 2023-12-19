@@ -21,10 +21,10 @@
 struct prog{
    char cmnd[MAXCMND][MAXTOKENSIZE]; //What is stored in each?
    int cw; // Current Word
-   int col;
-   int row;
-   double distance;
-   double angle;
+   // int col;
+   // int row;
+   // double distance;
+   // double angle;
    bool endReached;
    // FILETYPE file;
 };
@@ -36,13 +36,13 @@ typedef struct prog Program;
 // typedef struct board Board;
 
 // bool TurtleInit(Program *turtle);
-bool Prog(Program *turtle);
-void Init(Program *turtle);
-bool Inslst(Program *turtle);
-bool Ins(Program *turtle);
-bool Fwd(Program *turtle);
-bool Rgt(Program *turtle);
-bool Num(Program *turtle);
+// bool Prog(Program *turtle);
+// void Init(Program *turtle);
+// bool Inslst(Program *turtle);
+// bool Ins(Program *turtle);
+// bool Fwd(Program *turtle);
+// bool Rgt(Program *turtle);
+// bool Num(Program *turtle);
 
-void test(void);
+// void test(void);
 
