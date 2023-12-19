@@ -21,8 +21,8 @@ int main(void){
 //Need to first know how to take ttl and run
 // void Input(FILE ttl, Program *turtle){
 //     //Need to strip the null character
+// FILE *fp = 
 //     while(fscanf("%s", turtle->cmnd[turtle->cw++]) != 1){
-        
 //     }
 // }
 
@@ -89,6 +89,7 @@ bool Fwd(Program *turtle){
     // }
     //How do we actually make it go forward??
     //SOH CAH TOA
+    //strlen - 1
     double radians = turtle->angle * PI / STRAIGHT_ANGLE;
     turtle->row += turtle->distance * cos(radians);
     turtle->col += turtle->distance * sin(radians);
@@ -118,7 +119,6 @@ bool Rgt(Program *turtle){
     //how can we make go right? Conversion?
     return true;
 }
-
 
 void test(void){
     //Prog Function Test;
