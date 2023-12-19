@@ -4,8 +4,8 @@
             "name": "(gdb) Turtle",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Turtle/parse_s",
-            "args": ["${workspaceFolder}/TTLs/forward.ttl"],
+            "program": "${workspaceFolder}/Turtle/parse_s", // Ensure this path is correct
+            "args": ["parse_s TTLs/forward.ttl"], // Add any required arguments
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,

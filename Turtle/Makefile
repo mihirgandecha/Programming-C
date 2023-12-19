@@ -22,7 +22,9 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 
 run: all
 #./parse_s TTLs/empty.ttl
-	./parse_s TTLs/forward.ttl
+#./parse_s TTLs/forward.ttl
+	./parse_s TTLs/octagon1.ttl
+
 # ./parse_s $(TTL_FILES)
 
 clean:

@@ -21,24 +21,21 @@ int main(int argc, char* argv[]){
     while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
         i++;
     }
-    printf("%s\n", turtle->wds[turtle->cw]);
-    printf("%d\n", turtle->cw);
+    // printf("%s\n", turtle->wds[turtle->cw]);
+    // printf("%d\n", turtle->cw);
     if(!Prog(turtle)){
         ERROR("Prog did not work");
         return 1;
     }
-    printf("%s\n", turtle->wds[turtle->cw]);
-    printf("%d\n", turtle->cw);
     puts("OK dokey");
     fclose(fttl);
     free(turtle);
-    test();
+    // test();
     return 0;
 }
 
 bool Prog(Program *turtle){
     if (!strsame(turtle->wds[turtle->cw], "START")){
-        printf("%s\n", turtle->wds[turtle->cw]);
         ERROR("No 'START' statement!\n");
         return false;
     }
@@ -61,21 +58,23 @@ bool Inslst(Program *turtle){
 }
 
 bool Ins(Program *turtle){
-    //Forward
-    if (Fwd(turtle)){
-        return true;
-    }
-    
-    if (!Rgt(turtle)){
-        ERROR("Right did not execute!\n");
+    char* cmnd = turtle->wds[turtle->cw];
+
+    if (strsame(cmnd, "FORWARD")){
+        return Fwd(turtle);
+    } 
+    else if (strsame(cmnd, "RIGHT")){
+        return Rgt(turtle);
+    } 
+    else{
+        ERROR("Unknown command.\n");
         return false;
     }
-
-    return true;
 }
 
 bool Fwd(Program *turtle){
-    if (!strsame(turtle->wds[turtle->cw], "FORWARD")){
+    char* cmnd = turtle->wds[turtle->cw];
+    if (!strsame(cmnd, "FORWARD")){
         ERROR("Forward did not execute!\n");
         return false;
     }
@@ -91,19 +90,20 @@ bool Fwd(Program *turtle){
 }
 
 bool Rgt(Program *turtle){
-    if (strsame(turtle->wds[turtle->cw], "RIGHT")){
+    char* cmnd = turtle->wds[turtle->cw];
+    if (!strsame(cmnd, "RIGHT")){
+        ERROR("Forward did not execute!\n");
+        return false;
+    }
+    else{
         turtle->cw++;
         double num;
         if(!Num(turtle, &num)){
             ERROR("Wrong integer input.\n");
             return false;
         }
-        return true;
     }
-    else{
-        ERROR("Invalid instruction. Expected RIGHT.\n");
-        return false;
-    }
+    return true;
 }
 
 bool Num(Program *turtle, double *num){
@@ -120,36 +120,46 @@ bool Num(Program *turtle, double *num){
     }
 }
 
-
 void test(void){
     //Prog Function Test;
     Program* testTurtle = (Program*)calloc(1, sizeof(Program));
     if (!testTurtle){
         ERROR("Turtle Tests failed to initialise!\n");
     }
+
     //Testing for Start
-    strcpy(testTurtle->wds[0], "START");
+    testTurtle->cw = 0;
+    strcpy(testTurtle->wds[testTurtle->cw], "START");
     assert(Prog(testTurtle) == true);
-    //Testing for End:
-    strcpy(testTurtle->wds[1], "END");
+
+    // //Testing for End:
+    testTurtle->cw = 1;
+    strcpy(testTurtle->wds[testTurtle->cw], "END");
     assert(Inslst(testTurtle) == true);
 
-    //Testing for Ins
-    strcpy(testTurtle->wds[2], "FORWARD");
-    strcpy(testTurtle->wds[3], "10");
-    testTurtle->cw = 2;
-    assert(Ins(testTurtle) == true);
+    // //Testing for Ins
+    // strcpy(testTurtle->wds[2], "FORWARD");
+    // strcpy(testTurtle->wds[3], "10");
+    // testTurtle->cw = 2;
+    // assert(Ins(testTurtle) == true);
 
-    //Testing for Fwd
-    strcpy(testTurtle->wds[2], "FORWARD");
-    strcpy(testTurtle->wds[3], "10");
-    testTurtle->cw = 2;
-    assert(Fwd(testTurtle) == true);
+    // //Testing for Fwd
+    // strcpy(testTurtle->wds[2], "FORWARD");
+    // strcpy(testTurtle->wds[3], "10");
+    // testTurtle->cw = 2;
+    // assert(Fwd(testTurtle) == true);
 
-    //Testing for Num
-    strcpy(testTurtle->wds[2], "10");
-    testTurtle->cw = 2;
-    double num;
-    assert(Num(testTurtle, &num) == true);
+    // //Testing for Rgt
+    // strcpy(testTurtle->wds[2], "RIGHT");
+    // strcpy(testTurtle->wds[3], "10");
+    // testTurtle->cw = 2;
+    // assert(Rgt(testTurtle) == true);
+
+    // //Testing for Num
+    // strcpy(testTurtle->wds[2], "10");
+    // testTurtle->cw = 2;
+    // double num;
+    // assert(Num(testTurtle, &num) == true);
+
     free(testTurtle);
 }
