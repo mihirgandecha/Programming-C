@@ -73,6 +73,16 @@
 //     turtle->distance = 0; //alreaddy calloc?
 // }
 
+
+char Ltr(void){
+    //no - have to use %lf
+    static char start = 'A';
+    if(start > 'Z'){
+        ERROR("All variable LTR's have been used.");
+    }
+    return start++;
+}
+
 bool Prog(Program *turtle) {
     turtle->endReached = false;
     //Prog done

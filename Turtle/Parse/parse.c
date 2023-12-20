@@ -91,14 +91,14 @@ bool Ins(Program *turtle){
 bool Fwd(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!strsame(cmnd, "FORWARD")){
-        ERROR("Forward did not execute!");
+        NOEXIT_ERROR("Forward did not execute!");
         return false;
     }
     else{
         turtle->cw++;
         double num;
         if(!Num(turtle, &num)){
-            ERROR("Wrong integer input.");
+            NOEXIT_ERROR("Wrong integer input.");
             return false;
         }
     }
@@ -108,14 +108,14 @@ bool Fwd(Program *turtle){
 bool Rgt(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!strsame(cmnd, "RIGHT")){
-        ERROR("Forward did not execute!\n");
+        NOEXIT_ERROR("Forward did not execute!\n");
         return false;
     }
     else{
         turtle->cw++;
         double num;
         if(!Num(turtle, &num)){
-            ERROR("Wrong integer input.");
+            NOEXIT_ERROR("Wrong integer input.");
             return false;
         }
     }
@@ -134,6 +134,14 @@ bool Num(Program *turtle, double *num){
         NOEXIT_ERROR("Invalid Number.");
         return false;
     }
+}
+
+bool Ltr(char var){
+    if (var >= 'A' && var <= 'Z'){
+        return true;
+    }
+    NOEXIT_ERROR("Invalid Letter Input!");
+    return false;
 }
 
 void test(void){
@@ -222,6 +230,18 @@ void test(void){
     testTurtle->cw = 0;
     assert(Num(testTurtle, &num) == false);
     //Expecting msg: Fatal Error Invalid Number. occurred in Parse/parse.c, line 134 
-
+    
+    //Testing for Ltr Function:
+    assert(Ltr('A') == true);
+    assert(Ltr('Z') == true);
+    assert(Ltr('M') == true);
+    printf("\n");
+    assert(Ltr('a') == false);
+    printf("\n");
+    assert(Ltr('z') == false);
+    printf("\n");
+    assert(Ltr('1') == false);
+    printf("\n");
+    assert(Ltr('@') == false);
     free(testTurtle);
 }

@@ -31,6 +31,7 @@ bool Ins(Program *turtle);
 bool Fwd(Program *turtle);
 bool Num(Program *turtle, double *num);
 bool Rgt(Program *turtle);
+bool Ltr(char var);
 
 void test(void);
 
