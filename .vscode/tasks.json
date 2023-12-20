@@ -10,7 +10,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/path/to/Makefile"
+                "cwd": "${workspaceFolder}/Turtle/"
             }
         }
     ]
