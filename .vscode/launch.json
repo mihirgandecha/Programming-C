@@ -1,16 +1,18 @@
 {
     "configurations": [
+        
         {
             "name": "(gdb) Turtle",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Turtle/parse_s", // Ensure this path is correct
-            "args": ["parse_s TTLs/forward.ttl"], // Add any required arguments
+            "program": "${workspaceFolder}/Turtle/parse_s", 
+            "args": ["TTLs/forward.ttl"], 
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
             "miDebuggerPath": "/usr/bin/gdb",
+            "preLaunchTask": "make run",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -18,7 +20,6 @@
                     "ignoreFailures": true
                 }
             ]
-            // Removed "preLaunchTask"
         }
     ]
 }

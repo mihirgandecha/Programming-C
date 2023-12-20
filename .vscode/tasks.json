@@ -2,19 +2,16 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build with Makefile",
+            "label": "make run",
             "type": "shell",
-            "command": "make",
-            "args": [
-                "-C", 
-                "${workspaceFolder}/Turtle",
-                "all"
-            ],
+            "command": "make run",
             "group": {
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": "$gcc"
+            "options": {
+                "cwd": "${workspaceFolder}/path/to/Makefile"
+            }
         }
     ]
 }
