@@ -13,6 +13,9 @@ all: parse_s #interp_s
 parse_s: Parse/parse.h Parse/parse.c
 	$(CC) Parse/parse.c -g -o parse_s -I./Parse $(SANITIZE) -lm
 
+parse_with_test: Parse/parse.h Parse/parse.c Testing/parse_test.c
+	$(CC) Parse/parse.c Testing/parse_test.c -g -o parse_test -I./Parse -I./Testing $(SANITIZE) -lm
+
 # interp_s: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
 # 	$(CC) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
 
@@ -20,12 +23,11 @@ parse_s: Parse/parse.h Parse/parse.c
 extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c neillsimplescreen.h
 	$(CC) neillsimplescreen.c Extension/extension.c -o extension_s -I./Extension $(SANITIZE) -lm
 
-run: all
-#./parse_s TTLs/empty.ttl
-#./parse_s TTLs/forward.ttl
-	./parse_s TTLs/octagon1.ttl
+runtest: parse_with_test
+	./parse_test
 
-# ./parse_s $(TTL_FILES)
+run: parse_s
+	./parse_s $(TTL_FILES)
 
 clean:
-	rm -f parse_s interp_s out_*.txt out_*.ps out_*.pdf
+	rm -f parse_s parse_test interp_s out_*.txt out_*.ps out_*.pdf

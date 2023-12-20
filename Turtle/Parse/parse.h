@@ -8,7 +8,7 @@
 #define MAXTOKENSIZE 20
 #define strsame(A,B) (strcmp(A, B)==0) //TODO: Does this need to be capitalised?
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
-#define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d ", PHRASE, __FILE__, __LINE__); }
+#define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -29,10 +29,11 @@ bool Prog(Program *turtle);
 bool Inslst(Program *turtle);
 bool Ins(Program *turtle);
 bool Fwd(Program *turtle);
-bool Num(Program *turtle, double *num);
+bool Num(Program *turtle);
 bool Rgt(Program *turtle);
 bool Ltr(char var);
 bool Var(Program *turtle);
+bool Varnum(Program *turtle);
 
 void test(void);
 
