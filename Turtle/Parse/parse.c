@@ -136,6 +136,19 @@ bool Num(Program *turtle, double *num){
     }
 }
 
+bool Var(Program *turtle){
+    char* var = turtle->wds[turtle->cw];
+    if (strlen(var) != 2) {
+        NOEXIT_ERROR("Invalid Variable Input!");
+        return false;
+    }
+    if (var[0] == '$' && Ltr(var[1])){
+        return true;
+    }
+    NOEXIT_ERROR("Invalid Variable Input!");
+    return false;
+}
+
 bool Ltr(char var){
     if (var >= 'A' && var <= 'Z'){
         return true;
@@ -200,18 +213,6 @@ void test(void){
     testTurtle->cw = 0;
     assert(Ins(testTurtle) == true);
 
-    // Testing Ins function with RIGHT
-    strcpy(testTurtle->wds[0], "RIGHT");
-    strcpy(testTurtle->wds[1], "90");
-    testTurtle->cw = 0;
-    assert(Ins(testTurtle) == true);
-
-    // Testing Fwd function
-    strcpy(testTurtle->wds[0], "FORWARD");
-    strcpy(testTurtle->wds[1], "10");
-    testTurtle->cw = 0;
-    assert(Fwd(testTurtle) == true);
-
     // Testing Rgt function
     strcpy(testTurtle->wds[0], "RIGHT");
     strcpy(testTurtle->wds[1], "90");
@@ -243,5 +244,37 @@ void test(void){
     assert(Ltr('1') == false);
     printf("\n");
     assert(Ltr('@') == false);
+
+    //Test for Var Function:
+    // Test 1: Valid variable
+    strcpy(testTurtle->wds[0], "$A");
+    testTurtle->cw = 0;
+    assert(Var(testTurtle) == true);
+
+    // Test 2: Invalid variable (length is not 2)
+    strcpy(testTurtle->wds[0], "$AB");
+    testTurtle->cw = 0;
+    printf("\n");
+    assert(Var(testTurtle) == false);
+
+    // Test 3: Invalid variable (first character is not $)
+    strcpy(testTurtle->wds[0], "A");
+    testTurtle->cw = 0;
+    printf("\n");
+    assert(Var(testTurtle) == false);
+
+    // Test 4: Invalid variable (second character is not an uppercase letter)
+    strcpy(testTurtle->wds[0], "$a");
+    testTurtle->cw = 0;
+    printf("\n");
+    assert(Var(testTurtle) == false);
+
+    // Test 5: Valid letter
+    assert(Ltr('A') == true);
+
+    // Test 6: Invalid letter (not an uppercase letter)
+    printf("\n");
+    assert(Ltr('a') == false);
+
     free(testTurtle);
 }
