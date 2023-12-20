@@ -2,15 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "make run",
+            "label": "compile",
             "type": "shell",
-            "command": "make run",
+            "command": "gcc Parse/parse.c -g -o parse_s -I./Parse -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 -Werror -fsanitize=undefined -fsanitize=address -g3 -lm",
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "options": {
-                "cwd": "${workspaceFolder}/Turtle/"
             }
         }
     ]

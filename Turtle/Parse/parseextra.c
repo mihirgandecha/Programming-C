@@ -27,36 +27,36 @@
 //     return 0;
 // }
 
-int main(int argc, char* argv[]){
-    if(argc != 3){
-        ERROR("Error", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-    FILE* fttl = fopen(argv[1], "r");
-    if(!fttl){
-        ERROR("Cannot read from  \n", argv[1]);
-        exit(EXIT_FAILURE);
-    }
-    Program* turtle = (Program*)calloc(1, sizeof(Program));
-    if (!turtle){
-        ERROR("Turtle failed to initialise!\n");
-        exit(EXIT_FAILURE);
-    }
-    char temp;
-    while((temp = fgetc(fttl)) != EOF){
-        turtle->cmnd[turtle->cw] = temp;
-        Prog(turtle);
-    }
-    // Init(turtle);
-    // if (scanf("%s %s", turtle->cmnd[turtle->cw]) != 1 || !strsame(turtle->cmnd[turtle->cw], "START")){
-    //     ERROR("No 'START' statement!\n");
-    //     return false;
-    // }
-    printf("Parsed OK\n");
-    fclose(fttl);
-    free(turtle);
-    return 0;
-}
+// int main(int argc, char* argv[]){
+//     test();
+//     if(argc != 2){
+//         ERROR("Error on argv[0]\n");
+//         exit(EXIT_FAILURE);
+//     }
+//     FILE* fttl = fopen(argv[1], "r");
+//     if(!fttl){
+//         ERROR("Cannot read from argv[1] \n");
+//         fclose(fttl);
+//         exit(EXIT_FAILURE);
+//     }
+//     Program* turtle = (Program*)calloc(1, sizeof(Program));
+//     if (!turtle){
+//         ERROR("Turtle failed to initialise!\n");
+//         fclose(fttl);
+//         exit(EXIT_FAILURE);
+//     }
+//     int i = 0;
+//     while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
+//         i++;
+//     }
+//     if(!Prog(turtle)){
+//         ERROR("Prog did not work");
+//     }
+//     puts("\nPassed Ok.");
+//     fclose(fttl);
+//     free(turtle);
+//     return 0;
+// }
 
 //Need to first know how to take ttl and run
 // void Input(FILE ttl, Program *turtle){

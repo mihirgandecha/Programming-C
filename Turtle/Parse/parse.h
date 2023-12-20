@@ -6,8 +6,9 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
-#define strsame(A,B) (strcmp(A, B)==0) //does this mean we are defaulting it to be false?
+#define strsame(A,B) (strcmp(A, B)==0) //TODO: Does this need to be capitalised?
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
+#define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d ", PHRASE, __FILE__, __LINE__); }
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -16,6 +17,14 @@ struct prog{
 };
 typedef struct prog Program;
 
+//Main broken down:
+void validArgs(int argc);
+FILE* openFile(char* filename);
+Program* initTurtle(void);
+void readWords(FILE* fttl, Program* turtle);
+void runProgram(Program* turtle);
+
+//Grammar:
 bool Prog(Program *turtle);
 bool Inslst(Program *turtle);
 bool Ins(Program *turtle);

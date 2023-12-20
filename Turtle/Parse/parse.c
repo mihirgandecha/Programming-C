@@ -1,42 +1,62 @@
 #include "parse.h"
 
 int main(int argc, char* argv[]){
+    test();
+
+    validArgs(argc);
+    FILE* fttl = openFile(argv[1]);
+    Program* turtle = initTurtle();
+    readWords(fttl, turtle);
+    runProgram(turtle);
+
+    puts("\nPassed Ok.");
+    fclose(fttl);
+    free(turtle);
+    return 0;
+}
+
+void validArgs(int argc){
     if(argc != 2){
         ERROR("Error on argv[0]\n");
         exit(EXIT_FAILURE);
     }
-    FILE* fttl = fopen(argv[1], "r");
+}
+
+FILE* openFile(char* filename){
+    FILE* fttl = fopen(filename, "r");
     if(!fttl){
         ERROR("Cannot read from argv[1] \n");
         fclose(fttl);
         exit(EXIT_FAILURE);
     }
+    return fttl;
+}
+
+Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
     if (!turtle){
         ERROR("Turtle failed to initialise!\n");
-        fclose(fttl);
         exit(EXIT_FAILURE);
     }
+    return turtle;
+}
+
+void readWords(FILE* fttl, Program* turtle){
     int i = 0;
     while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
         i++;
     }
-    // printf("%s\n", turtle->wds[turtle->cw]);
-    // printf("%d\n", turtle->cw);
+}
+
+void runProgram(Program* turtle){
     if(!Prog(turtle)){
-        ERROR("Prog did not work");
-        return 1;
+        ERROR("Grammar mistakes found in ttl ~ terminated.");
     }
-    puts("OK dokey");
-    fclose(fttl);
-    free(turtle);
-    // test();
-    return 0;
 }
 
 bool Prog(Program *turtle){
     if (!strsame(turtle->wds[turtle->cw], "START")){
-        ERROR("No 'START' statement!\n");
+        NOEXIT_ERROR("No 'START' statement!");
         return false;
     }
     turtle->cw++;
@@ -44,13 +64,13 @@ bool Prog(Program *turtle){
 }
 
 bool Inslst(Program *turtle){
-    turtle->endReached = false;
+    turtle->endReached = false; //TODO should i move to prog?
     if(strsame(turtle->wds[turtle->cw], "END")){
         turtle->endReached = true;
         return true;
     }
     if(!Ins(turtle)){
-        ERROR("Failed.\n");
+        NOEXIT_ERROR("No 'END' or Unknown Command!");
         return false;
     }
     turtle->cw++;
@@ -59,30 +79,26 @@ bool Inslst(Program *turtle){
 
 bool Ins(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-
-    if (strsame(cmnd, "FORWARD")){
+    if (strsame(cmnd, "FORWARD")){ //TODO this is repeated in Fwd
         return Fwd(turtle);
     } 
     else if (strsame(cmnd, "RIGHT")){
         return Rgt(turtle);
     } 
-    else{
-        ERROR("Unknown command.\n");
-        return false;
-    }
+    return false;
 }
 
 bool Fwd(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!strsame(cmnd, "FORWARD")){
-        ERROR("Forward did not execute!\n");
+        ERROR("Forward did not execute!");
         return false;
     }
     else{
         turtle->cw++;
         double num;
         if(!Num(turtle, &num)){
-            ERROR("Wrong integer input.\n");
+            ERROR("Wrong integer input.");
             return false;
         }
     }
@@ -99,7 +115,7 @@ bool Rgt(Program *turtle){
         turtle->cw++;
         double num;
         if(!Num(turtle, &num)){
-            ERROR("Wrong integer input.\n");
+            ERROR("Wrong integer input.");
             return false;
         }
     }
@@ -115,51 +131,97 @@ bool Num(Program *turtle, double *num){
         return true;
     }
     else{
-        ERROR("Invalid Number\n");
+        NOEXIT_ERROR("Invalid Number.");
         return false;
     }
 }
 
 void test(void){
-    //Prog Function Test;
-    Program* testTurtle = (Program*)calloc(1, sizeof(Program));
-    if (!testTurtle){
-        ERROR("Turtle Tests failed to initialise!\n");
-    }
-
-    //Testing for Start
+    Program* testTurtle = initTurtle();
+    //Testing for Error msg [Start]: ~working
+    strcpy(testTurtle->wds[0], "END");
     testTurtle->cw = 0;
-    strcpy(testTurtle->wds[testTurtle->cw], "START");
-    assert(Prog(testTurtle) == true);
+    assert(Prog(testTurtle) == false);
+    // runProgram(testTurtle);
+    //Expecting Fatal Error No 'START' statement! occurred in Parse/parse.c, line 59 
+    //Uncomment runProgram - expecting Fatal Error Grammar mistakes found in ttl ~ terminated. occurred in Parse/parse.c, line 53
 
-    // //Testing for End:
-    testTurtle->cw = 1;
-    strcpy(testTurtle->wds[testTurtle->cw], "END");
+    //Testing for Error msg [End]
+    printf("\n");
+    strcpy(testTurtle->wds[0], "START");
+    strcpy(testTurtle->wds[1], "FINISH");
+    testTurtle->cw = 0;
+    assert(Prog(testTurtle) == false);
+    // runProgram(testTurtle);
+    //Expecting: Fatal Error No 'END' or Unknown Command! occurred in Parse/parse.c, line 73
+
+    //Testing for End ~working
+    strcpy(testTurtle->wds[0], "START");
+    strcpy(testTurtle->wds[1], "END");
+    testTurtle->cw = 0;
+    runProgram(testTurtle);
+    // assert(Prog(testTurtle) == true);
+
+    //Testing that return false if no End - working
+    printf("\n");
+    strcpy(testTurtle->wds[1], "RIGHT");
+    strcpy(testTurtle->wds[2], "45");
+    strcpy(testTurtle->wds[3], "FORWARD");
+    strcpy(testTurtle->wds[4], "20");
+    testTurtle->cw = 0;
+    //Expecting no Error msg:
+    assert(Ins(testTurtle) == false);
+    //Expecting Fatal Error No 'END' or Unknown Command! occurred in Parse/parse.c, line 73
+    assert(Prog(testTurtle) == false);
+
+    //Expecting no Error msg:
+    strcpy(testTurtle->wds[5], "END");
+    testTurtle->cw = 0;
+    runProgram(testTurtle);
+
+    // Testing Inslst function - even though no START
+    strcpy(testTurtle->wds[0], "FORWARD");
+    strcpy(testTurtle->wds[1], "10");
+    strcpy(testTurtle->wds[2], "END");
+    testTurtle->cw = 0;
     assert(Inslst(testTurtle) == true);
 
-    // //Testing for Ins
-    // strcpy(testTurtle->wds[2], "FORWARD");
-    // strcpy(testTurtle->wds[3], "10");
-    // testTurtle->cw = 2;
-    // assert(Ins(testTurtle) == true);
+    // Testing Ins function with FORWARD
+    strcpy(testTurtle->wds[0], "FORWARD");
+    strcpy(testTurtle->wds[1], "10");
+    testTurtle->cw = 0;
+    assert(Ins(testTurtle) == true);
 
-    // //Testing for Fwd
-    // strcpy(testTurtle->wds[2], "FORWARD");
-    // strcpy(testTurtle->wds[3], "10");
-    // testTurtle->cw = 2;
-    // assert(Fwd(testTurtle) == true);
+    // Testing Ins function with RIGHT
+    strcpy(testTurtle->wds[0], "RIGHT");
+    strcpy(testTurtle->wds[1], "90");
+    testTurtle->cw = 0;
+    assert(Ins(testTurtle) == true);
 
-    // //Testing for Rgt
-    // strcpy(testTurtle->wds[2], "RIGHT");
-    // strcpy(testTurtle->wds[3], "10");
-    // testTurtle->cw = 2;
-    // assert(Rgt(testTurtle) == true);
+    // Testing Fwd function
+    strcpy(testTurtle->wds[0], "FORWARD");
+    strcpy(testTurtle->wds[1], "10");
+    testTurtle->cw = 0;
+    assert(Fwd(testTurtle) == true);
 
-    // //Testing for Num
-    // strcpy(testTurtle->wds[2], "10");
-    // testTurtle->cw = 2;
-    // double num;
-    // assert(Num(testTurtle, &num) == true);
+    // Testing Rgt function
+    strcpy(testTurtle->wds[0], "RIGHT");
+    strcpy(testTurtle->wds[1], "90");
+    testTurtle->cw = 0;
+    assert(Rgt(testTurtle) == true);
+
+    // Testing Num function with valid number
+    strcpy(testTurtle->wds[0], "10");
+    testTurtle->cw = 0;
+    double num;
+    assert(Num(testTurtle, &num) == true);
+
+    // Testing Num error msg ~ working
+    printf("\n");
+    strcpy(testTurtle->wds[0], "abc");
+    testTurtle->cw = 0;
+    assert(Num(testTurtle, &num) == false);
+    //Expecting msg: Fatal Error Invalid Number. occurred in Parse/parse.c, line 134 
 
     free(testTurtle);
 }
