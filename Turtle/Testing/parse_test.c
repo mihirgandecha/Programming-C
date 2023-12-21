@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <assert.h>
 #include "../Parse/parse.h"
 
 void test(void){
@@ -135,7 +140,19 @@ void test(void){
     strcpy(testTurtle2->wds[0], "COLOUR");
     strcpy(testTurtle2->wds[1], "$A");
     testTurtle2->cw = 0;
-    // assert(Col(testTurtle2) == true);
+    // puts("\nTest 3 of <Varnum> error msg:");
+    assert(Col(testTurtle2) == true);
+
+    // Test for <WORD> function:
+    strcpy(testTurtle2->wds[0], "\"RED\"");
+    testTurtle2->cw = 0;
+    assert(Word(testTurtle2) == true);
+
+    //Test <COL> with <WORD> function:
+    strcpy(testTurtle2->wds[0], "COLOUR");
+    strcpy(testTurtle2->wds[1], "\"RED\"");
+    testTurtle2->cw = 0;
+    assert(Col(testTurtle2) == true);
 
     free(testTurtle);
     free(testTurtle2);

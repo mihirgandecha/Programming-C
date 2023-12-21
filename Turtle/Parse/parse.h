@@ -34,6 +34,11 @@ bool Rgt(Program *turtle);
 bool Ltr(char var);
 bool Var(Program *turtle);
 bool Varnum(Program *turtle);
+bool Col(Program *turtle);
+bool Word(Program* turtle);
+
+//Testing:
+void freeTurtle(Program* turtle);
 
 void test(void);
 
