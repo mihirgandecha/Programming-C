@@ -133,6 +133,29 @@ bool Col(Program *turtle){
     return true;
 }
 
+bool Loop(Program *turtle){
+    if (!strsame(turtle->wds[turtle->cw], "LOOP")){
+        return false;
+    }
+    turtle->cw++;
+    if (!Ltr(*turtle->wds[turtle->cw])){
+        return false;
+    }
+    turtle->cw++;
+    if (!strsame(turtle->wds[turtle->cw], "OVER")){
+        return false;
+    }
+    turtle->cw++;
+    if (!Lst(turtle)){
+        return false;
+    }
+    turtle->cw++;
+    if (!Inslst(turtle)){
+        return false;
+    }
+    return true;
+}
+
 bool Varnum(Program *turtle){
     if(!Var(turtle)){
         if(!Num(turtle)){

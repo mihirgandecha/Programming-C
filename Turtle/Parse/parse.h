@@ -39,7 +39,7 @@ bool Word(Program* turtle);
 bool Item(Program* turtle);
 bool Items(Program* turtle);
 bool Lst(Program* turtle);
-
+bool Loop(Program *turtle);
 
 //Testing:
 void freeTurtle(Program* turtle);
