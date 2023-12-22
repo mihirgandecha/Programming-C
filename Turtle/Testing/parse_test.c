@@ -216,6 +216,7 @@ void test(void){
     puts("\nTest of <Lst> function without closing brace:");
     assert(Lst(testTurtle3) == false);
 
+    //Testing for <LOOP>
     Program* testTurtle4 = initTurtle();
     strcpy(testTurtle4->wds[0], "START");
     strcpy(testTurtle4->wds[1], "LOOP");
@@ -227,38 +228,39 @@ void test(void){
     strcpy(testTurtle4->wds[7], "\"BLUE\"");
     strcpy(testTurtle4->wds[8], "}");
     strcpy(testTurtle4->wds[9], "COLOUR");
-    strcpy(testTurtle4->wds[10], "$C");
+    strcpy(testTurtle4->wds[10], "$C"); //fails here
     strcpy(testTurtle4->wds[11], "FORWARD");
     strcpy(testTurtle4->wds[12], "5");
     strcpy(testTurtle4->wds[13], "RIGHT");
     strcpy(testTurtle4->wds[14], "90");
     strcpy(testTurtle4->wds[15], "END");
-    testTurtle4->cw = 0;
+    testTurtle4->cw = 1;
     puts("\nTest of <Loop> function with valid input:");
     assert(Loop(testTurtle4) == true);
 
-    // strcpy(testTurtle3->wds[0], "LOOP");
-    // strcpy(testTurtle3->wds[1], "C");
-    // strcpy(testTurtle3->wds[2], "OVER");
-    // strcpy(testTurtle3->wds[3], "{");
-    // strcpy(testTurtle3->wds[4], "\"RED\"");
-    // strcpy(testTurtle3->wds[5], "\"GREEN\"");
-    // strcpy(testTurtle3->wds[6], "\"BLUE\"");
-    // strcpy(testTurtle3->wds[7], "}");
-    // strcpy(testTurtle3->wds[8], "COLOUR");
-    // strcpy(testTurtle3->wds[9], "$C");
-    // strcpy(testTurtle3->wds[10], "FORWARD");
-    // strcpy(testTurtle3->wds[11], "5");
-    // strcpy(testTurtle3->wds[12], "RIGHT");
-    // strcpy(testTurtle3->wds[13], "90");
-    // // No END keyword
-    // testTurtle3->cw = 0;
-    // puts("\nTest of <Loop> function without END keyword:");
-    // assert(Loop(testTurtle3) == false);
-
+    Program* testTurtle5 = initTurtle();
+    strcpy(testTurtle5->wds[0], "LOOP");
+    strcpy(testTurtle5->wds[1], "C");
+    strcpy(testTurtle5->wds[2], "OVER");
+    strcpy(testTurtle5->wds[3], "{");
+    strcpy(testTurtle5->wds[4], "\"RED\"");
+    strcpy(testTurtle5->wds[5], "\"GREEN\"");
+    strcpy(testTurtle5->wds[6], "\"BLUE\"");
+    strcpy(testTurtle5->wds[7], "}");
+    strcpy(testTurtle5->wds[8], "COLOUR");
+    strcpy(testTurtle5->wds[9], "$C");
+    strcpy(testTurtle5->wds[10], "FORWARD");
+    strcpy(testTurtle5->wds[11], "5");
+    strcpy(testTurtle5->wds[12], "RIGHT");
+    strcpy(testTurtle5->wds[13], "90");
+    // No END keyword
+    testTurtle5->cw = 0;
+    puts("\nTest of <Loop> function without END keyword:");
+    assert(Loop(testTurtle5) == false);
 
     free(testTurtle);
     free(testTurtle2);
     free(testTurtle3);
     free(testTurtle4);
+    free(testTurtle5);
 }

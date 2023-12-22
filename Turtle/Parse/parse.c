@@ -86,6 +86,9 @@ bool Ins(Program *turtle){
     else if (strsame(cmnd, "RIGHT")){
         return Rgt(turtle);
     }
+    else if (strsame(cmnd, "COLOUR")){
+        return Col(turtle);
+    }
     NOEXIT_ERROR("No 'FWD' OR 'Rgt' function."); 
     return false;
 }
@@ -149,7 +152,6 @@ bool Loop(Program *turtle){
     if (!Lst(turtle)){
         return false;
     }
-    turtle->cw++;
     if (!Inslst(turtle)){
         return false;
     }
