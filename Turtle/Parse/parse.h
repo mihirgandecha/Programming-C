@@ -40,6 +40,7 @@ bool Item(Program* turtle);
 bool Items(Program* turtle);
 bool Lst(Program* turtle);
 bool Loop(Program *turtle);
+bool Op(Program* turtle);
 
 //Testing:
 void freeTurtle(Program* turtle);

@@ -234,4 +234,20 @@ bool Lst(Program* turtle){
     return false;
 }
 
-
+bool Op(Program* turtle){
+    if(!turtle || !turtle->wds || !turtle->wds[turtle->cw]){
+        return false;
+    }
+    if(strlen(turtle->wds[turtle->cw]) != 1){
+        return false;
+    }
+    switch(turtle->wds[turtle->cw][0]){
+        case '+':
+        case '-':
+        case '/':
+        case '*':
+            return true;
+        default:
+            return false;
+    }
+}

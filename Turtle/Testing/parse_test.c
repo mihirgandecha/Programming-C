@@ -258,9 +258,39 @@ void test(void){
     puts("\nTest of <Loop> function without END keyword:");
     assert(Loop(testTurtle5) == false);
 
+    //Test for <OPS> Function:
+    Program* testTurtle6 = initTurtle();
+    strcpy(testTurtle6->wds[0], "+");
+    testTurtle6->cw = 0;
+    assert(Op(testTurtle6) == true);
+    strcpy(testTurtle6->wds[1], "-");
+    testTurtle6->cw = 1;
+    assert(Op(testTurtle6) == true);
+    strcpy(testTurtle6->wds[2], "/");
+    testTurtle6->cw = 2;
+    assert(Op(testTurtle6) == true);
+    strcpy(testTurtle6->wds[3], "*");
+    testTurtle6->cw = 3;
+    assert(Op(testTurtle6) == true);
+    strcpy(testTurtle6->wds[4], "++");
+    testTurtle6->cw = 4;
+    assert(Op(testTurtle6) == false);
+    strcpy(testTurtle6->wds[5], "");
+    testTurtle6->cw = 5;
+    assert(Op(testTurtle6) == false);
+    strcpy(testTurtle6->wds[6], "7+");
+    testTurtle6->cw = 6;
+    assert(Op(testTurtle6) == false);
+    strcpy(testTurtle6->wds[7], ">");
+    testTurtle6->cw = 7;
+    assert(Op(testTurtle6) == false);
+    assert(Op(NULL) == false);
+
+
     free(testTurtle);
     free(testTurtle2);
     free(testTurtle3);
     free(testTurtle4);
     free(testTurtle5);
+    free(testTurtle6);
 }
