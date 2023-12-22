@@ -182,3 +182,11 @@ bool Word(Program* turtle){
     return false;
 }
 
+bool Items(Program* turtle){
+    if(!Varnum(turtle) && !Word(turtle)){
+        return false;
+    }
+    return true;
+}
+
+
