@@ -286,8 +286,33 @@ void test(void){
     assert(Op(testTurtle6) == false);
     assert(Op(NULL) == false);
 
-    
+    //Test for <PFIX> Function:
+    Program* testTurtle7 = initTurtle();
+    // Test for ")"
+    strcpy(testTurtle7->wds[0], ")");
+    testTurtle7->cw = 0;
+    assert(Pfix(testTurtle7) == true);
 
+    // Test for <VARNUM> <PFIX>
+    strcpy(testTurtle7->wds[0], "5");
+    strcpy(testTurtle7->wds[1], ")");
+    testTurtle7->cw = 0;
+    assert(Pfix(testTurtle7) == true);
+
+    // Test for <OP> <PFIX>
+    strcpy(testTurtle7->wds[0], "+");
+    strcpy(testTurtle7->wds[1], "-");
+    strcpy(testTurtle7->wds[2], ")");
+    testTurtle7->cw = 0;
+    assert(Pfix(testTurtle7) == true);
+
+    // Test for non-PFIX string
+    strcpy(testTurtle7->wds[0], "?");
+    testTurtle7->cw = 0;
+    assert(Pfix(testTurtle7) == false);
+
+    // Test for NULL
+    assert(Pfix(NULL) == false);
 
     free(testTurtle);
     free(testTurtle2);
@@ -295,4 +320,5 @@ void test(void){
     free(testTurtle4);
     free(testTurtle5);
     free(testTurtle6);
+    free(testTurtle7);
 }

@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
 }
 
 void validArgs(int argc){
-    if(argc != 2){
+    if(argc != EXPECTED_ARG_COUNT){
         ERROR("Error on argv[0]\n");
         exit(EXIT_FAILURE);
     }
@@ -43,6 +43,9 @@ Program* initTurtle(void){
 }
 
 void readWords(FILE* fttl, Program* turtle){
+    if(!checkNull(turtle)){
+        return;
+    }
     int i = 0;
     while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
         i++;
@@ -51,7 +54,7 @@ void readWords(FILE* fttl, Program* turtle){
 
 void runProgram(Program* turtle){
     if(!Prog(turtle)){
-        ERROR("Grammar mistakes found in ttl ~ terminated.");
+        ERROR("Grammar mistakes found in ttl.");
     }
 }
 
@@ -65,7 +68,8 @@ bool Prog(Program *turtle){
 }
 
 bool Inslst(Program *turtle){
-    turtle->endReached = false; //TODO should i move to prog?
+    //TODO should i move to prog?
+    turtle->endReached = false; 
     if(strsame(turtle->wds[turtle->cw], "END")){
         turtle->endReached = true;
         return true;
@@ -80,7 +84,8 @@ bool Inslst(Program *turtle){
 
 bool Ins(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-    if (strsame(cmnd, "FORWARD")){ //TODO this is repeated in Fwd
+    //TODO this is repeated in Fwd
+    if (strsame(cmnd, "FORWARD")){ 
         return Fwd(turtle);
     } 
     else if (strsame(cmnd, "RIGHT")){
@@ -159,11 +164,9 @@ bool Loop(Program *turtle){
 }
 
 bool Varnum(Program *turtle){
-    if(!Var(turtle)){
-        if(!Num(turtle)){
-            NOEXIT_ERROR("Invalid Number or Variable Name.");
-            return false;
-        }
+    if(!Var(turtle) && !Num(turtle)){
+        NOEXIT_ERROR("Invalid Number or Variable Name.");
+        return false;
     }
     return true; 
 }
@@ -182,7 +185,7 @@ bool Num(Program *turtle){
 
 bool Var(Program *turtle){
     char* var = turtle->wds[turtle->cw];
-    if (strlen(var) != 2) {
+    if (strlen(var) != EXPECTED_VAR_LENGTH) {
         return false;
     }
     if (var[0] == '$' && Ltr(var[1])){
@@ -234,9 +237,22 @@ bool Lst(Program* turtle){
     return false;
 }
 
+bool checkNull(Program *turtle){
+    if(!turtle){
+        return false;
+    }
+    if(!turtle->wds){
+        return false;
+    }
+    if(!turtle->wds[turtle->cw]){
+        return false;
+    }
+    return true;
+}
+
 bool Op(Program* turtle){
     //TODO shall i be testing NULL for all functions?
-    if(!turtle || !turtle->wds || !turtle->wds[turtle->cw]){
+    if(!checkNull(turtle)){
         return false;
     }
     if(strlen(turtle->wds[turtle->cw]) != 1){
@@ -252,8 +268,11 @@ bool Op(Program* turtle){
             return false;
     }
 }
-//<PFIX>::= ")" | <OP> <PFIX> | <VARNUM> <PFIX>
+
 bool Pfix(Program* turtle){
+    if(!checkNull(turtle)){
+        return false;
+    }
     if(strsame(turtle->wds[turtle->cw], ")")){
         turtle->cw++;
         return true;

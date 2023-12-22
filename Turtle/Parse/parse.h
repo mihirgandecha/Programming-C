@@ -6,6 +6,8 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
+#define EXPECTED_ARG_COUNT 2
+#define EXPECTED_VAR_LENGTH 2
 #define strsame(A,B) (strcmp(A, B)==0) //TODO: Does this need to be capitalised?
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
 #define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
@@ -41,6 +43,8 @@ bool Items(Program* turtle);
 bool Lst(Program* turtle);
 bool Loop(Program *turtle);
 bool Op(Program* turtle);
+bool Pfix(Program* turtle);
 
+bool checkNull(Program *turtle);
 void test(void);
 
