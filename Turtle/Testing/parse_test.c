@@ -286,6 +286,8 @@ void test(void){
     assert(Op(testTurtle6) == false);
     assert(Op(NULL) == false);
 
+    
+
 
     free(testTurtle);
     free(testTurtle2);

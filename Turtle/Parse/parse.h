@@ -42,8 +42,5 @@ bool Lst(Program* turtle);
 bool Loop(Program *turtle);
 bool Op(Program* turtle);
 
-//Testing:
-void freeTurtle(Program* turtle);
-
 void test(void);
 

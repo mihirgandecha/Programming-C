@@ -252,3 +252,20 @@ bool Op(Program* turtle){
             return false;
     }
 }
+//<PFIX>::= ")" | <OP> <PFIX> | <VARNUM> <PFIX>
+bool Pfix(Program* turtle){
+    if(strsame(turtle->wds[turtle->cw], ")")){
+        turtle->cw++;
+        return true;
+    }
+    else if (Op(turtle)){
+        turtle->cw++;
+        return Pfix(turtle);
+    }
+    else if (Varnum(turtle)){
+        turtle->cw++;
+        return Pfix(turtle);
+    }
+    return false;
+}
+
