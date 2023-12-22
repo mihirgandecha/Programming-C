@@ -235,6 +235,7 @@ bool Lst(Program* turtle){
 }
 
 bool Op(Program* turtle){
+    //TODO shall i be testing NULL for all functions?
     if(!turtle || !turtle->wds || !turtle->wds[turtle->cw]){
         return false;
     }

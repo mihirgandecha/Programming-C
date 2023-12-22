@@ -61,7 +61,6 @@ void generate_boards() {
 }
 
 void test() {
-    // TODO: Add test cases
 }
 
 int main(int argc, char *argv[]) {

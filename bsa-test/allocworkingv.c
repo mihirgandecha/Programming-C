@@ -35,7 +35,6 @@ bool is_indxinBound(int indx){
     }
     return true;
 }
-//TODO just move to end
 void asserttest_indxbound(void){
     int indx = 1073741824;
     assert(is_indxinBound(indx));
