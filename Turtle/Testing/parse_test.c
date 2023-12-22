@@ -194,18 +194,7 @@ void test(void){
     // Test for <LST> function for false
     //TODO QUESTION: nested list - outer list is {"MAGENTA", {"WHITE", $Y}, $G}
     Program* testTurtle3 = initTurtle(); 
-    // strcpy(testTurtle3->wds[0], "{");
-    // strcpy(testTurtle3->wds[1], "\"MAGENTA\"");
-    // strcpy(testTurtle3->wds[2], "{");
-    // strcpy(testTurtle3->wds[3], "\"WHITE\"");
-    // strcpy(testTurtle3->wds[4], "$Y");
-    // strcpy(testTurtle3->wds[5], "}");
-    // strcpy(testTurtle3->wds[6], "$G");
-    // strcpy(testTurtle3->wds[7], "}");
-    // testTurtle3->cw = 0;
-    // puts("\nTest of <Lst> function with nested lists:");
-    // assert(Lst(testTurtle3) == true);
-
+    
     //Empty List: '{}'
     strcpy(testTurtle->wds[0], "{");
     strcpy(testTurtle->wds[1], "}");
