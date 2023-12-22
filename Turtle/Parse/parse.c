@@ -182,11 +182,31 @@ bool Word(Program* turtle){
     return false;
 }
 
-bool Items(Program* turtle){
+bool Item(Program* turtle){
     if(!Varnum(turtle) && !Word(turtle)){
         return false;
     }
     return true;
+}
+
+bool Items(Program* turtle){
+    if(strsame(turtle->wds[turtle->cw], "}")){
+        turtle->cw++;
+        return true;
+    }
+    else if(Item(turtle)){
+        turtle->cw++;
+        return Items(turtle);
+    }
+    return false;
+}
+
+bool Lst(Program* turtle){
+    if(strsame(turtle->wds[turtle->cw], "{")){
+        turtle->cw++;
+        return Items(turtle);
+    }
+    return false;
 }
 
 

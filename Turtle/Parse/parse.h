@@ -36,6 +36,10 @@ bool Var(Program *turtle);
 bool Varnum(Program *turtle);
 bool Col(Program *turtle);
 bool Word(Program* turtle);
+bool Item(Program* turtle);
+bool Items(Program* turtle);
+bool Lst(Program* turtle);
+
 
 //Testing:
 void freeTurtle(Program* turtle);

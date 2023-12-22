@@ -154,6 +154,80 @@ void test(void){
     testTurtle2->cw = 0;
     assert(Col(testTurtle2) == true);
 
+    //Test <ITEM> Function:
+    strcpy(testTurtle->wds[0], "\"RED\"");
+    testTurtle->cw = 0;
+    puts("\nTest of <Item> function:");
+    assert(Item(testTurtle) == true);
+
+    strcpy(testTurtle->wds[0], "ORANGE");
+    testTurtle->cw = 0;
+    puts("\nTest of <Item> function:");
+    assert(Item(testTurtle) == false);
+
+    // Test for <ITEMS> function
+    strcpy(testTurtle->wds[0], "}");
+    testTurtle->cw = 0;
+    puts("\nTest of <Items> function:");
+    assert(Items(testTurtle) == true);
+
+    strcpy(testTurtle->wds[0], "$H");
+    strcpy(testTurtle->wds[1], "}");
+    testTurtle->cw = 0;
+    puts("\nTest of <Items> function:");
+    assert(Items(testTurtle) == true);
+
+    strcpy(testTurtle->wds[0], "{}");
+    testTurtle->cw = 0;
+    puts("\nTest of <Items> function:");
+    assert(Items(testTurtle) == false);
+
+    // Test for <LST> function
+    strcpy(testTurtle->wds[0], "{");
+    strcpy(testTurtle->wds[1], "\"178\"");
+    strcpy(testTurtle->wds[2], "$Z");
+    strcpy(testTurtle->wds[3], "}");
+    testTurtle->cw = 0;
+    puts("\nTest of <Lst> function:");
+    assert(Lst(testTurtle) == true);
+
+    // Test for <LST> function for false
+    //TODO QUESTION: nested list - outer list is {"MAGENTA", {"WHITE", $Y}, $G}
+    Program* testTurtle3 = initTurtle(); 
+    // strcpy(testTurtle3->wds[0], "{");
+    // strcpy(testTurtle3->wds[1], "\"MAGENTA\"");
+    // strcpy(testTurtle3->wds[2], "{");
+    // strcpy(testTurtle3->wds[3], "\"WHITE\"");
+    // strcpy(testTurtle3->wds[4], "$Y");
+    // strcpy(testTurtle3->wds[5], "}");
+    // strcpy(testTurtle3->wds[6], "$G");
+    // strcpy(testTurtle3->wds[7], "}");
+    // testTurtle3->cw = 0;
+    // puts("\nTest of <Lst> function with nested lists:");
+    // assert(Lst(testTurtle3) == true);
+
+    //Empty List: '{}'
+    strcpy(testTurtle->wds[0], "{");
+    strcpy(testTurtle->wds[1], "}");
+    testTurtle->cw = 0;
+    puts("\nTest of <Lst> function with empty list:");
+    assert(Lst(testTurtle) == true);
+
+    //Without closing '}' should fail:
+    strcpy(testTurtle3->wds[0], "{");
+    strcpy(testTurtle3->wds[1], "\"BLUE\"");
+    strcpy(testTurtle3->wds[2], "\"CYAN\"");
+    testTurtle3->cw = 0;
+    puts("\nTest of <Lst> function without closing brace:");
+    assert(Lst(testTurtle3) == false);
+
+    //Extra varnum after closing brace:
+    strcpy(testTurtle->wds[3], "}");
+    strcpy(testTurtle->wds[4], "$Z");
+    puts("\nTest of <Lst> function without closing brace:");
+    assert(Lst(testTurtle3) == false);
+
     free(testTurtle);
     free(testTurtle2);
+    free(testTurtle3);
 }
