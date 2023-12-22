@@ -6,9 +6,9 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
-#define EXPECTED_ARG_COUNT 2
-#define EXPECTED_VAR_LENGTH 2
-#define strsame(A,B) (strcmp(A, B)==0) //TODO: Does this need to be capitalised?
+#define EXPECTED_ARGS 2
+#define EXPECTED_VARLEN 2
+#define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
 #define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
 

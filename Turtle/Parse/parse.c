@@ -17,7 +17,7 @@ int main(int argc, char* argv[]){
 }
 
 void validArgs(int argc){
-    if(argc != EXPECTED_ARG_COUNT){
+    if(argc != EXPECTED_ARGS){
         ERROR("Error on argv[0]\n");
         exit(EXIT_FAILURE);
     }
@@ -59,7 +59,7 @@ void runProgram(Program* turtle){
 }
 
 bool Prog(Program *turtle){
-    if (!strsame(turtle->wds[turtle->cw], "START")){
+    if (!STRSAME(turtle->wds[turtle->cw], "START")){
         NOEXIT_ERROR("No 'START' statement!");
         return false;
     }
@@ -70,7 +70,7 @@ bool Prog(Program *turtle){
 bool Inslst(Program *turtle){
     //TODO should i move to prog?
     turtle->endReached = false; 
-    if(strsame(turtle->wds[turtle->cw], "END")){
+    if(STRSAME(turtle->wds[turtle->cw], "END")){
         turtle->endReached = true;
         return true;
     }
@@ -85,13 +85,13 @@ bool Inslst(Program *turtle){
 bool Ins(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     //TODO this is repeated in Fwd
-    if (strsame(cmnd, "FORWARD")){ 
+    if (STRSAME(cmnd, "FORWARD")){ 
         return Fwd(turtle);
     } 
-    else if (strsame(cmnd, "RIGHT")){
+    else if (STRSAME(cmnd, "RIGHT")){
         return Rgt(turtle);
     }
-    else if (strsame(cmnd, "COLOUR")){
+    else if (STRSAME(cmnd, "COLOUR")){
         return Col(turtle);
     }
     NOEXIT_ERROR("No 'FWD' OR 'Rgt' function."); 
@@ -100,7 +100,7 @@ bool Ins(Program *turtle){
 
 bool Fwd(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-    if (!strsame(cmnd, "FORWARD")){
+    if (!STRSAME(cmnd, "FORWARD")){
         NOEXIT_ERROR("Forward did not execute!");
         return false;
     }
@@ -115,7 +115,7 @@ bool Fwd(Program *turtle){
 
 bool Rgt(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-    if (!strsame(cmnd, "RIGHT")){
+    if (!STRSAME(cmnd, "RIGHT")){
         NOEXIT_ERROR("Right did not execute!");
         return false;
     }
@@ -130,7 +130,7 @@ bool Rgt(Program *turtle){
 
 bool Col(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-    if (!strsame(cmnd, "COLOUR")){
+    if (!STRSAME(cmnd, "COLOUR")){
         NOEXIT_ERROR("COLOUR was not registered.");
         return false;
     }
@@ -142,7 +142,7 @@ bool Col(Program *turtle){
 }
 
 bool Loop(Program *turtle){
-    if (!strsame(turtle->wds[turtle->cw], "LOOP")){
+    if (!STRSAME(turtle->wds[turtle->cw], "LOOP")){
         return false;
     }
     turtle->cw++;
@@ -150,7 +150,7 @@ bool Loop(Program *turtle){
         return false;
     }
     turtle->cw++;
-    if (!strsame(turtle->wds[turtle->cw], "OVER")){
+    if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
     turtle->cw++;
@@ -185,7 +185,7 @@ bool Num(Program *turtle){
 
 bool Var(Program *turtle){
     char* var = turtle->wds[turtle->cw];
-    if (strlen(var) != EXPECTED_VAR_LENGTH) {
+    if (strlen(var) != EXPECTED_VARLEN) {
         return false;
     }
     if (var[0] == '$' && Ltr(var[1])){
@@ -218,7 +218,7 @@ bool Item(Program* turtle){
 }
 
 bool Items(Program* turtle){
-    if(strsame(turtle->wds[turtle->cw], "}")){
+    if(STRSAME(turtle->wds[turtle->cw], "}")){
         turtle->cw++;
         return true;
     }
@@ -230,7 +230,7 @@ bool Items(Program* turtle){
 }
 
 bool Lst(Program* turtle){
-    if(strsame(turtle->wds[turtle->cw], "{")){
+    if(STRSAME(turtle->wds[turtle->cw], "{")){
         turtle->cw++;
         return Items(turtle);
     }
@@ -273,7 +273,7 @@ bool Pfix(Program* turtle){
     if(!checkNull(turtle)){
         return false;
     }
-    if(strsame(turtle->wds[turtle->cw], ")")){
+    if(STRSAME(turtle->wds[turtle->cw], ")")){
         turtle->cw++;
         return true;
     }
