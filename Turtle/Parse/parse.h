@@ -52,6 +52,7 @@ bool Item(Program* turtle);
 bool Pfix(Program* turtle);
 bool Op(Program* turtle);
 
+void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
 void test(void);
 

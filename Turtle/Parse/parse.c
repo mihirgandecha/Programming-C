@@ -1,8 +1,8 @@
 #include "parse.h"
 
 int main(int argc, char* argv[]){
-    test();
-    return 0;
+    // test();
+    // return 0;
 
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
@@ -22,6 +22,7 @@ int main(int argc, char* argv[]){
   while in a "verbose" mode, you might print out all errors and additional debugging information.
 
 */
+
 void validArgs(int argc){
     if(argc != EXPECTED_ARGS){
         ERROR("Error on argv[0]\n");
@@ -99,6 +100,12 @@ bool Ins(Program *turtle){
     }
     else if (STRSAME(cmnd, "COLOUR")){
         return Col(turtle);
+    }
+    else if (STRSAME(cmnd, "LOOP")){
+        return Loop(turtle);
+    }
+    else if (STRSAME(cmnd, "SET")){
+        return Set(turtle);
     }
     DEBUG("No 'FWD' OR 'Rgt' OR 'Col' input."); 
     return false;

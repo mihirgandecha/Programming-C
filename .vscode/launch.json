@@ -24,7 +24,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Turtle/parse_s", 
-            "args": ["Turtle/TTLs/octagon1.ttl"], 
+            "args": ["Turtle/TTLs/set1.ttl"], 
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
