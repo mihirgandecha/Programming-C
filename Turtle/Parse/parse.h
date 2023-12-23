@@ -10,7 +10,7 @@
 #define EXPECTED_VARLEN 2
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
-#define NOEXIT_ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
+#define DEBUG(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -28,22 +28,29 @@ void runProgram(Program* turtle);
 
 //Grammar:
 bool Prog(Program *turtle);
+
 bool Inslst(Program *turtle);
 bool Ins(Program *turtle);
+
 bool Fwd(Program *turtle);
-bool Num(Program *turtle);
 bool Rgt(Program *turtle);
-bool Ltr(char var);
-bool Var(Program *turtle);
-bool Varnum(Program *turtle);
 bool Col(Program *turtle);
-bool Word(Program* turtle);
-bool Item(Program* turtle);
-bool Items(Program* turtle);
-bool Lst(Program* turtle);
 bool Loop(Program *turtle);
-bool Op(Program* turtle);
+bool Set(Program *turtle);
+
+bool Varnum(Program *turtle);
+bool Var(Program *turtle);
+bool Ltr(Program *turtle);
+bool Num(Program *turtle);
+
+bool Word(Program* turtle);
+
+bool Lst(Program* turtle);
+bool Items(Program* turtle);
+bool Item(Program* turtle);
+
 bool Pfix(Program* turtle);
+bool Op(Program* turtle);
 
 bool checkNull(Program *turtle);
 void test(void);

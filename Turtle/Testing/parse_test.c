@@ -10,7 +10,7 @@ void test(void){
     //Testing for Error msg [Start]: ~working
     strcpy(testTurtle->wds[0], "END");
     testTurtle->cw = 0;
-    puts("\nTest of <Prog> error msg:");
+    puts("Test of <Prog> error msg:");
     assert(Prog(testTurtle) == false);
     // runProgram(testTurtle);
     //Expecting Fatal Error No 'START' statement! occurred in Parse/parse.c, line 59 
@@ -39,10 +39,9 @@ void test(void){
     strcpy(testTurtle->wds[4], "20");
     testTurtle->cw = 0;
     //Expecting no Error msg:
-    puts("\nTest of <Ins> error msg:");
+    puts("\nTesting <Ins> error msg:");
     assert(Ins(testTurtle) == false);
-    //Expecting Fatal Error No 'END' or Unknown Command! occurred in Parse/parse.c, line 73
-    puts("\nTest 4 of <Prog> error msg:");
+    puts("\nTesting <Prog> error msg:");
     assert(Prog(testTurtle) == false);
 
     //Expecting no Error msg:
@@ -77,24 +76,23 @@ void test(void){
     // Testing Num error msg ~ working
     strcpy(testTurtle->wds[0], "abc");
     testTurtle->cw = 0;
-    puts("\nTest 1 of <Num> error msg:");
     assert(Num(testTurtle) == false);
-    //Expecting msg: Fatal Error Invalid Number. occurred in Parse/parse.c, line 134 
     
     //Testing for Ltr Function:
-    assert(Ltr('A') == true);
-    assert(Ltr('Z') == true);
-    assert(Ltr('M') == true);
-    puts("\nTest 4 of <Ltr> error msg:");
-    assert(Ltr('a') == false);
-    puts("\nTest 5 of <Ltr> error msg:");
-    assert(Ltr('z') == false);
-    puts("\nTest 6 of <Ltr> error msg:");
-    assert(Ltr('1') == false);
-    puts("\nTest 7 of <Ltr> error msg:");
-    assert(Ltr('@') == false);
+    Program* testLtr = initTurtle();
+    testLtr->cw = 0;
+    strcpy(testLtr->wds[testLtr->cw], "A");
+    assert(Ltr(testLtr) == true);
+    strcpy(testLtr->wds[testLtr->cw], "M");
+    assert(Ltr(testLtr) == true);
+    strcpy(testTurtle->wds[testTurtle->cw], "c");
+    assert(Ltr(testTurtle) == false);
+    strcpy(testTurtle->wds[testTurtle->cw], "2");
+    assert(Ltr(testTurtle) == false);
+    strcpy(testTurtle->wds[testTurtle->cw], "@");
+    assert(Ltr(testTurtle) == false);
 
-    //Test for Var Function:
+    //Test for <VAR> Function:
     // Test 1: Valid variable
     strcpy(testTurtle->wds[0], "$A");
     testTurtle->cw = 0;
@@ -102,25 +100,17 @@ void test(void){
     // Test 2: Invalid variable (length is not 2)
     strcpy(testTurtle->wds[0], "$AB");
     testTurtle->cw = 0;
-    puts("\nTest 2 of <Var> error msg:");
     assert(Var(testTurtle) == false);
     // Test 3: Invalid variable (first character is not $)
     strcpy(testTurtle->wds[0], "A");
     testTurtle->cw = 0;
-    puts("\nTest 4 of <Var> error msg:");
     assert(Var(testTurtle) == false);
     // Test 4: Invalid variable (second character is not an uppercase letter)
     strcpy(testTurtle->wds[0], "$a");
     testTurtle->cw = 0;
-    puts("\nTest 4 of <Var> error msg:");
     assert(Var(testTurtle) == false);
-    // Test 5: Valid letter
-    assert(Ltr('A') == true);
-    // Test 6: Invalid letter (not an uppercase letter)
-    puts("\nTest 6 of <Var> error msg:");
-    assert(Ltr('a') == false);
 
-    //Test for <Varnum> Function
+    //Test for <VARNUM> Function
     // Test 1: Valid variable
     strcpy(testTurtle->wds[0], "$A");
     testTurtle->cw = 0;
@@ -133,14 +123,12 @@ void test(void){
     Program* testTurtle2 = initTurtle();
     strcpy(testTurtle2->wds[0], "AB");
     testTurtle2->cw = 0;
-    puts("\nTest 3 of <Varnum> error msg:");
     assert(Varnum(testTurtle2) == false);
 
     //Testing for <COL> function:
     strcpy(testTurtle2->wds[0], "COLOUR");
     strcpy(testTurtle2->wds[1], "$A");
     testTurtle2->cw = 0;
-    // puts("\nTest 3 of <Varnum> error msg:");
     assert(Col(testTurtle2) == true);
 
     // Test for <WORD> function:
@@ -157,29 +145,24 @@ void test(void){
     //Test <ITEM> Function:
     strcpy(testTurtle->wds[0], "\"RED\"");
     testTurtle->cw = 0;
-    puts("\nTest of <Item> function:");
     assert(Item(testTurtle) == true);
 
     strcpy(testTurtle->wds[0], "ORANGE");
     testTurtle->cw = 0;
-    puts("\nTest of <Item> function:");
     assert(Item(testTurtle) == false);
 
     // Test for <ITEMS> function
     strcpy(testTurtle->wds[0], "}");
     testTurtle->cw = 0;
-    puts("\nTest of <Items> function:");
     assert(Items(testTurtle) == true);
 
     strcpy(testTurtle->wds[0], "$H");
     strcpy(testTurtle->wds[1], "}");
     testTurtle->cw = 0;
-    puts("\nTest of <Items> function:");
     assert(Items(testTurtle) == true);
 
     strcpy(testTurtle->wds[0], "{}");
     testTurtle->cw = 0;
-    puts("\nTest of <Items> function:");
     assert(Items(testTurtle) == false);
 
     // Test for <LST> function
@@ -188,7 +171,6 @@ void test(void){
     strcpy(testTurtle->wds[2], "$Z");
     strcpy(testTurtle->wds[3], "}");
     testTurtle->cw = 0;
-    puts("\nTest of <Lst> function:");
     assert(Lst(testTurtle) == true);
 
     // Test for <LST> function for false
@@ -199,7 +181,6 @@ void test(void){
     strcpy(testTurtle->wds[0], "{");
     strcpy(testTurtle->wds[1], "}");
     testTurtle->cw = 0;
-    puts("\nTest of <Lst> function with empty list:");
     assert(Lst(testTurtle) == true);
 
     //Without closing '}' should fail:
@@ -207,13 +188,11 @@ void test(void){
     strcpy(testTurtle3->wds[1], "\"BLUE\"");
     strcpy(testTurtle3->wds[2], "\"CYAN\"");
     testTurtle3->cw = 0;
-    puts("\nTest of <Lst> function without closing brace:");
     assert(Lst(testTurtle3) == false);
 
     //Extra varnum after closing brace:
     strcpy(testTurtle->wds[3], "}");
     strcpy(testTurtle->wds[4], "$Z");
-    puts("\nTest of <Lst> function without closing brace:");
     assert(Lst(testTurtle3) == false);
 
     //Testing for <LOOP>
@@ -235,7 +214,6 @@ void test(void){
     strcpy(testTurtle4->wds[14], "90");
     strcpy(testTurtle4->wds[15], "END");
     testTurtle4->cw = 1;
-    puts("\nTest of <Loop> function with valid input:");
     assert(Loop(testTurtle4) == true);
 
     Program* testTurtle5 = initTurtle();
@@ -314,6 +292,18 @@ void test(void){
     // Test for NULL
     assert(Pfix(NULL) == false);
 
+    //Test for <SET> function:
+    Program* testTurtle8 = initTurtle();
+    strcpy(testTurtle8->wds[0], "SET");
+    strcpy(testTurtle8->wds[1], "A");
+    strcpy(testTurtle8->wds[2], "(");
+    strcpy(testTurtle8->wds[3], "1");
+    strcpy(testTurtle8->wds[4], "+");
+    strcpy(testTurtle8->wds[5], "2");
+    strcpy(testTurtle8->wds[6], ")");
+    testTurtle8->cw = 0;
+    assert(Set(testTurtle8) == true);
+
     free(testTurtle);
     free(testTurtle2);
     free(testTurtle3);
@@ -321,4 +311,6 @@ void test(void){
     free(testTurtle5);
     free(testTurtle6);
     free(testTurtle7);
+    free(testTurtle8);
+    free(testLtr);
 }

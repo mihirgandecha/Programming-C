@@ -15,7 +15,13 @@ int main(int argc, char* argv[]){
     free(turtle);
     return 0;
 }
+/*TODO: 
+3. **Use different levels of verbosity**:
+ For a cleaner output, you could implement different levels of verbosity for your error messages.
+  For example, in a "quiet" mode, you might only print out critical errors, 
+  while in a "verbose" mode, you might print out all errors and additional debugging information.
 
+*/
 void validArgs(int argc){
     if(argc != EXPECTED_ARGS){
         ERROR("Error on argv[0]\n");
@@ -60,7 +66,7 @@ void runProgram(Program* turtle){
 
 bool Prog(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "START")){
-        NOEXIT_ERROR("No 'START' statement!");
+        DEBUG("No 'START' statement!");
         return false;
     }
     turtle->cw++;
@@ -75,7 +81,7 @@ bool Inslst(Program *turtle){
         return true;
     }
     if(!Ins(turtle)){
-        NOEXIT_ERROR("No 'END' or Unknown Command!");
+        DEBUG("No 'END' or Unknown Command!");
         return false;
     }
     turtle->cw++;
@@ -94,14 +100,13 @@ bool Ins(Program *turtle){
     else if (STRSAME(cmnd, "COLOUR")){
         return Col(turtle);
     }
-    NOEXIT_ERROR("No 'FWD' OR 'Rgt' function."); 
+    DEBUG("No 'FWD' OR 'Rgt' OR 'Col' input."); 
     return false;
 }
 
 bool Fwd(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!STRSAME(cmnd, "FORWARD")){
-        NOEXIT_ERROR("Forward did not execute!");
         return false;
     }
     else{
@@ -116,7 +121,6 @@ bool Fwd(Program *turtle){
 bool Rgt(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!STRSAME(cmnd, "RIGHT")){
-        NOEXIT_ERROR("Right did not execute!");
         return false;
     }
     else{
@@ -131,7 +135,6 @@ bool Rgt(Program *turtle){
 bool Col(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
     if (!STRSAME(cmnd, "COLOUR")){
-        NOEXIT_ERROR("COLOUR was not registered.");
         return false;
     }
     turtle->cw++;
@@ -146,7 +149,7 @@ bool Loop(Program *turtle){
         return false;
     }
     turtle->cw++;
-    if (!Ltr(*turtle->wds[turtle->cw])){
+    if (!Ltr(turtle)){
         return false;
     }
     turtle->cw++;
@@ -163,9 +166,29 @@ bool Loop(Program *turtle){
     return true;
 }
 
+bool Set(Program *turtle){
+    if(!STRSAME(turtle->wds[turtle->cw], "SET")){
+        DEBUG("Expected 'SET'");
+        return false;
+    }
+    turtle->cw++;
+    if(!Ltr(turtle)){
+        return false;
+    }
+    turtle->cw++;
+    if(!STRSAME(turtle->wds[turtle->cw], "(")){
+        DEBUG("Expected 'Opening '('");
+        return false;
+    }
+    turtle->cw++;
+    if(!Pfix(turtle)){
+        return false;
+    }
+    return true; 
+}
+
 bool Varnum(Program *turtle){
     if(!Var(turtle) && !Num(turtle)){
-        NOEXIT_ERROR("Invalid Number or Variable Name.");
         return false;
     }
     return true; 
@@ -188,15 +211,27 @@ bool Var(Program *turtle){
     if (strlen(var) != EXPECTED_VARLEN) {
         return false;
     }
-    if (var[0] == '$' && Ltr(var[1])){
+    if (var[0] == '$' && Ltr(turtle)){
         return true;
     }
     return false;
 }
 
-bool Ltr(char var){
-    if (var >= 'A' && var <= 'Z'){
-        return true;
+bool Ltr(Program *turtle){
+    char* var = turtle->wds[turtle->cw];
+    int len = strlen(var);
+    if (len == 1){
+        char firstChar = var[0];
+        if (firstChar >= 'A' && firstChar <= 'Z'){
+            return true;
+        }
+    }
+    else if (len > 1){
+        char firstChar = var[0];
+        char secondChar = var[1];
+        if (firstChar == '$' && secondChar >= 'A' && secondChar <= 'Z'){
+            return true;
+        }
     }
     return false;
 }
