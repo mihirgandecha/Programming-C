@@ -316,7 +316,6 @@ bool Pfix(Program* turtle){
         return false;
     }
     if(STRSAME(turtle->wds[turtle->cw], ")")){
-        turtle->cw++;
         return true;
     }
     else if (Op(turtle)){
