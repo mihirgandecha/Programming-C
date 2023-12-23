@@ -1,8 +1,6 @@
 #include "parse.h"
 
 int main(int argc, char* argv[]){
-    // test();
-    // return 0;
 
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
@@ -13,6 +11,8 @@ int main(int argc, char* argv[]){
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
+    // test();
+    // return 0;
     return 0;
 }
 /*TODO: 
