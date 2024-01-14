@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <math.h>
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
@@ -23,6 +24,9 @@ struct prog{
    int cw; 
    bool endReached;
    int col, row;
+   double angle;
+   double rAngle;
+   double num[MAXCMND][MAXTOKENSIZE];
 };
 typedef struct prog Program;
 

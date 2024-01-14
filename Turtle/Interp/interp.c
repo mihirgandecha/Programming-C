@@ -45,6 +45,8 @@ Program* initTurtle(void){
 void initPos(Program *turtle){
     turtle->col = SCOL;
     turtle->row = SROW;
+    turtle->angle = 0;
+    turtle->rAngle = 0;
 }
 
 void readWords(FILE* fttl, Program* turtle){
@@ -118,6 +120,12 @@ bool Fwd(Program *turtle){
             return false;
         }
     }
+    double num = atof(turtle->wds[turtle->cw]);
+    //can num be signed value?
+    if(num > COL){
+        return false;
+    }
+    turtle->num[turtle->cw][num];
     return true;
 }
 
@@ -134,6 +142,8 @@ bool Rgt(Program *turtle){
     }
     return true;
 }
+
+double degToRad(double )
 
 bool Col(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
