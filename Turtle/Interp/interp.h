@@ -14,13 +14,15 @@
 
 #define COL 51
 #define ROW 33
+#define SCOL 25
+#define SROW 16
 
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
    bool endReached;
-   char board[COL][ROW];
+   int col, row;
 };
 typedef struct prog Program;
 
@@ -57,4 +59,4 @@ void test(void);
 
 
 //Interpreter Functions:
-// bool initPos(Program *turtle);
+void initPos(Program *turtle);

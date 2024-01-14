@@ -9,7 +9,8 @@
         "assert.h": "c",
         "stdbool.h": "c",
         "stdlib.h": "c",
-        "ctype.h": "c"
+        "ctype.h": "c",
+        "interp.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

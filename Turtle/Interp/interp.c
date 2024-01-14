@@ -1,4 +1,4 @@
-#include "parse.h"
+#include "interp.h"
 
 int main(int argc, char* argv[]){
 
@@ -38,8 +38,13 @@ Program* initTurtle(void){
         ERROR("Turtle failed to initialise!\n");
         exit(EXIT_FAILURE);
     }
-    
+    initPos(turtle);
     return turtle;
+}
+
+void initPos(Program *turtle){
+    turtle->col = SCOL;
+    turtle->row = SROW;
 }
 
 void readWords(FILE* fttl, Program* turtle){

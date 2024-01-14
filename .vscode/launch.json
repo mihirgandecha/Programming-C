@@ -25,6 +25,31 @@
                 "engineLogging": true 
             }
         },
+        {
+            "name": "Debug interp with GDB",   
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/Turtle/interp_s",
+            "args": ["Turtle/TTLs/empty.ttl"], // Adjust for different TTL files
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "/usr/bin/gdb",
+            "logging": { 
+                "trace": true, 
+                "traceResponse": true, 
+                "engineLogging": true 
+            }
+        },
 
         {
             "name": "(gdb) Parser Attach",

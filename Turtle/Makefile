@@ -13,8 +13,8 @@ parse_s: Parse/parse.h Parse/parse.c
 # parse_with_test: Parse/parse.h Parse/parse.c Testing/parse_test.c
 #     $(CC) Parse/parse.c Testing/parse_test.c -g -o parse_test -I./Parse -I./Testing -lm
 
-# interp_s: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
-# 	$(CC) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
+interp_s: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
+	$(CC) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
 
 ### An example : you may wish to adapt this slightly
 extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c neillsimplescreen.h
@@ -23,23 +23,24 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 run: all
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
-	./parse_s TTLs/empty.ttl
-	./parse_s TTLs/forward.ttl
-	./parse_s TTLs/ok_parse_fail_interp.ttl
-	./parse_s TTLs/set1.ttl
-	./parse_s TTLs/donothing.ttl
-	./parse_s TTLs/set2.ttl
-	./parse_s TTLs/turn.ttl
-	./parse_s TTLs/spiral.ttl
-	./parse_s TTLs/octagon1.ttl
-	./parse_s TTLs/octagon2.ttl
-	./parse_s TTLs/tunnel.ttl
-	./parse_s TTLs/labyrinth.ttl
-	./parse_s TTLs/hypno.ttl
-	./parse_s TTLs/5x5.ttl
-	./parse_s TTLs/downarrow.ttl
+#	./parse_s TTLs/empty.ttl
+#	./parse_s TTLs/forward.ttl
+#	./parse_s TTLs/ok_parse_fail_interp.ttl
+#	./parse_s TTLs/set1.ttl
+#	./parse_s TTLs/donothing.ttl
+#	./parse_s TTLs/set2.ttl
+#	./parse_s TTLs/turn.ttl
+#	./parse_s TTLs/spiral.ttl
+#	./parse_s TTLs/octagon1.ttl
+#	./parse_s TTLs/octagon2.ttl
+#	./parse_s TTLs/tunnel.ttl
+#	./parse_s TTLs/labyrinth.ttl
+#	./parse_s TTLs/hypno.ttl
+#	./parse_s TTLs/5x5.ttl
+#	./parse_s TTLs/downarrow.ttl
 
-#	./interp_s TTLs/empty.ttl out_empty.txt
+	./interp_s TTLs/empty.ttl 
+#	out_empty.txt
 #	./interp_s TTLs/forward.ttl out_forward.txt
 #	./interp_s TTLs/set1.ttl out_set1.txt
 #	./interp_s TTLs/donothing.ttl out_donothing.txt
