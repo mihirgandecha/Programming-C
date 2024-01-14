@@ -21,6 +21,8 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 	$(CC) neillsimplescreen.c Extension/extension.c -o extension_s -I./Extension $(SANITIZE) -lm
 
 run: all
+# to go through all TTL's in repo and run
+#	find TTLs -type f -exec ./parse_s {} \; 
 	./parse_s TTLs/empty.ttl
 	./parse_s TTLs/forward.ttl
 	./parse_s TTLs/ok_parse_fail_interp.ttl
@@ -68,4 +70,4 @@ run: all
 #	./interp_s TTLs/5x5.ttl out_5x5.ps
 #	./interp_s TTLs/downarrow.ttl out_downarrow.ps
 clean:
-	rm -f parse_s interp_s out_*.txt out_*.ps out_*.pdf
+	rm -f parse_s parse_test interp_s out_*.txt out_*.ps out_*.pdf
