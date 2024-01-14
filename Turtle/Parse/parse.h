@@ -57,5 +57,3 @@ void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
 void test(void);
 
-//Helper functions:
-// void freeTurtle(Program* turtle);

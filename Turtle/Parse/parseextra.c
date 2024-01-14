@@ -132,20 +132,20 @@ bool Inslst(Program *turtle){
 // }
 
 //also conducting horizontal/vertical?
-// bool Fwd(Program *turtle){
-    //strlen - 1
-    // if (!Num(turtle)){
-    //     ERROR("Invalid number after FORWARD");
-    //     return false;
-    // }
-    //How do we actually make it go forward??
-    //SOH CAH TOA
-    // double radians = turtle->angle * PI / STRAIGHT_ANGLE;
-    // turtle->row += turtle->distance * cos(radians);
-    // turtle->col += turtle->distance * sin(radians);
+bool Fwd(Program *turtle){
+    strlen - 1
+    if (!Num(turtle)){
+        ERROR("Invalid number after FORWARD");
+        return false;
+    }
+    // How do we actually make it go forward??
+    // SOH CAH TOA
+    double radians = turtle->angle * PI / STRAIGHT_ANGLE;
+    turtle->row += turtle->distance * cos(radians);
+    turtle->col += turtle->distance * sin(radians);
     
-//     return true;
-// }
+    return true;
+}
 
 // bool Num(Program *turtle){
 //     if (sscanf("%lf",turtle->cmnd[turtle->cw]) != 1){
