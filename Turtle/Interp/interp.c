@@ -2,19 +2,27 @@
 #include "../neillsimplescreen.h"
 
 int main(int argc, char* argv[]){
+    // printf("%d", argc);
 
     validArgs(argc);
+    degToRadTest();
     FILE* fttl = openFile(argv[1]);
+    //if argv[2] then output to screen
+    // FILE* fttx = openFile(argv[2]);
+
     Program* turtle = initTurtle();
     readWords(fttl, turtle);
     runProgram(turtle);
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
+
     // test();
     // return 0;
     return 0;
 }
+
+//use fgcol,print char, s
 
 void validArgs(int argc){
     if(argc != EXPECTED_ARGS){
@@ -28,10 +36,21 @@ FILE* openFile(char* filename){
     if(!fttl){
         ERROR("Cannot read from argv[1] \n");
         fclose(fttl);
-        exit(EXIT_FAILURE);
+        // exit(EXIT_FAILURE);
     }
     return fttl;
 }
+
+// FILE* openFileTxt(char* filename){
+//     FILE* ftxt = fopen(filename, "r"); //TODO does it need to be write to?
+//     if(!fttl){
+//         ERROR("Cannot read from argv[1] \n");
+//         fclose(fttl);
+//         // exit(EXIT_FAILURE);
+//     }
+//     return fttl;
+// }
+
 
 Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
@@ -47,7 +66,7 @@ void initPos(Program *turtle){
     turtle->col = SCOL;
     turtle->row = SROW;
     turtle->angle = 0;
-    turtle->rAngle = 0;
+    turtle->radians = 0;
 }
 
 void readWords(FILE* fttl, Program* turtle){
@@ -61,6 +80,7 @@ void readWords(FILE* fttl, Program* turtle){
 }
 
 void runProgram(Program* turtle){
+    turtle->numUsed = false;
     if(!Prog(turtle)){
         ERROR("Grammar mistakes found in ttl.");
     }
@@ -120,15 +140,28 @@ bool Fwd(Program *turtle){
         if(!Varnum(turtle)){
             return false;
         }
+        if(Num(turtle)){
+            turtle->distance = turtle->distance + atof(turtle->wds[turtle->cw]);
+            intFwd(turtle);
+            return true;
+        }
     }
-    double num = atof(turtle->wds[turtle->cw]);
-    //can num be signed value?
-    if(num > COL){
-        return false;
-    }
-    turtle->num[turtle->cw][num];
+//interp Fwd func
     return true;
 }
+
+void intFwd(Program *turtle){
+    //First interpFwd check:
+    //fwd can be signed val, cannot be 51? as screen board size?
+    if((num > 0 && num > COL) || (num < 0 && num < -COL)){
+        return;
+    }
+    //change in row and col then add:
+    double dRow = sin(turtle->radians) * turtle->distance;
+    double dCol = cos(turtle->radians) * turtle->distance;
+    turtle->row += (int)dRow;
+    turtle->col += (int)dCol;
+}    
 
 bool Rgt(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
@@ -140,11 +173,32 @@ bool Rgt(Program *turtle){
         if(!Varnum(turtle)){
             return false;
         }
+        //interp for num:
+        if(Num(turtle)){
+            //start with only 1 instruction: ie RIGHT 0, FWD 15
+            turtle->angle = turtle->angle + atof(turtle->wds[turtle->cw]);
+            turtle->radians = turtle->radians + degToRad(turtle->angle);
+        }
     }
     return true;
 }
 
-double degToRad(double )
+double degToRad(double degrees){
+    //Log: 
+    //while loop for constantly adding 360 if negative
+    //used fmod instead from stk overflow to make degrees within range [0->360]
+    //get absolute value (fabs)
+    degrees = fabs(degrees);
+
+    if(degrees > FULLCIRC){
+        degrees = fmod(degrees, FULLCIRC);
+    }
+    // if (degrees < 0){
+    //     degrees += FULLCIRC;
+    // }
+    double radians = degrees * (M_PI / HALFCIRC);
+    return radians;
+}
 
 bool Col(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
@@ -213,6 +267,7 @@ bool Num(Program *turtle){
     char *endptr;
     strtod(number, &endptr);
     if (*endptr == '\0'){
+        turtle->numUsed = true;
         return true;
     }
     else{
@@ -333,4 +388,76 @@ bool Pfix(Program* turtle){
         return Pfix(turtle);
     }
     return false;
+}
+
+void degToRadTest(void){
+    //Blackbox testing:
+    /*
+    //Log:Does not work as testing for floating point
+    number does not represent real number
+    ^found I needed to use small tolerance
+    (1e-12) <- too complex, used a range
+    Degrees × (π/180) = Radians
+    Radians  × (180/π) = Degrees
+    360 Degrees = 2π Radians
+    180 Degrees = π Radians
+    */
+    // Test conversion of 0 degrees
+    double result;
+    // Test conversion of 0 degrees
+    result = degToRad(0);
+    assert((int)result == 0);
+    // Test conversion of -0 degrees (TODO Edge case - does RIGHT -0 work?)
+    result = degToRad(-0);
+    assert((int)result == 0);
+    // Test conversion of 360 degrees
+    result = degToRad(360);
+    assert(result >= 6.1 && result <= 6.3);
+    // Test conversion of -360 degrees
+    result = degToRad(-360);
+    assert(result >= 6.1 && result <= 6.3);
+    // Test conversion of 90 degrees
+    result = degToRad(90);
+    assert(result >= 1.3 && result <= 1.6);
+    // Test conversion of -90 degrees (testing fabs)
+    result = degToRad(-90);
+    assert(result >= 1.3 && result <= 1.6);
+    // Test conversion of 180 degrees
+    result = degToRad(HALFCIRC);
+    assert(result >= 3.10 && result <= 3.20);
+    // Test conversion of -180 degrees
+    result = degToRad(-HALFCIRC);
+    assert(result >= 3.10 && result <= 3.20);
+    // Test conversion of 270 degrees
+    result = degToRad(270);
+    assert(result >= 4.70 && result <= 4.80);
+    // Test conversion of -270 degrees
+    result = degToRad(-270);
+    assert(result >= 4.70 && result <= 4.80);
+    //Edge cases:
+    // .0 <- 
+    // test very small +ve degree
+    result = degToRad(1e-12);
+    assert(result > 0 && result < 1e-12);
+    // test very small -ve degree
+    result = degToRad(-1e-12);
+    assert(result > 0 && result < 1e-12);
+    // test very large -ve degree
+    result = degToRad(-1e12);
+    assert(result >= 0 && result <= 2 * M_PI);
+    // test very large +ve degree
+    result = degToRad(1e12);
+    assert(result >= 0 && result <= 2 * M_PI);
+    // test fractional degree
+    result = degToRad(0.123456789);
+    assert(result > 0 && result < M_PI / 360);
+    // test negative fractional degree
+    result = degToRad(-0.123456789);
+    assert(result > 0 && result < M_PI / 360);
+    // test degree slightly less than 360
+    result = degToRad(359.999999999);
+    assert(result > 0 && result < (2 * M_PI));
+    // test degree slightly more than 0
+    result = degToRad(0.000000001);
+    assert(result > 0 && result < M_PI / 180);
 }
