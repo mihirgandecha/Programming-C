@@ -21,7 +21,6 @@
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
 
-
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
@@ -31,10 +30,14 @@ struct prog{
    double angle;
    double radians;
    bool numUsed;
-
+   char SCREEN[COL][ROW];
 };
 typedef struct prog Program;
 
+//Screen:
+void initScrn(Program *turtle);
+void printtoscreen(Program *turtle);
+void intFwd(Program *turtle);
 
 
 //Start Parser:

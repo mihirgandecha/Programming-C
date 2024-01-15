@@ -13,6 +13,7 @@ int main(int argc, char* argv[]){
     Program* turtle = initTurtle();
     readWords(fttl, turtle);
     runProgram(turtle);
+    initScrn(turtle);
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
@@ -21,6 +22,7 @@ int main(int argc, char* argv[]){
     // return 0;
     return 0;
 }
+//need 2D-arr for Screen and print2screen function
 
 //use fgcol,print char, s
 
@@ -51,6 +53,36 @@ FILE* openFile(char* filename){
 //     return fttl;
 // }
 
+void initScrn(Program *turtle){
+    for (int row = 0; row < ROW; row++){
+        for (int col = 0; col < COL; col++){
+            turtle->SCREEN[row][col] = ' ';
+        }
+    }
+}
+
+//llop cnt over distane
+//call trig
+//check in bound of screen
+//asign char to screen
+//in struct have colour = 'W' default
+
+
+void printtoscreen(Program *turtle){
+    neillclrscrn();
+    neillbgcol(black);
+    neillcursorhome();
+    // double s = 0.5;
+    //given we have current pos, and new pos, need to print each step:
+    for (int row = 0; row < ROW; row++){
+        for (int col = 0; col < COL; col++){
+            printf("%c", turtle->SCREEN[col][row]);
+        }
+        printf("\n");
+    }
+    //reset after used:
+    neillreset();
+}
 
 Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
@@ -153,14 +185,19 @@ bool Fwd(Program *turtle){
 void intFwd(Program *turtle){
     //First interpFwd check:
     //fwd can be signed val, cannot be 51? as screen board size?
-    if((num > 0 && num > COL) || (num < 0 && num < -COL)){
+    if((turtle->distance > 0 && turtle->distance > COL) || (turtle->distance < 0 && turtle->distance < -COL)){
         return;
     }
     //change in row and col then add:
+    //call round function, pump in double, then push to col,row
     double dRow = sin(turtle->radians) * turtle->distance;
-    double dCol = cos(turtle->radians) * turtle->distance;
+    double dCol = cos(turtle->radians) * -turtle->distance;
+    dRow = round(dRow);
+    dCol = round(dCol);
+
     turtle->row += (int)dRow;
     turtle->col += (int)dCol;
+    printtoscreen(turtle);
 }    
 
 bool Rgt(Program *turtle){
