@@ -18,7 +18,6 @@
 #define SCOL 25
 #define SROW 16
 
-
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 

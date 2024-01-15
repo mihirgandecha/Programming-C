@@ -1,4 +1,5 @@
 #include "interp.h"
+#include "../neillsimplescreen.h"
 
 int main(int argc, char* argv[]){
 

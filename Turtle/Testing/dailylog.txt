@@ -1,0 +1,9 @@
+1. Framework to tell you what is passing and failing - testing framework traps your code
+2. Call another function instead of EXIT - or flag set in testing mode
+
+Loopup Unit Testing
+Redefine your own version of EXIT
+
+15th Jan:
+Asked about testing with Neil - explained to use bash script and store num in $V, and if -eq 0 (EXIT_FAILURE)..then do X, else... do Y.
+
