@@ -104,8 +104,7 @@ Program* initTurtle(void){
 void initPos(Program *turtle){
     turtle->col = SCOL;
     turtle->row = SROW;
-    turtle->angle = 0;
-    turtle->radians = 0;
+    turtle->rAngle = 0;
 }
 
 void readWords(FILE* fttl, Program* turtle){
@@ -203,9 +202,9 @@ bool intFwd(Program *turtle){
     //change in row and col then add:
     //call round function, pump in double, then push to col,row
     
-    double dRow = sin(turtle->radians) * turtle->distance;
+    double dRow = sin(turtle->rAngle) * turtle->distance;
     //TODO check if negative:
-    double dCol = cos(turtle->radians) * -(turtle->distance);
+    double dCol = cos(turtle->rAngle) * -(turtle->distance);
     dRow = round(dRow);
     dCol = round(dCol);
 
@@ -244,8 +243,8 @@ bool Rgt(Program *turtle){
         if(Num(turtle)){
             //start with only 1 instruction: ie RIGHT 0, FWD 15
             //just store radians
-            turtle->angle = turtle->angle + atof(turtle->wds[turtle->cw]);
-            turtle->radians = turtle->radians + degToRad(turtle->angle);
+            double angle = atof(turtle->wds[turtle->cw]);
+            turtle->rAngle = turtle->rAngle + degToRad(angle);
         }
     }
     return true;
@@ -261,11 +260,8 @@ double degToRad(double degrees){
     if(degrees > FULLCIRC){
         degrees = fmod(degrees, FULLCIRC);
     }
-    // if (degrees < 0){
-    //     degrees += FULLCIRC;
-    // }
     double radians = degrees * (M_PI / HALFCIRC);
-    //store 
+    //store? 
     return radians;
 }
 
@@ -282,9 +278,9 @@ bool Col(Program *turtle){
     return true;
 }
 
+void setCol(Program *turtle, char* colour){
 //TODO is function len > 20 ok? 
 //TODO need to change background 
-void setCol(Program *turtle, char* colour){
     //change the background
     if (STRSAME(colour, "BLACK")){
         turtle->colour = 'B';

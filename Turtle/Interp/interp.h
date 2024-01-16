@@ -27,8 +27,7 @@ struct prog{
    bool endReached;
    int col, row;
    double distance;
-   double angle;
-   double radians;
+   double rAngle;
    bool numUsed;
    char SCREEN[ROW][COL];
    char colour;
