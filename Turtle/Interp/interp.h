@@ -30,14 +30,16 @@ struct prog{
    double angle;
    double radians;
    bool numUsed;
-   char SCREEN[COL][ROW];
+   char SCREEN[ROW][COL];
+   char colour;
 };
 typedef struct prog Program;
 
 //Screen:
 void initScrn(Program *turtle);
 void printtoscreen(Program *turtle);
-void intFwd(Program *turtle);
+bool intFwd(Program *turtle);
+void setCol(Program *turtle, char* colour);
 
 
 //Start Parser:

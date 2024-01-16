@@ -63,9 +63,9 @@ Your methodology for testing the Turtle parser and interpreter seems well though
 ----Phase 1: Parser Testing----
 
 ----(1)Black-Box Testing----
-- **Test with TTL Files**: Pass various TTL files (both provided and custom-created) through the parser. These files should be designed to test different aspects of the grammar and potential edge cases.
-- **Focus on Output**: Evaluate whether the parser outputs the correct result or error message for each input. The exact internal workings of the parser are not a concern here.
-- **Scripting for Automation**: Utilize a bash script to automate these tests. The script can run the parser with different inputs and check for expected outcomes, handling `EXIT_FAILURE` appropriately.
+- Test with TTL Files: Pass various TTL files (both provided and custom-created) through the parser. These files should be designed to test different aspects of the grammar and potential edge cases.
+- Unit Testing: using a flag to see if we are getting the correct output 
+
 
 ----(2)Black-Box Testing----
 - **Internal Checks**: Focus on the internal logic of the parser. This includes how it handles recursion, memory allocation for structures, error handling, etc.

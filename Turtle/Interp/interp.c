@@ -12,8 +12,8 @@ int main(int argc, char* argv[]){
 
     Program* turtle = initTurtle();
     readWords(fttl, turtle);
-    runProgram(turtle);
     initScrn(turtle);
+    runProgram(turtle);
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
@@ -53,6 +53,20 @@ FILE* openFile(char* filename){
 //     return fttl;
 // }
 
+//Draw Path func: want to individually draw movement of char on screen
+//llop cnt = 0 over distane
+    //call trig for each movement?
+    //check in bound of screen
+        //if so then capture col char and insert into SCREEN struct
+//OR:
+
+//make col, row the MIDPOINT
+//loop over counter i = 0; row, row <= newrow, i++ 
+    //loop over counter j = 0; col, col <= newcol, j++
+        //does it matter if 1 change in row&col at a time?
+        //NO-just need to mark char on position
+
+
 void initScrn(Program *turtle){
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
@@ -61,22 +75,15 @@ void initScrn(Program *turtle){
     }
 }
 
-//llop cnt over distane
-//call trig
-//check in bound of screen
-//asign char to screen
-//in struct have colour = 'W' default
-
-
 void printtoscreen(Program *turtle){
     neillclrscrn();
     neillbgcol(black);
     neillcursorhome();
-    // double s = 0.5;
-    //given we have current pos, and new pos, need to print each step:
+    // double seconds =;
+    //loop over 2d-arr and print each char
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
-            printf("%c", turtle->SCREEN[col][row]);
+            printf("%c", turtle->SCREEN[row][col]);
         }
         printf("\n");
     }
@@ -175,29 +182,52 @@ bool Fwd(Program *turtle){
         if(Num(turtle)){
             turtle->distance = turtle->distance + atof(turtle->wds[turtle->cw]);
             intFwd(turtle);
-            return true;
         }
     }
-//interp Fwd func
+
+
+    printtoscreen(turtle);
     return true;
 }
 
-void intFwd(Program *turtle){
+//use line algorithm - getpoint
+//pass in start point (current turtle pos - not midpoint!), pass distance 
+
+bool intFwd(Program *turtle){
     //First interpFwd check:
     //fwd can be signed val, cannot be 51? as screen board size?
     if((turtle->distance > 0 && turtle->distance > COL) || (turtle->distance < 0 && turtle->distance < -COL)){
-        return;
+        return false;
     }
+    // turtle->SCREEN[SROW][SCOL] = 'W';
     //change in row and col then add:
     //call round function, pump in double, then push to col,row
+    
     double dRow = sin(turtle->radians) * turtle->distance;
-    double dCol = cos(turtle->radians) * -turtle->distance;
+    //TODO check if negative:
+    double dCol = cos(turtle->radians) * -(turtle->distance);
     dRow = round(dRow);
     dCol = round(dCol);
 
-    turtle->row += (int)dRow;
-    turtle->col += (int)dCol;
-    printtoscreen(turtle);
+    //then start + delta (if not postscript)
+
+    /*TODO dont store yet! Bresenham's algorithm!
+    Approximate the best place to put
+    write colour to that points
+
+    */
+    
+    
+    //turtle->row += (int)dRow;
+    //turtle->col += (int)dCol;
+    
+
+
+
+    //TODO remove after temporary
+    //turtle->SCREEN[turtle->col][turtle->row] = 'W';
+    //this should be last step
+    return true;
 }    
 
 bool Rgt(Program *turtle){
@@ -213,6 +243,7 @@ bool Rgt(Program *turtle){
         //interp for num:
         if(Num(turtle)){
             //start with only 1 instruction: ie RIGHT 0, FWD 15
+            //just store radians
             turtle->angle = turtle->angle + atof(turtle->wds[turtle->cw]);
             turtle->radians = turtle->radians + degToRad(turtle->angle);
         }
@@ -234,6 +265,7 @@ double degToRad(double degrees){
     //     degrees += FULLCIRC;
     // }
     double radians = degrees * (M_PI / HALFCIRC);
+    //store 
     return radians;
 }
 
@@ -246,7 +278,41 @@ bool Col(Program *turtle){
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
+    setCol(turtle, turtle->wds[turtle->cw]);
     return true;
+}
+
+//TODO is function len > 20 ok? 
+//TODO need to change background 
+void setCol(Program *turtle, char* colour){
+    //change the background
+    if (STRSAME(colour, "BLACK")){
+        turtle->colour = 'B';
+    } 
+    else if (STRSAME(colour, "WHITE")){
+        turtle->colour = 'W';
+    } 
+    else if (STRSAME(colour, "RED")){
+        turtle->colour = 'R';
+    } 
+    else if (STRSAME(colour, "GREEN")){
+        turtle->colour = 'G';
+    } 
+    else if (STRSAME(colour, "BLUE")){
+        turtle->colour = 'B';
+    } 
+    else if (STRSAME(colour, "YELLOW")){
+        turtle->colour = 'Y';
+    } 
+    else if (STRSAME(colour, "CYAN")){
+        turtle->colour = 'C';
+    } 
+    else if (STRSAME(colour, "MAGENTA")){
+        turtle->colour = 'M';
+    } 
+    else {
+        turtle->colour = 'W';
+    }
 }
 
 bool Loop(Program *turtle){
