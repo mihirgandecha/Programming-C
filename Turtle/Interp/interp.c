@@ -5,16 +5,16 @@ int main(int argc, char* argv[]){
     // printf("%d", argc);
 
     validArgs(argc);
-    degToRadTest();
-    testBresenham();
     FILE* fttl = openFile(argv[1]);
     //if argv[2] then output to screen
     // FILE* fttx = openFile(argv[2]);
 
     Program* turtle = initTurtle();
     readWords(fttl, turtle);
-    initScrn(turtle);
+    // initScrn(turtle);
     runProgram(turtle);
+    degToRadTest();
+    testBresenham();
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
@@ -82,6 +82,7 @@ void printtoscreen(Program *turtle){
     neillcursorhome();
     // double seconds =;
     //loop over 2d-arr and print each char
+    initScrn(turtle);
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
@@ -218,16 +219,13 @@ bool intFwd(Program *turtle){
 }    
 
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol){
-
     int signRow = rowStart < rowEnd ? 1 : -1;
     int signCol = colStart < colEnd ? 1 : -1;
     dRow = abs(dRow);
     dCol = abs(dCol);
     int error = dCol - dRow;
+    turtle->SCREEN[rowStart][colStart] = turtle->colour;
     while(rowStart != rowEnd || colStart != colEnd){
-        if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
-            turtle->SCREEN[rowStart][colStart] = turtle->colour;
-        }
         //calculate if error for next point
         int doubleError = 2 * error;
         if(doubleError >= -dRow){
@@ -238,12 +236,16 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
             error += dCol;
             rowStart += signRow;
         }
+        if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
+            turtle->SCREEN[rowStart][colStart] = turtle->colour;
+        }
+    
     }
-    if(rowEnd >= 0 && rowEnd < ROW && colEnd >= 0 && colEnd < COL){
-        turtle->SCREEN[rowEnd][colEnd] = turtle->colour;
-        return true;
-    }
-    return false;
+    // if(rowEnd >= 0 && rowEnd < ROW && colEnd >= 0 && colEnd < COL){
+    //     turtle->SCREEN[rowEnd][colEnd] = turtle->colour;
+    //     return true;
+    // }
+    return true;
 }
 
 void testBresenham(void){
