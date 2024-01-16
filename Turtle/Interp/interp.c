@@ -15,6 +15,8 @@ int main(int argc, char* argv[]){
     initScrn(turtle);
     readWords(fttl, turtle);
     runProgram(turtle);
+    printtoscreen(turtle);
+
     // degToRadTest();
     puts("\nPassed Ok.");
     fclose(fttl);
@@ -172,7 +174,7 @@ bool Fwd(Program *turtle){
             intFwd(turtle);
         }
     }
-    printtoscreen(turtle);
+    // printtoscreen(turtle);
     return true;
 }
 
