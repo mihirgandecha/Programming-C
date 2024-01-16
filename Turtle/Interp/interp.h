@@ -27,6 +27,9 @@ struct prog{
    bool endReached;
    int col, row;
    double distance;
+   //Storing rotation of curser in degrees, and rAngle for radians
+   double rot;
+   //TODO Change to radRot:
    double rAngle;
    bool numUsed;
    char SCREEN[ROW][COL];

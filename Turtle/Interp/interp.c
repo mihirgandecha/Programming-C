@@ -107,6 +107,7 @@ void initPos(Program *turtle){
     turtle->rAngle = 0;
 }
 
+
 void readWords(FILE* fttl, Program* turtle){
     if(!checkNull(turtle)){
         return;
@@ -201,33 +202,69 @@ bool intFwd(Program *turtle){
     // turtle->SCREEN[SROW][SCOL] = 'W';
     //change in row and col then add:
     //call round function, pump in double, then push to col,row
+    int prevCol = (int)turtle->col;
+    int prevRow = (int)turtle->row;
     
     double dRow = sin(turtle->rAngle) * turtle->distance;
     //TODO check if negative:
     double dCol = cos(turtle->rAngle) * -(turtle->distance);
-    dRow = round(dRow);
-    dCol = round(dCol);
-
-    //then start + delta (if not postscript)
+    
+    (int)dRow = round(dRow);
+    (int)dCol = round(dCol);
 
     /*TODO dont store yet! Bresenham's algorithm!
     Approximate the best place to put
     write colour to that points
 
+    //(if not postscript) -> store (start + delta)
+
     */
-    
-    
     //turtle->row += (int)dRow;
     //turtle->col += (int)dCol;
     
-
-
-
     //TODO remove after temporary
     //turtle->SCREEN[turtle->col][turtle->row] = 'W';
     //this should be last step
     return true;
 }    
+
+//Takes old position and gives new position:
+void updatePos(Program *turtle){
+    turtle->col = cos(degToRad(turtle->rot) * turtle->distance);
+    turtle->row = sin(degToRad(turtle->rot) * turtle->distance);
+}
+
+void Bresenham(Program *turtle, int rowInit, int colInit, int dRow, int dCol){
+    //y=mx+c
+    
+    int grad = dCol / dRow;
+
+    //try for FWD 5:
+    for (int i = (int)colInit; i < (int)newCol; i++){
+        //starter code on git
+    }
+
+
+}
+
+void testBresenham(void){
+    Program testTurtle = initTurtle();
+    testTurtle.col = SCOL;
+    testTurtle.row = SROW;
+    testTurtle.rAngle = 0;
+
+    //test for FWD 5
+    double dCol = 5;
+    double dRow = 0;
+    Bresenham(testTurtle, testTurtle.row, testTurtle.col, dRow, dCol);
+    assert(testTurtle.SCREEN[SROW][SCOL] == 'W');
+    assert(testTurtle.SCREEN[SROW][24] == 'W');
+    assert(testTurtle.SCREEN[SROW][23] == 'W');
+    assert(testTurtle.SCREEN[SROW][22] == 'W');
+    assert(testTurtle.SCREEN[SROW][21] == 'W');
+}
+
+
 
 bool Rgt(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
