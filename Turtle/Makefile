@@ -39,9 +39,9 @@ run: all
 #	./parse_s TTLs/5x5.ttl
 #	./parse_s TTLs/downarrow.ttl
 
-#	./interp_s TTLs/empty.ttl 
+	./interp_s TTLs/empty.ttl 
 #	out_empty.txt
-	./interp_s TTLs/forward.ttl 
+#	./interp_s TTLs/forward.ttl 
 #	out_forward.txt
 #	./interp_s TTLs/set1.ttl out_set1.txt
 #	./interp_s TTLs/donothing.ttl out_donothing.txt

@@ -6,6 +6,7 @@ int main(int argc, char* argv[]){
 
     validArgs(argc);
     degToRadTest();
+    testBresenham();
     FILE* fttl = openFile(argv[1]);
     //if argv[2] then output to screen
     // FILE* fttx = openFile(argv[2]);
@@ -194,74 +195,78 @@ bool Fwd(Program *turtle){
 //pass in start point (current turtle pos - not midpoint!), pass distance 
 
 bool intFwd(Program *turtle){
-    //First interpFwd check:
-    //fwd can be signed val, cannot be 51? as screen board size?
     if((turtle->distance > 0 && turtle->distance > COL) || (turtle->distance < 0 && turtle->distance < -COL)){
         return false;
     }
-    // turtle->SCREEN[SROW][SCOL] = 'W';
-    //change in row and col then add:
-    //call round function, pump in double, then push to col,row
+    //TODO check if negative:
     int prevCol = (int)turtle->col;
     int prevRow = (int)turtle->row;
     
-    double dRow = sin(turtle->rAngle) * turtle->distance;
-    //TODO check if negative:
-    double dCol = cos(turtle->rAngle) * -(turtle->distance);
-    
-    (int)dRow = round(dRow);
-    (int)dCol = round(dCol);
-
-    /*TODO dont store yet! Bresenham's algorithm!
-    Approximate the best place to put
-    write colour to that points
-
+    int dRow = round(sin(turtle->rAngle) * turtle->distance);
+    int dCol = round(cos(turtle->rAngle) * -(turtle->distance));
     //(if not postscript) -> store (start + delta)
-
-    */
-    //turtle->row += (int)dRow;
-    //turtle->col += (int)dCol;
-    
-    //TODO remove after temporary
-    //turtle->SCREEN[turtle->col][turtle->row] = 'W';
-    //this should be last step
-    return true;
+    turtle->colour = 'W';
+    int newRow = prevRow + dRow;
+    int newCol = prevCol + dCol;
+    Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol);
+    if(newRow >= 0 && newRow < ROW && newCol >= 0 && newCol < COL){
+        turtle->row = newRow;
+        turtle->col = newCol;
+        return true;
+    }
+    return false;
 }    
 
-//Takes old position and gives new position:
-void updatePos(Program *turtle){
-    turtle->col = cos(degToRad(turtle->rot) * turtle->distance);
-    turtle->row = sin(degToRad(turtle->rot) * turtle->distance);
-}
+bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol){
 
-void Bresenham(Program *turtle, int rowInit, int colInit, int dRow, int dCol){
-    //y=mx+c
-    
-    int grad = dCol / dRow;
-
-    //try for FWD 5:
-    for (int i = (int)colInit; i < (int)newCol; i++){
-        //starter code on git
+    int signRow = rowStart < rowEnd ? 1 : -1;
+    int signCol = colStart < colEnd ? 1 : -1;
+    dRow = abs(dRow);
+    dCol = abs(dCol);
+    int error = dCol - dRow;
+    while(rowStart != rowEnd || colStart != colEnd){
+        if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
+            turtle->SCREEN[rowStart][colStart] = turtle->colour;
+        }
+        //calculate if error for next point
+        int doubleError = 2 * error;
+        if(doubleError >= -dRow){
+            error -= dRow;
+            colStart += signCol;
+        }
+        if(doubleError <= dCol){
+            error += dCol;
+            rowStart += signRow;
+        }
     }
-
-
+    if(rowEnd >= 0 && rowEnd < ROW && colEnd >= 0 && colEnd < COL){
+        turtle->SCREEN[rowEnd][colEnd] = turtle->colour;
+        return true;
+    }
+    return false;
 }
 
 void testBresenham(void){
-    Program testTurtle = initTurtle();
-    testTurtle.col = SCOL;
-    testTurtle.row = SROW;
-    testTurtle.rAngle = 0;
+    Program *testTurtle = initTurtle();
+    testTurtle->col = SCOL;
+    testTurtle->row = SROW;
+    testTurtle->rAngle = 0;
 
     //test for FWD 5
-    double dCol = 5;
-    double dRow = 0;
-    Bresenham(testTurtle, testTurtle.row, testTurtle.col, dRow, dCol);
-    assert(testTurtle.SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle.SCREEN[SROW][24] == 'W');
-    assert(testTurtle.SCREEN[SROW][23] == 'W');
-    assert(testTurtle.SCREEN[SROW][22] == 'W');
-    assert(testTurtle.SCREEN[SROW][21] == 'W');
+    testTurtle->cw = 0;
+    char* cmnd = "FORWARD";
+    strcpy(testTurtle->wds[testTurtle->cw], cmnd); 
+    testTurtle->cw = 1;
+    char* cmnd2 = "5";
+    strcpy(testTurtle->wds[testTurtle->cw], cmnd2); 
+    testTurtle->cw = 0;
+    Fwd(testTurtle);
+    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
+    assert(testTurtle->SCREEN[SROW][24] == 'W');
+    assert(testTurtle->SCREEN[SROW][23] == 'W');
+    assert(testTurtle->SCREEN[SROW][22] == 'W');
+    assert(testTurtle->SCREEN[SROW][21] == 'W');
+    free(testTurtle);
 }
 
 
