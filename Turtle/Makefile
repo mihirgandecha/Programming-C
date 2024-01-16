@@ -39,7 +39,7 @@ run: all
 #	./parse_s TTLs/5x5.ttl
 #	./parse_s TTLs/downarrow.ttl
 
-	./interp_s TTLs/empty.ttl 
+	./interp_s TTLs/octagon1.ttl 
 #	out_empty.txt
 #	./interp_s TTLs/forward.ttl 
 #	out_forward.txt

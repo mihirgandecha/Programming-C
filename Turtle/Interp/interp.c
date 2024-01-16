@@ -3,6 +3,8 @@
 
 int main(int argc, char* argv[]){
     // printf("%d", argc);
+    // testBresenham();
+    // return 0;
 
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
@@ -10,11 +12,10 @@ int main(int argc, char* argv[]){
     // FILE* fttx = openFile(argv[2]);
 
     Program* turtle = initTurtle();
+    initScrn(turtle);
     readWords(fttl, turtle);
-    // initScrn(turtle);
     runProgram(turtle);
-    degToRadTest();
-    testBresenham();
+    // degToRadTest();
     puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
@@ -54,20 +55,6 @@ FILE* openFile(char* filename){
 //     return fttl;
 // }
 
-//Draw Path func: want to individually draw movement of char on screen
-//llop cnt = 0 over distane
-    //call trig for each movement?
-    //check in bound of screen
-        //if so then capture col char and insert into SCREEN struct
-//OR:
-
-//make col, row the MIDPOINT
-//loop over counter i = 0; row, row <= newrow, i++ 
-    //loop over counter j = 0; col, col <= newcol, j++
-        //does it matter if 1 change in row&col at a time?
-        //NO-just need to mark char on position
-
-
 void initScrn(Program *turtle){
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
@@ -82,7 +69,6 @@ void printtoscreen(Program *turtle){
     neillcursorhome();
     // double seconds =;
     //loop over 2d-arr and print each char
-    initScrn(turtle);
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
@@ -186,8 +172,6 @@ bool Fwd(Program *turtle){
             intFwd(turtle);
         }
     }
-
-
     printtoscreen(turtle);
     return true;
 }
@@ -203,14 +187,15 @@ bool intFwd(Program *turtle){
     int prevCol = (int)turtle->col;
     int prevRow = (int)turtle->row;
     
-    int dRow = round(sin(turtle->rAngle) * turtle->distance);
-    int dCol = round(cos(turtle->rAngle) * -(turtle->distance));
+    // int dRow = round(sin(turtle->rAngle) * turtle->distance);
+    // int dCol = round(cos(turtle->rAngle) * -(turtle->distance));
+    int dRow = round(cos(turtle->rAngle) * -turtle->distance);
+    int dCol = round(sin(turtle->rAngle) * turtle->distance); 
     //(if not postscript) -> store (start + delta)
     turtle->colour = 'W';
     int newRow = prevRow + dRow;
     int newCol = prevCol + dCol;
-    Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol);
-    if(newRow >= 0 && newRow < ROW && newCol >= 0 && newCol < COL){
+    if(Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol)){
         turtle->row = newRow;
         turtle->col = newCol;
         return true;
@@ -224,8 +209,10 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
     dRow = abs(dRow);
     dCol = abs(dCol);
     int error = dCol - dRow;
-    turtle->SCREEN[rowStart][colStart] = turtle->colour;
-    while(rowStart != rowEnd || colStart != colEnd){
+    if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
+        turtle->SCREEN[rowStart][colStart] = turtle->colour;
+    }
+    while(abs(rowStart - rowEnd) > 1 || abs(colStart - colEnd) > 1){
         //calculate if error for next point
         int doubleError = 2 * error;
         if(doubleError >= -dRow){
@@ -239,20 +226,18 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
         if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
             turtle->SCREEN[rowStart][colStart] = turtle->colour;
         }
-    
     }
-    // if(rowEnd >= 0 && rowEnd < ROW && colEnd >= 0 && colEnd < COL){
-    //     turtle->SCREEN[rowEnd][colEnd] = turtle->colour;
-    //     return true;
-    // }
     return true;
 }
+
+
 
 void testBresenham(void){
     Program *testTurtle = initTurtle();
     testTurtle->col = SCOL;
     testTurtle->row = SROW;
     testTurtle->rAngle = 0;
+    initScrn(testTurtle);
 
     //test for FWD 5
     testTurtle->cw = 0;
@@ -264,10 +249,10 @@ void testBresenham(void){
     testTurtle->cw = 0;
     Fwd(testTurtle);
     assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle->SCREEN[SROW][24] == 'W');
-    assert(testTurtle->SCREEN[SROW][23] == 'W');
-    assert(testTurtle->SCREEN[SROW][22] == 'W');
-    assert(testTurtle->SCREEN[SROW][21] == 'W');
+    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
+    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
+    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
+    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
     free(testTurtle);
 }
 
@@ -295,17 +280,11 @@ bool Rgt(Program *turtle){
 }
 
 double degToRad(double degrees){
-    //Log: 
-    //while loop for constantly adding 360 if negative
-    //used fmod instead from stk overflow to make degrees within range [0->360]
-    //get absolute value (fabs)
     degrees = fabs(degrees);
-
     if(degrees > FULLCIRC){
         degrees = fmod(degrees, FULLCIRC);
     }
     double radians = degrees * (M_PI / HALFCIRC);
-    //store? 
     return radians;
 }
 
