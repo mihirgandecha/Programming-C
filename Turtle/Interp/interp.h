@@ -7,7 +7,7 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
-#define EXPECTED_ARGS 2 //TODO change to 3
+#define EXPECTED_ARGS 3 //TODO change to 3
 #define EXPECTED_VARLEN 2
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
@@ -20,6 +20,7 @@
 #define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
+#define DOUBLE 2
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -45,7 +46,15 @@ bool intFwd(Program *turtle);
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
 // void testBresenham(void);
-void substring(char* str, Program *turtle);
+char* subStr(char *str);
+void test_subStr(void);
+void test1(void);
+bool isWithinBounds(int row, int col);
+bool isWithinBounds(int row, int col);
+void test_isWithinBounds(void);
+
+bool drawPoint(Program *turtle, int row, int col);
+FILE* writeFile(char* filename, Program *turtle);
 
 //Start Parser:
 void validArgs(int argc);

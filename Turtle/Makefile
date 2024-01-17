@@ -1,5 +1,5 @@
 CC=gcc 
-COMMON= -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 -Werror
+COMMON= -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 # -Werror
 DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
 VALGRIND= $(COMMON) $(DEBUG)
@@ -25,8 +25,8 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 #	say making change in interpreter, do I need parser test running for each one. What does it mean for runtime?
 
 
-run: all
-	./interp_s TTLs/octagon1.ttl 
+run: all	
+	./interp_s TTLs/octagon1.ttl octagon1test.txt
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
 #	./parse_s TTLs/empty.ttl

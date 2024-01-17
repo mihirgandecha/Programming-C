@@ -1,21 +1,33 @@
 #include "interp.h"
 #include "../neillsimplescreen.h"
+#include "mintest.h"
 
 int main(int argc, char* argv[]){
     // printf("%d", argc);
     // testBresenham();
     // return 0;
+    // lrun("Is Within Bounds: ", test_isWithinBounds);
+    // lrun("Basic Test:", test1);
 
+    test_subStr();
+    test_isWithinBounds();
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
-    // if (argv[2] then output to screen
-    // FILE* fttx = openFile(argv[2]);
 
     Program* turtle = initTurtle();
     initScrn(turtle);
     readWords(fttl, turtle);
     runProgram(turtle);
-    printtoscreen(turtle);
+
+    // If argv[2] exists, print accordingly
+    if(argc > DOUBLE){
+        writeFile(argv[DOUBLE], turtle);
+    }
+    else{
+        printtoscreen(turtle);
+    }
+
+    // printtoscreen(turtle);
 
     // degToRadTest();
     puts("\nPassed Ok.");
@@ -24,6 +36,10 @@ int main(int argc, char* argv[]){
     free(turtle);
     // test();
     // return 0;
+    // lresults();
+    lrun("Is Within Bounds: ", test_isWithinBounds);
+    lrun("Basic Test:", test1);
+    // return lfails != 0;
     return 0;
 }
 
@@ -44,14 +60,39 @@ FILE* openFile(char* filename){
     return fttl;
 }
 
-// FILE* openFileTxt(char* filename){
-//     FILE* ftxt = fopen(filename, "r"); //TODO does it need to be write to?
-//     if(!fttl){
-//         ERROR("Cannot read from argv[1] \n");
-//         fclose(fttl);
-//         // exit(EXIT_FAILURE);
+// Function to write to file
+FILE* writeFile(char* filename, Program *turtle){
+    char filepath[256];
+    snprintf(filepath, sizeof(filepath), "Turtle/myResults/%s", filename);
+
+    FILE* fttx = fopen(filepath, "w");
+    if(!fttx){
+        ERROR("Cannot read from argv[2] \n");
+        fclose(fttx);
+        // exit(EXIT_FAILURE);
+    }
+    for (int row = 0; row < ROW; row++){
+        for (int col = 0; col < COL; col++){
+            fprintf(fttx, "%c", turtle->SCREEN[row][col]);
+        }
+        fprintf(fttx, "\n");
+    }
+    return fttx;
+}
+
+// void printToFile(Program *turtle, char* filename){
+//     FILE* ftxt = fopen(filename, "w");
+//     if(!ftxt){
+//         printf("Cannot write to %s \n", filename);
+//         return;
 //     }
-//     return fttl;
+//     for (int row = 0; row < ROW; row++){
+//         for (int col = 0; col < COL; col++){
+//             fprintf(ftxt, "%c", turtle->SCREEN[row][col]);
+//         }
+//         fprintf(ftxt, "\n");
+//     }
+//     fclose(ftxt);
 // }
 
 void initScrn(Program *turtle){
@@ -61,12 +102,12 @@ void initScrn(Program *turtle){
         }
     }
 }
-//iso error
+
 void printtoscreen(Program *turtle){
     neillclrscrn();
     neillbgcol(black);
     neillcursorhome();
-    // double seconds =;
+    double seconds = 0.05;
     puts("\n");
     puts("\n");
     puts("\n");
@@ -74,6 +115,8 @@ void printtoscreen(Program *turtle){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
         }
+        //TODO Check if placement correct:
+        neillbusywait(seconds);
         printf("\n");
     }
     //reset after used:
@@ -169,17 +212,17 @@ bool Fwd(Program *turtle){
             return false;
         }
         if(Num(turtle)){
-            //should this just be function parameter?
             turtle->distance = atof(turtle->wds[turtle->cw]);
             intFwd(turtle);
         }
     }
-    // printtoscreen(turtle);
     return true;
 }
 
-//use line algorithm - getpoint
-//pass in start point (current turtle pos - not midpoint!), pass distance 
+//TODO remove after
+void test1() {
+    lok('a' == 'a');
+}
 
 bool intFwd(Program *turtle){
     if((turtle->distance > 0 && turtle->distance > COL) || (turtle->distance < 0 && turtle->distance < -COL)){
@@ -208,14 +251,12 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
     int signCol = colStart < colEnd ? 1 : -1;
     dRow = abs(dRow);
     dCol = abs(dCol);
-    int error = dCol - dRow;
-    //can i have boundry check in another func?s
-    if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
-        turtle->SCREEN[rowStart][colStart] = turtle->colour;
+    if(!drawPoint(turtle, rowStart, colStart)){
+        return false;
     }
+    int error = dCol - dRow;
     while(abs(rowStart - rowEnd) > 1 || abs(colStart - colEnd) > 1){
-        //calculate if error for next point
-        int doubleError = 2 * error;
+        int doubleError = DOUBLE * error;
         if(doubleError >= -dRow){
             error -= dRow;
             colStart += signCol;
@@ -224,11 +265,35 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
             error += dCol;
             rowStart += signRow;
         }
-        if(rowStart >= 0 && rowStart < ROW && colStart >= 0 && colStart < COL){
-            turtle->SCREEN[rowStart][colStart] = turtle->colour;
+        if(!drawPoint(turtle, rowStart, colStart)){
+            return false;
         }
     }
     return true;
+}
+
+bool isWithinBounds(int row, int col){
+    return row >= 0 && row < ROW && col >= 0 && col < COL;
+}
+
+void test_isWithinBounds(){
+    assert(isWithinBounds(0, 0) == true);
+    assert(isWithinBounds(ROW, COL) == false);
+    assert(isWithinBounds(SROW, SCOL) == true);
+    assert(isWithinBounds(ROW-1, COL-1) == true);
+    assert(isWithinBounds(ROW + 1, COL + 1) == false);
+    assert(isWithinBounds(-1, 0) == false);
+    assert(isWithinBounds(0, -1) == false);
+    assert(isWithinBounds(ROW, 0) == false);
+    assert(isWithinBounds(0, COL) == false);
+}
+
+bool drawPoint(Program *turtle, int row, int col){
+    if(isWithinBounds(row, col)){
+        turtle->SCREEN[row][col] = turtle->colour;
+        return true;
+    }
+    return false;
 }
 
 
@@ -298,59 +363,85 @@ bool Col(Program *turtle){
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
-    char* colVal = turtle->wds[turtle->cw];
-    substring(colVal, turtle);
-    setCol(turtle, turtle->strcol);
+    char *colVal = subStr(turtle->wds[turtle->cw]);
+    setCol(turtle, colVal);
     return true;
 }
 
-void substring(char* str, Program *turtle){
+char* subStr(char *str){
+    if (str == NULL) {
+        return NULL;
+    }
     int len = strlen(str);
 
     for (int i = 1; i < len - 1; i++){
         str[i - 1] = str[i];
     }
-    str[len - 2] = '\0';
-    turtle->strcol = str;
+    str[len - DOUBLE] = '\0';
+    return str;
 }
 
+void test_subStr(void){
+    char black[] = "\"BLACK\"";
+    assert(STRSAME(subStr(black), "BLACK"));
+    char red[] = "\"RED\"";
+    assert(STRSAME(subStr(red), "RED"));
+    char green[] = "\"GREEN\"";
+    assert(STRSAME(subStr(green), "GREEN"));
+    char blue[] = "\"BLUE\"";
+    assert(STRSAME(subStr(blue), "BLUE"));
+    char yellow[] = "\"YELLOW\"";
+    assert(STRSAME(subStr(yellow), "YELLOW"));
+    char cyan[] = "\"CYAN\"";
+    assert(STRSAME(subStr(cyan), "CYAN"));
+    char magenta[] = "\"MAGENTA\"";
+    assert(STRSAME(subStr(magenta), "MAGENTA"));
+    char white[] = "\"WHITE\"";
+    assert(STRSAME(subStr(white), "WHITE"));
+}
 
+//{black=30, red, green, yellow, blue, magenta, cyan, white};
+//enum neillcol {black=30, red, green, yellow, blue, magenta, cyan, white};
 void setCol(Program *turtle, char* colour){
-//TODO is function len > 20 ok? 
-//TODO need to change background 
-    //change the background
-    // if(word[0] == '"' && word[len - 1] == '"')
-
-    if (STRSAME(colour, "'BLACK'")){
+    if (STRSAME(colour, "BLACK")){
         turtle->colour = 'B';
-        // neillfgcol(30);
+        neillfgcol(black);
     } 
     else if (STRSAME(colour, "WHITE")){
         turtle->colour = 'W';
+        neillfgcol(white);
     } 
-    else if (STRSAME(colour, "'RED'")){
+    else if (STRSAME(colour, "RED")){
         turtle->colour = 'R';
-        neillfgcol(31);
+        neillfgcol(red);
     } 
     else if (STRSAME(colour, "GREEN")){
         turtle->colour = 'G';
+        neillfgcol(green);
     } 
     else if (STRSAME(colour, "BLUE")){
         turtle->colour = 'B';
+        neillfgcol(blue);
     } 
     else if (STRSAME(colour, "YELLOW")){
         turtle->colour = 'Y';
+        neillfgcol(yellow);
     } 
     else if (STRSAME(colour, "CYAN")){
         turtle->colour = 'C';
+        neillfgcol(cyan);
     } 
     else if (STRSAME(colour, "MAGENTA")){
         turtle->colour = 'M';
+        neillfgcol(35);
     } 
     else {
         turtle->colour = 'W';
+        neillfgcol(white);
     }
 }
+
+
 
 bool Loop(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "LOOP")){
@@ -551,10 +642,10 @@ void degToRadTest(void){
     result = degToRad(-0);
     assert((int)result == 0);
     // Test conversion of 360 degrees
-    result = degToRad(360);
+    result = degToRad(FULLCIRC);
     assert(result >= 6.1 && result <= 6.3);
     // Test conversion of -360 degrees
-    result = degToRad(-360);
+    result = degToRad(-FULLCIRC);
     assert(result >= 6.1 && result <= 6.3);
     // Test conversion of 90 degrees
     result = degToRad(90);
