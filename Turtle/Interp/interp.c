@@ -15,6 +15,7 @@ int main(int argc, char* argv[]){
     initScrn(turtle);
     readWords(fttl, turtle);
     runProgram(turtle);
+    printtoscreen(turtle);
 
     // degToRadTest();
     puts("\nPassed Ok.");
@@ -168,7 +169,8 @@ bool Fwd(Program *turtle){
             return false;
         }
         if(Num(turtle)){
-            turtle->distance = turtle->distance + atof(turtle->wds[turtle->cw]);
+            //should this just be function parameter?
+            turtle->distance = atof(turtle->wds[turtle->cw]);
             intFwd(turtle);
         }
     }
@@ -196,7 +198,6 @@ bool intFwd(Program *turtle){
     if(Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol)){
         turtle->row = newRow;
         turtle->col = newCol;
-        printtoscreen(turtle);
         return true;
     }
     return false;
@@ -269,24 +270,24 @@ bool Rgt(Program *turtle){
             return false;
         }
         //interp for num:
-        // if(Num(turtle)){
-        //     //start with only 1 instruction: ie RIGHT 0, FWD 15
-        //     //just store radians
-        //     double angle = atof(turtle->wds[turtle->cw]);
-        //     turtle->rAngle = turtle->rAngle + degToRad(angle);
-        // }
+        if(Num(turtle)){
+            //start with only 1 instruction: ie RIGHT 0, FWD 15
+            //just store radians
+            double angle = atof(turtle->wds[turtle->cw]);
+            turtle->rAngle = turtle->rAngle + degToRad(angle);
+        }
     }
     return true;
 }
 
-// double degToRad(double degrees){
-//     degrees = fabs(degrees);
-//     if(degrees > FULLCIRC){
-//         degrees = fmod(degrees, FULLCIRC);
-//     }
-//     double radians = degrees * (M_PI / HALFCIRC);
-//     return radians;
-// }
+double degToRad(double degrees){
+    degrees = fabs(degrees);
+    if(degrees > FULLCIRC){
+        degrees = fmod(degrees, FULLCIRC);
+    }
+    double radians = degrees * (M_PI / HALFCIRC);
+    return radians;
+}
 
 bool Col(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
@@ -301,38 +302,38 @@ bool Col(Program *turtle){
     return true;
 }
 
-// void setCol(Program *turtle, char* colour){
-// //TODO is function len > 20 ok? 
-// //TODO need to change background 
-//     //change the background
-//     if (STRSAME(colour, "BLACK")){
-//         turtle->colour = 'B';
-//     } 
-//     else if (STRSAME(colour, "WHITE")){
-//         turtle->colour = 'W';
-//     } 
-//     else if (STRSAME(colour, "RED")){
-//         turtle->colour = 'R';
-//     } 
-//     else if (STRSAME(colour, "GREEN")){
-//         turtle->colour = 'G';
-//     } 
-//     else if (STRSAME(colour, "BLUE")){
-//         turtle->colour = 'B';
-//     } 
-//     else if (STRSAME(colour, "YELLOW")){
-//         turtle->colour = 'Y';
-//     } 
-//     else if (STRSAME(colour, "CYAN")){
-//         turtle->colour = 'C';
-//     } 
-//     else if (STRSAME(colour, "MAGENTA")){
-//         turtle->colour = 'M';
-//     } 
-//     else {
-//         turtle->colour = 'W';
-//     }
-// }
+void setCol(Program *turtle, char* colour){
+//TODO is function len > 20 ok? 
+//TODO need to change background 
+    //change the background
+    if (STRSAME(colour, "BLACK")){
+        turtle->colour = 'B';
+    } 
+    else if (STRSAME(colour, "WHITE")){
+        turtle->colour = 'W';
+    } 
+    else if (STRSAME(colour, "RED")){
+        turtle->colour = 'R';
+    } 
+    else if (STRSAME(colour, "GREEN")){
+        turtle->colour = 'G';
+    } 
+    else if (STRSAME(colour, "BLUE")){
+        turtle->colour = 'B';
+    } 
+    else if (STRSAME(colour, "YELLOW")){
+        turtle->colour = 'Y';
+    } 
+    else if (STRSAME(colour, "CYAN")){
+        turtle->colour = 'C';
+    } 
+    else if (STRSAME(colour, "MAGENTA")){
+        turtle->colour = 'M';
+    } 
+    else {
+        turtle->colour = 'W';
+    }
+}
 
 bool Loop(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "LOOP")){
@@ -512,74 +513,74 @@ bool Pfix(Program* turtle){
     return false;
 }
 
-// void degToRadTest(void){
-//     //Blackbox testing:
-//     /*
-//     //Log:Does not work as testing for floating point
-//     number does not represent real number
-//     ^found I needed to use small tolerance
-//     (1e-12) <- too complex, used a range
-//     Degrees × (π/180) = Radians
-//     Radians  × (180/π) = Degrees
-//     360 Degrees = 2π Radians
-//     180 Degrees = π Radians
-//     */
-//     // Test conversion of 0 degrees
-//     double result;
-//     // Test conversion of 0 degrees
-//     result = degToRad(0);
-//     assert((int)result == 0);
-//     // Test conversion of -0 degrees (TODO Edge case - does RIGHT -0 work?)
-//     result = degToRad(-0);
-//     assert((int)result == 0);
-//     // Test conversion of 360 degrees
-//     result = degToRad(360);
-//     assert(result >= 6.1 && result <= 6.3);
-//     // Test conversion of -360 degrees
-//     result = degToRad(-360);
-//     assert(result >= 6.1 && result <= 6.3);
-//     // Test conversion of 90 degrees
-//     result = degToRad(90);
-//     assert(result >= 1.3 && result <= 1.6);
-//     // Test conversion of -90 degrees (testing fabs)
-//     result = degToRad(-90);
-//     assert(result >= 1.3 && result <= 1.6);
-//     // Test conversion of 180 degrees
-//     result = degToRad(HALFCIRC);
-//     assert(result >= 3.10 && result <= 3.20);
-//     // Test conversion of -180 degrees
-//     result = degToRad(-HALFCIRC);
-//     assert(result >= 3.10 && result <= 3.20);
-//     // Test conversion of 270 degrees
-//     result = degToRad(270);
-//     assert(result >= 4.70 && result <= 4.80);
-//     // Test conversion of -270 degrees
-//     result = degToRad(-270);
-//     assert(result >= 4.70 && result <= 4.80);
-//     //Edge cases:
-//     // .0 <- 
-//     // test very small +ve degree
-//     result = degToRad(1e-12);
-//     assert(result > 0 && result < 1e-12);
-//     // test very small -ve degree
-//     result = degToRad(-1e-12);
-//     assert(result > 0 && result < 1e-12);
-//     // test very large -ve degree
-//     result = degToRad(-1e12);
-//     assert(result >= 0 && result <= 2 * M_PI);
-//     // test very large +ve degree
-//     result = degToRad(1e12);
-//     assert(result >= 0 && result <= 2 * M_PI);
-//     // test fractional degree
-//     result = degToRad(0.123456789);
-//     assert(result > 0 && result < M_PI / 360);
-//     // test negative fractional degree
-//     result = degToRad(-0.123456789);
-//     assert(result > 0 && result < M_PI / 360);
-//     // test degree slightly less than 360
-//     result = degToRad(359.999999999);
-//     assert(result > 0 && result < (2 * M_PI));
-//     // test degree slightly more than 0
-//     result = degToRad(0.000000001);
-//     assert(result > 0 && result < M_PI / 180);
-// }
+void degToRadTest(void){
+    //Blackbox testing:
+    /*
+    //Log:Does not work as testing for floating point
+    number does not represent real number
+    ^found I needed to use small tolerance
+    (1e-12) <- too complex, used a range
+    Degrees × (π/180) = Radians
+    Radians  × (180/π) = Degrees
+    360 Degrees = 2π Radians
+    180 Degrees = π Radians
+    */
+    // Test conversion of 0 degrees
+    double result;
+    // Test conversion of 0 degrees
+    result = degToRad(0);
+    assert((int)result == 0);
+    // Test conversion of -0 degrees (TODO Edge case - does RIGHT -0 work?)
+    result = degToRad(-0);
+    assert((int)result == 0);
+    // Test conversion of 360 degrees
+    result = degToRad(360);
+    assert(result >= 6.1 && result <= 6.3);
+    // Test conversion of -360 degrees
+    result = degToRad(-360);
+    assert(result >= 6.1 && result <= 6.3);
+    // Test conversion of 90 degrees
+    result = degToRad(90);
+    assert(result >= 1.3 && result <= 1.6);
+    // Test conversion of -90 degrees (testing fabs)
+    result = degToRad(-90);
+    assert(result >= 1.3 && result <= 1.6);
+    // Test conversion of 180 degrees
+    result = degToRad(HALFCIRC);
+    assert(result >= 3.10 && result <= 3.20);
+    // Test conversion of -180 degrees
+    result = degToRad(-HALFCIRC);
+    assert(result >= 3.10 && result <= 3.20);
+    // Test conversion of 270 degrees
+    result = degToRad(270);
+    assert(result >= 4.70 && result <= 4.80);
+    // Test conversion of -270 degrees
+    result = degToRad(-270);
+    assert(result >= 4.70 && result <= 4.80);
+    //Edge cases:
+    // .0 <- 
+    // test very small +ve degree
+    result = degToRad(1e-12);
+    assert(result > 0 && result < 1e-12);
+    // test very small -ve degree
+    result = degToRad(-1e-12);
+    assert(result > 0 && result < 1e-12);
+    // test very large -ve degree
+    result = degToRad(-1e12);
+    assert(result >= 0 && result <= 2 * M_PI);
+    // test very large +ve degree
+    result = degToRad(1e12);
+    assert(result >= 0 && result <= 2 * M_PI);
+    // test fractional degree
+    result = degToRad(0.123456789);
+    assert(result > 0 && result < M_PI / 360);
+    // test negative fractional degree
+    result = degToRad(-0.123456789);
+    assert(result > 0 && result < M_PI / 360);
+    // test degree slightly less than 360
+    result = degToRad(359.999999999);
+    assert(result > 0 && result < (2 * M_PI));
+    // test degree slightly more than 0
+    result = degToRad(0.000000001);
+    assert(result > 0 && result < M_PI / 180);
+}

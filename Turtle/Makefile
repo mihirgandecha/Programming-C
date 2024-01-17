@@ -5,7 +5,7 @@ SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
 VALGRIND= $(COMMON) $(DEBUG)
 PRODUCTION= $(COMMON) -O3
 
-all: interp_s #parse_s #interp_s
+all: parse_s #interp_s
 
 parse_s: Parse/parse.h Parse/parse.c
 	$(CC) Parse/parse.c -o parse_s -I./Parse $(SANITIZE) -lm
@@ -24,10 +24,9 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 #1 option includes having a make test flag (consider would there be an option if certain test should run after each change?)
 #	say making change in interpreter, do I need parser test running for each one. What does it mean for runtime?
 
-run_test: 
-	./interp_s TTLs/octagon1.ttl  
 
 run: all
+	./interp_s TTLs/octagon1.ttl 
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
 #	./parse_s TTLs/empty.ttl
@@ -46,7 +45,6 @@ run: all
 #	./parse_s TTLs/5x5.ttl
 #	./parse_s TTLs/downarrow.ttl
 
-	./interp_s TTLs/forward.ttl 
 #	out_empty.txt
 #	./interp_s TTLs/forward.ttl 
 #	out_forward.txt
