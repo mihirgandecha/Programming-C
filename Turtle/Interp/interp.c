@@ -61,19 +61,20 @@ void initScrn(Program *turtle){
     }
 }
 //iso error
-void printtoscreen(void){
+void printtoscreen(Program *turtle){
     neillclrscrn();
-    // puts("here");
     neillbgcol(black);
-    // neillcursorhome();
+    neillcursorhome();
     // double seconds =;
-    // loop over 2d-arr and print each char
-    // for (int row = 0; row < ROW; row++){
-    //     for (int col = 0; col < COL; col++){
-    //         printf("%c", turtle->SCREEN[row][col]);
-    //     }
-    //     printf("\n");
-    // }
+    puts("\n");
+    puts("\n");
+    puts("\n");
+    for (int row = 0; row < ROW; row++){
+        for (int col = 0; col < COL; col++){
+            printf("%c", turtle->SCREEN[row][col]);
+        }
+        printf("\n");
+    }
     //reset after used:
     neillreset();
 }
@@ -195,7 +196,7 @@ bool intFwd(Program *turtle){
     if(Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol)){
         turtle->row = newRow;
         turtle->col = newCol;
-        printtoscreen();
+        printtoscreen(turtle);
         return true;
     }
     return false;

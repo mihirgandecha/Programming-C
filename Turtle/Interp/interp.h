@@ -39,7 +39,7 @@ typedef struct prog Program;
 
 //Screen:
 void initScrn(Program *turtle);
-void printtoscreen(void);
+void printtoscreen(Program *turtle);
 bool intFwd(Program *turtle);
 // void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
