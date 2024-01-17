@@ -39,11 +39,11 @@ typedef struct prog Program;
 
 //Screen:
 void initScrn(Program *turtle);
-void printtoscreen(Program *turtle);
+void printtoscreen(void);
 bool intFwd(Program *turtle);
-void setCol(Program *turtle, char* colour);
+// void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
-void testBresenham(void);
+// void testBresenham(void);
 
 
 //Start Parser:
@@ -78,5 +78,5 @@ void test(void);
 
 //Interpreter Functions:
 void initPos(Program *turtle);
-double degToRad(double degrees);
-void degToRadTest(void);
+// double degToRad(double degrees);
+// void degToRadTest(void);

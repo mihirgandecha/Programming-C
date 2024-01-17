@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc 
 COMMON= -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 -Werror
 DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
@@ -20,6 +20,9 @@ interp_s: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c neillsimplescreen.h
 	$(CC) neillsimplescreen.c Extension/extension.c -o extension_s -I./Extension $(SANITIZE) -lm
 
+#test harness do I run all tests here? at same time?
+#1 option includes having a make test flag (consider would there be an option if certain test should run after each change?)
+#	say making change in interpreter, do I need parser test running for each one. What does it mean for runtime?
 run: all
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
@@ -39,7 +42,7 @@ run: all
 #	./parse_s TTLs/5x5.ttl
 #	./parse_s TTLs/downarrow.ttl
 
-	./interp_s TTLs/octagon1.ttl 
+	./interp_s TTLs/forward.ttl 
 #	out_empty.txt
 #	./interp_s TTLs/forward.ttl 
 #	out_forward.txt
