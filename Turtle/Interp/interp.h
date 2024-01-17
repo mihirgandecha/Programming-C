@@ -45,8 +45,7 @@ bool intFwd(Program *turtle);
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
 // void testBresenham(void);
-void substring(char* str);
-
+void substring(char* str, Program *turtle);
 
 //Start Parser:
 void validArgs(int argc);

@@ -192,7 +192,7 @@ bool intFwd(Program *turtle){
     int dRow = round(cos(turtle->rAngle) * -turtle->distance);
     int dCol = round(sin(turtle->rAngle) * turtle->distance); 
     //(if not postscript) -> store (start + delta)
-    turtle->colour = 'W';
+    // turtle->colour = 'W';
     int newRow = prevRow + dRow;
     int newCol = prevCol + dCol;
     if(Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol)){
@@ -299,20 +299,19 @@ bool Col(Program *turtle){
         return false;
     }
     char* colVal = turtle->wds[turtle->cw];
-    substring(colVal);
-
-    setCol(turtle, turtle->wds[turtle->cw]);
+    substring(colVal, turtle);
+    setCol(turtle, turtle->strcol);
     return true;
 }
 
-void substring(char* str){
+void substring(char* str, Program *turtle){
     int len = strlen(str);
 
     for (int i = 1; i < len - 1; i++){
         str[i - 1] = str[i];
     }
     str[len - 2] = '\0';
-    turtle.strcol = str;
+    turtle->strcol = str;
 }
 
 
