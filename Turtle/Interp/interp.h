@@ -34,6 +34,7 @@ struct prog{
    bool numUsed;
    char SCREEN[ROW][COL];
    char colour;
+   char* strcol;
 };
 typedef struct prog Program;
 
@@ -44,6 +45,7 @@ bool intFwd(Program *turtle);
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
 // void testBresenham(void);
+void substring(char* str);
 
 
 //Start Parser:

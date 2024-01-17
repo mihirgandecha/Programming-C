@@ -298,22 +298,40 @@ bool Col(Program *turtle){
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
-    // setCol(turtle, turtle->wds[turtle->cw]);
+    char* colVal = turtle->wds[turtle->cw];
+    substring(colVal);
+
+    setCol(turtle, turtle->wds[turtle->cw]);
     return true;
 }
+
+void substring(char* str){
+    int len = strlen(str);
+
+    for (int i = 1; i < len - 1; i++){
+        str[i - 1] = str[i];
+    }
+    str[len - 2] = '\0';
+    turtle.strcol = str;
+}
+
 
 void setCol(Program *turtle, char* colour){
 //TODO is function len > 20 ok? 
 //TODO need to change background 
     //change the background
-    if (STRSAME(colour, "BLACK")){
+    // if(word[0] == '"' && word[len - 1] == '"')
+
+    if (STRSAME(colour, "'BLACK'")){
         turtle->colour = 'B';
+        // neillfgcol(30);
     } 
     else if (STRSAME(colour, "WHITE")){
         turtle->colour = 'W';
     } 
-    else if (STRSAME(colour, "RED")){
+    else if (STRSAME(colour, "'RED'")){
         turtle->colour = 'R';
+        neillfgcol(31);
     } 
     else if (STRSAME(colour, "GREEN")){
         turtle->colour = 'G';
