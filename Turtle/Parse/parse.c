@@ -327,14 +327,3 @@ bool Pfix(Program* turtle){
     }
     return false;
 }
-
-//Helper functions:
-// void freeTurtle(Program *turtle){
-//     if(turtle != NULL){
-//         free(turtle->endReached);
-//     }
-//     if(turtle->cw != NULL){
-//         free(turtle->cw);
-//     }
-// }
-

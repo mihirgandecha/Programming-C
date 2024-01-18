@@ -314,3 +314,55 @@ void test(void){
     free(testTurtle8);
     free(testLtr);
 }
+
+//Blackbox Test 1:
+void test_openFile(void){
+    printf("Testing openFile\n");
+    FILE* testFTTL = openFile("existing_file.txt");
+    assert(testFTTL != NULL);
+    fclose(testFTTL);
+}
+
+//Blackbox Test 2:
+void test_initTurtle(void) {
+    printf("Testing initTurtle...\n");
+    Program* turtle = initTurtle();
+    assert(turtle != NULL);
+    free(turtle);
+}
+
+//Blackbox Test 3:
+void test_readWords(void) {
+    printf("Testing readWords...\n");
+    Program* turtle = initTurtle();
+    FILE* file = fopen("existing_file.txt", "r");
+    readWords(file, turtle);
+    // Check that the first word is as expected
+    assert(strcmp(turtle->wds[0], "EXPECTED_FIRST_WORD") == 0);
+    fclose(file);
+    free(turtle);
+}
+
+//Blackbox Test 4:
+void test_runProgram(void) {
+    printf("Testing runProgram...\n");
+    Program* turtle = initTurtle();
+    strcpy(turtle->wds[0], "START");
+    strcpy(turtle->wds[1], "END");
+    runProgram(turtle);
+    // If the program has grammar mistakes, it should exit, so if we reach this point, the test has passed
+    free(turtle);
+}
+
+//Blackbox Test 5:
+void test_Prog(void) {
+    printf("Testing Prog...\n");
+    Program* turtle = initTurtle();
+    // Test 1: START statement at the beginning
+    strcpy(turtle->wds[0], "START");
+    assert(Prog(turtle) == true);
+    // Test 2: No START statement at the beginning
+    strcpy(turtle->wds[0], "END");
+    assert(Prog(turtle) == false);
+    free(turtle);
+}
