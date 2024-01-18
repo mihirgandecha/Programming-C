@@ -22,7 +22,7 @@ Asked about:
 		-test sqrt(4)==2
 		-Given only functionality, what can we test for?
 		-Turtle eg: Running TTL's through Parser. Maybe more assert testing?
-		
+	(Interpreter: if %success > say 80%)
 		
 1. For testing I first had to understand the difference between Whitebox vs Blackbox testing...(see above)
 2. Next have to understand and evaluate what is the best way of representing these tests...

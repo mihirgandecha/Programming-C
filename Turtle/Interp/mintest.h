@@ -78,7 +78,7 @@ static size_t lfails = 0;
 
 
 /* Display the test results. */
-#define lresults() do {\
+#define RESULTS() do {\
     if (lfails == 0) {\
         printf("ALL TESTS PASSED (%zu/%zu)\n", ltests, ltests);\
     } else {\
@@ -88,7 +88,7 @@ static size_t lfails = 0;
 
 
 /* Run a test. Name can be any string to print out, test is the function name to call. */
-#define lrun(name, test) do {\
+#define RUN(name, test) do {\
     const size_t ts = ltests;\
     const size_t fs = lfails;\
     const clock_t start = clock();\
@@ -119,7 +119,7 @@ static size_t lfails = 0;
 
 
 /* Assert two integers are equal. */
-#define lequal(a, b)\
+#define INT_EQUAL(a, b)\
     lequal_base((a) == (b), a, b, "%d")
 
 
@@ -136,10 +136,11 @@ static size_t lfails = 0;
 //Mihir:
 
 /* Assert two characters are equal. */
-#define lcequal(a, b)\
+#define CHAR_EQUAL(a, b)\
     lequal_base((a) == (b), a, b, "%c")
 
-
+#define STR_EQUAL(a, b)\
+    lequal_base(strcmp((a), (b)) == 0, a, b, "%s")
 //End Mihir
 
 

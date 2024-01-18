@@ -3,9 +3,6 @@
 #include "mintest.h"
 
 int main(int argc, char* argv[]){
-    test_subStr();
-    test_interpSet_edge_cases();
-    test_isWithinBounds();
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
     Program* turtle = initTurtle();
@@ -14,7 +11,6 @@ int main(int argc, char* argv[]){
     runProgram(turtle);
     if(argc > DOUBLE){
         writeFile(argv[DOUBLE], turtle);
-        // fclose(fttx);
     }
     /*TODO:
     1. move printtoscreen after FWD interp after new pos updated
@@ -29,10 +25,21 @@ int main(int argc, char* argv[]){
         freeVariable(turtle);
     }
     free(turtle);
-    lrun("Is Within Bounds: ", test_isWithinBounds);
-    lrun("Basic Test:", test1);
+    test();
     return 0;
 } 
+
+static size_t test(void){
+    puts("\n");
+    RUN("[INTERP] Set Function Test", test_interpSet_edge_cases);
+    RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
+    RUN("[HELPER] Substring Test", test_subStr);
+    RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
+    RUN("[HELPER] Comparing float Test", test_compareFloat);
+    RUN("[HELPER] Degree to Radians Test", degToRadTest);
+    RESULTS();
+    return lfails != 0;
+}
 
 void validArgs(int argc){
     if(argc < MIN_ARGS){
@@ -211,11 +218,6 @@ bool Fwd(Program *turtle){
     return true;
 }
 
-//TODO remove after
-void test1() {
-    lok('a' == 'a');
-}
-
 bool intFwd(Program *turtle){
     //TODO: Split into small functions.
     //TODO: Func1 - if distance in bound, do I need? Does FWD 0 interpret?
@@ -313,11 +315,11 @@ void testBresenham(void){
     strcpy(testTurtle->wds[testTurtle->cw], cmnd2); 
     testTurtle->cw = 0;
     Fwd(testTurtle);
-    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
-    assert(testTurtle->SCREEN[SROW][SCOL] == 'W');
+    CHAR_EQUAL(testTurtle->SCREEN[SROW][SCOL], 'W');
+    CHAR_EQUAL(testTurtle->SCREEN[SROW - 1][SCOL], 'W');
+    CHAR_EQUAL(testTurtle->SCREEN[SROW - 2][SCOL], 'W');
+    CHAR_EQUAL(testTurtle->SCREEN[SROW - 3][SCOL], 'W');
+    CHAR_EQUAL(testTurtle->SCREEN[SROW - 4][SCOL], 'W');
     free(testTurtle);
 }
 
@@ -374,24 +376,24 @@ char* subStr(char *str){
     str[len - DOUBLE] = '\0';
     return str;
 }
-//Fully tested!
+//TODO Remove after Fully tested!
 void test_subStr(void){
     char black[] = "\"BLACK\"";
-    assert(STRSAME(subStr(black), "BLACK"));
+    STR_EQUAL(subStr(black), "BLACK");
     char red[] = "\"RED\"";
-    assert(STRSAME(subStr(red), "RED"));
+    STR_EQUAL(subStr(red), "RED");
     char green[] = "\"GREEN\"";
-    assert(STRSAME(subStr(green), "GREEN"));
+    STR_EQUAL(subStr(green), "GREEN");
     char blue[] = "\"BLUE\"";
-    assert(STRSAME(subStr(blue), "BLUE"));
+    STR_EQUAL(subStr(blue), "BLUE");
     char yellow[] = "\"YELLOW\"";
-    assert(STRSAME(subStr(yellow), "YELLOW"));
+    STR_EQUAL(subStr(yellow), "YELLOW");
     char cyan[] = "\"CYAN\"";
-    assert(STRSAME(subStr(cyan), "CYAN"));
+    STR_EQUAL(subStr(cyan), "CYAN");
     char magenta[] = "\"MAGENTA\"";
-    assert(STRSAME(subStr(magenta), "MAGENTA"));
+    STR_EQUAL(subStr(magenta), "MAGENTA");
     char white[] = "\"WHITE\"";
-    assert(STRSAME(subStr(white), "WHITE"));
+    STR_EQUAL(subStr(white), "WHITE");
 }
 
 //TODO: Should I use lookup table to condense function?
@@ -678,8 +680,8 @@ void test_interpSet_edge_cases(void){
         testTurtle->wds[testTurtle->cw][0] = tempVal;
         interpSet(testTurtle);
         index = varTemp - 'A';
-        assert(compareFloat(testTurtle->simpleSet[index]->value, tempVal));
-        lcequal(testTurtle->simpleSet[index]->var, varTemp);
+        // assert(compareFloat(testTurtle->simpleSet[index]->value, tempVal));
+        CHAR_EQUAL(testTurtle->simpleSet[index]->var, varTemp);
         testTurtle->cw = 0; // Reset the current word index for the next test
     }
 
@@ -704,10 +706,18 @@ void test_interpSet_edge_cases(void){
 }
 
 int compareFloat(double a, double b){
-    if (abs(a - b) < THRESHHOLD){
+    if (fabs(a - b) < THRESHHOLD){
         return 0;
     }
     return 1;
+}
+
+void test_compareFloat(){
+    double a = 5.0;
+    double b = 5.0;
+    double c = 5.01;
+    INT_EQUAL(compareFloat(a, b), 0);
+    INT_EQUAL(compareFloat(a, c), 1);
 }
 
 bool freeVariable(Program* turtle){

@@ -4,6 +4,7 @@ DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
 VALGRIND= $(COMMON) $(DEBUG)
 PRODUCTION= $(COMMON) -O3
+TEST = -DRUN_TESTS
 
 all: parse_s #interp_s
 
@@ -24,6 +25,8 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 #1 option includes having a make test flag (consider would there be an option if certain test should run after each change?)
 #	say making change in interpreter, do I need parser test running for each one. What does it mean for runtime?
 
+test_interp: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
+	$(CC) $(TEST) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
 
 run: all	
 #	./interp_s TTLs/octagon1.ttl octagon1test.txt

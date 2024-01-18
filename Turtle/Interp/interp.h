@@ -52,16 +52,18 @@ struct prog{
 };
 typedef struct prog Program;
 
+
+static size_t test(void);
+
 //Screen:
 void initScrn(Program *turtle);
 void printtoscreen(Program *turtle);
 bool intFwd(Program *turtle);
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
-// void testBresenham(void);
+void testBresenham(void);
 char* subStr(char *str);
 void test_subStr(void);
-void test1(void);
 bool isWithinBounds(int row, int col);
 bool isWithinBounds(int row, int col);
 void test_isWithinBounds(void);
@@ -78,6 +80,8 @@ void test_interpSet_edge_cases(void);
 
 bool freeVariable(Program* turtle);
 int compareFloat(double a, double b);
+void test_compareFloat();
+
 
 
 
@@ -107,7 +111,6 @@ bool Pfix(Program* turtle);
 bool Op(Program* turtle);
 void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
-void test(void);
 //End Parser
 
 
