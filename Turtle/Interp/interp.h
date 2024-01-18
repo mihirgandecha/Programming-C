@@ -7,7 +7,7 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
-#define EXPECTED_ARGS 3 //TODO change to 3
+#define MIN_ARGS 2
 #define EXPECTED_VARLEN 2
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
@@ -16,6 +16,7 @@
 #define ROW 33
 #define SCOL 25
 #define SROW 16
+#define SCR_DELAY 0.05
 
 #define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00

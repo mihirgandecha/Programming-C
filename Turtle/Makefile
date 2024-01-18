@@ -26,7 +26,8 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 
 
 run: all	
-	./interp_s TTLs/octagon1.ttl octagon1test.txt
+	./interp_s TTLs/octagon1.ttl 
+#	octagon1test.txt
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
 #	./parse_s TTLs/empty.ttl
