@@ -25,6 +25,7 @@
 #define BUFFER 10000
 
 #define MAX_VARS 26
+#define THRESHHOLD 1e-9
 
 //Simple Data Structure for SET <LTR> -> <NUM>
 typedef struct{
@@ -76,6 +77,8 @@ void interpSet(Program* turtle);
 void test_interpSet_edge_cases(void);
 
 bool freeVariable(Program* turtle);
+int compareFloat(double a, double b);
+
 
 
 //Start Parser:

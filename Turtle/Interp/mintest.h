@@ -133,5 +133,14 @@ static size_t lfails = 0;
 #define lsequal(a, b)\
     lequal_base(strcmp(a, b) == 0, a, b, "%s")
 
+//Mihir:
+
+/* Assert two characters are equal. */
+#define lcequal(a, b)\
+    lequal_base((a) == (b), a, b, "%c")
+
+
+//End Mihir
+
 
 #endif /*__MINCTEST_H__*/
