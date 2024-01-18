@@ -22,6 +22,15 @@
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
 #define DOUBLE 2
+#define BUFFER 10000
+
+#define MAX_VARS 26
+
+//Simple Data Structure for SET <LTR> -> <NUM>
+typedef struct{
+   char var;
+   double value;
+} Variable;
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -37,6 +46,8 @@ struct prog{
    char SCREEN[ROW][COL];
    char colour;
    char* strcol;
+   char* varTemp;
+   Variable* simpleSet[MAX_VARS];
 };
 typedef struct prog Program;
 
@@ -55,7 +66,17 @@ bool isWithinBounds(int row, int col);
 void test_isWithinBounds(void);
 
 bool drawPoint(Program *turtle, int row, int col);
-FILE* writeFile(char* filename, Program *turtle);
+void writeFile(char* filename, Program *turtle);
+
+//Interpret SET:
+//Simple function for interpreting SET Ltr -> <NUM>
+// bool setNum(char varName, double value);
+// void initVar(Program* turtle, int index, double value);
+void interpSet(Program* turtle);
+void test_interpSet_edge_cases(void);
+
+bool freeVariable(Program* turtle);
+
 
 //Start Parser:
 void validArgs(int argc);

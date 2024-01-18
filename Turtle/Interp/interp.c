@@ -4,6 +4,7 @@
 
 int main(int argc, char* argv[]){
     test_subStr();
+    test_interpSet_edge_cases();
     test_isWithinBounds();
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
@@ -13,16 +14,25 @@ int main(int argc, char* argv[]){
     runProgram(turtle);
     if(argc > DOUBLE){
         writeFile(argv[DOUBLE], turtle);
+        // fclose(fttx);
     }
+    /*TODO:
+    1. move printtoscreen after FWD interp after new pos updated
+    2. Flag in main if SCREEN or if TXT and store in turtle
+    3. After pos updated in FWD, if -Flag- printscreen or other
+    */
     else{
         printtoscreen(turtle);
     }
     fclose(fttl);
+    if (turtle->simpleSet != NULL){
+        freeVariable(turtle);
+    }
     free(turtle);
     lrun("Is Within Bounds: ", test_isWithinBounds);
     lrun("Basic Test:", test1);
     return 0;
-}
+} 
 
 void validArgs(int argc){
     if(argc < MIN_ARGS){
@@ -44,15 +54,17 @@ FILE* openFile(char* filename){
 
 //TODO: Fix
 // Function to write to file
-FILE* writeFile(char* filename, Program *turtle){
+void writeFile(char* filename, Program *turtle){
     //TODO magicnum
-    char filepath[256];
-    snprintf(filepath, sizeof(filepath), "Turtle/myResults/%s", filename);
-
+    //concasinate to buffer without causing to reset
+    //Another functio
+    char filepath[BUFFER] = {"\0"};
+    snprintf(filepath, sizeof(filepath), "myResults/%s", filename);
+    printf("%s", filepath);
     FILE* fttx = fopen(filepath, "w");
     if(!fttx){
         ERROR("Cannot read from argv[2] \n");
-        fclose(fttx);
+        // fclose(fttx);
         // exit(EXIT_FAILURE);
     }
     for (int row = 0; row < ROW; row++){
@@ -61,7 +73,8 @@ FILE* writeFile(char* filename, Program *turtle){
         }
         fprintf(fttx, "\n");
     }
-    return fttx;
+    fclose(fttx);
+    // return fttx;
 }
 
 //TODO: Test
@@ -80,6 +93,7 @@ void initPos(Program *turtle){
     turtle->col = SCOL;
     turtle->row = SROW;
     turtle->rAngle = 0;
+    turtle->colour = 'W';
 }
 
 //TODO: Test how?
@@ -87,7 +101,8 @@ void readWords(FILE* fttl, Program* turtle){
     if(!checkNull(turtle)){
         return;
     }
-    int i = 0;
+    int i = 0;            
+    turtle->varTemp = NULL;
     while((fscanf(fttl, "%s", turtle->wds[i])) == 1){
         i++;
     }
@@ -123,6 +138,7 @@ void printtoscreen(Program *turtle){
             printf("%c", turtle->SCREEN[row][col]);
         }
         //TODO Check if placement correct:
+        //TODO Seconds need to be 1 seconds
         neillbusywait(seconds);
         printf("\n");
     }
@@ -451,6 +467,8 @@ bool Set(Program *turtle){
     if(!Ltr(turtle)){
         return false;
     }
+    turtle->varTemp = turtle->wds[turtle->cw];
+    //Remember that Ltr is turtle->wds[turtle->cw - 2]
     turtle->cw++;
     if(!STRSAME(turtle->wds[turtle->cw], "(")){
         DEBUG("Expected 'Opening '('");
@@ -592,24 +610,113 @@ bool Pfix(Program* turtle){
         return Pfix(turtle);
     }
     else if (Varnum(turtle)){
+        if (Num(turtle)){
+            // int index = *turtle->varTemp - 'A';
+            // double numTemp = atof(turtle->wds[turtle->cw]);
+            // puts("\n");
+            // initVar(turtle, index, numTemp);
+            interpSet(turtle);
+        }
         turtle->cw++;
         return Pfix(turtle);
     }
-    return false;
+    else{
+        return false;
+    }
 }
 
+// void initVar(Program* turtle, int index, double value){
+//     turtle->simpleSet[index] = (Variable*)calloc(1, sizeof(Variable));
+//     if (!turtle->simpleSet){
+//         ERROR("simpleSet failed to initialise!\n");
+//         exit(EXIT_FAILURE);
+//     }
+//     turtle->simpleSet[index]->var = *turtle->varTemp;
+//     turtle->simpleSet[index]->value = value;
+// }
+
+void interpSet(Program* turtle){
+    int index = *turtle->varTemp - 'A';
+    double numVal = atof(turtle->wds[turtle->cw]);
+    turtle->simpleSet[index] = (Variable*)calloc(1, sizeof(Variable));
+    if (!turtle->simpleSet){
+        ERROR("simpleSet failed to initialise!\n");
+        exit(EXIT_FAILURE);
+    }
+    turtle->simpleSet[index]->var = *turtle->varTemp;
+    turtle->simpleSet[index]->value = numVal;
+}
+
+// void test_interpSet(void){
+//     Program *testTurtle =  initTurtle();
+//     testTurtle->cw = 0;
+//     char varTemp = 'A';
+//     testTurtle->wds[testTurtle->cw] = varTemp;
+//     testTurtle->cw++;
+//     double tempVal = -10.54;
+//     testTurtle->wds[testTurtle->cw] = tempVal;
+//     interpSet(testTurtle);
+//     int index = varTemp - 'A';
+//     assert(testTurtle->simpleSet[index]->value == tempVal);
+//     assert(testTurtle->simpleSet[index]->var == varTemp);
+    
+//     freeVariable(testTurtle);
+//     free(testTurtle);
+// }
+
+void test_interpSet_edge_cases(void){
+    Program *testTurtle =  initTurtle();
+    testTurtle->cw = 0;
+    char varTemp;
+    double tempVal;
+    int index;
+    //First testing that value can be stored from A->Z
+    for(varTemp = 'A'; varTemp <= 'Z'; varTemp++){
+        testTurtle->wds[testTurtle->cw] = varTemp;
+        testTurtle->cw++;
+        tempVal = (double)(varTemp - 'A'); // Assign a value corresponding to the letter
+        testTurtle->wds[testTurtle->cw] = tempVal;
+        interpSet(testTurtle);
+        index = varTemp - 'A';
+        assert(testTurtle->simpleSet[index]->value == tempVal);
+        assert(testTurtle->simpleSet[index]->var == varTemp);
+        testTurtle->cw = 0; // Reset the current word index for the next test
+    }
+
+    // Test with a variety of valid double values
+    double testValues[] = {0, -0, 1, -1, DBL_MIN, DBL_MAX, -DBL_MIN, -DBL_MAX};
+    int numTestValues = sizeof(testValues) / sizeof(double);
+    for(int i = 0; i < numTestValues; i++){
+        varTemp = 'A';
+        testTurtle->wds[testTurtle->cw] = varTemp;
+        testTurtle->cw++;
+        tempVal = testValues[i];
+        testTurtle->wds[testTurtle->cw] = tempVal;
+        interpSet(testTurtle);
+        index = varTemp - 'A';
+        assert(testTurtle->simpleSet[index]->value == tempVal);
+        assert(testTurtle->simpleSet[index]->var == varTemp);
+        testTurtle->cw = 0;
+    }
+
+    freeVariable(testTurtle);
+    free(testTurtle);
+}
+
+bool freeVariable(Program* turtle){
+    for(int index = 0; index < MAX_VARS; index++){
+        if(turtle->simpleSet[index] != NULL){
+            free(turtle->simpleSet[index]);
+            turtle->simpleSet[index] = NULL;
+        }
+    }
+    return true;
+}
+
+
+
 void degToRadTest(void){
-    //Blackbox testing:
-    /*
-    //Log:Does not work as testing for floating point
-    number does not represent real number
-    ^found I needed to use small tolerance
-    (1e-12) <- too complex, used a range
-    Degrees × (π/180) = Radians
-    Radians  × (180/π) = Degrees
-    360 Degrees = 2π Radians
-    180 Degrees = π Radians
-    */
+    
     // Test conversion of 0 degrees
     double result;
     // Test conversion of 0 degrees
