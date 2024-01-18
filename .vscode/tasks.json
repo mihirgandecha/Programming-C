@@ -2,15 +2,32 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "compile",
+            "options": {"cwd": "${workspaceFolder}/Turtle"},
+            "label": "Make test_interp",
             "type": "shell",
-            "command": "gcc Parse/parse.c -g -o parse_s -I./Parse -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 -Werror -fsanitize=undefined -fsanitize=address -g3 -lm",
+            "command": "make",
+            "args": ["test_interp"],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "options": {"cwd": "${workspaceFolder}/Turtle"},
+            "label": "Make All",
+            "type": "shell",
+            "command": "make",
+            "args": ["all"],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }
-
-
