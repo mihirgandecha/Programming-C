@@ -1,3 +1,6 @@
 START
+  SET B ( 90 )
+  SET A ( 2 )
+  RIGHT $B
   FORWARD $A
 END

@@ -30,7 +30,7 @@
 #define THRESHHOLD 1e-9
 
 //feed in turtle.varTemp to get index
-#define INDEX(turtle) (*(turtle)->varTemp - 'A')
+#define INDEX(c) ((int)(c - 'A'))
 
 //Data Structure for storing <NUM>
 typedef struct{
@@ -57,6 +57,8 @@ struct prog{
    double rAngle;
    bool numUsed;
    bool varUsed;
+   bool setUsed[MAX_VARS];
+   int index;
    char SCREEN[ROW][COL];
    char colour;
    char* strcol;
@@ -84,6 +86,10 @@ void test_isWithinBounds(void);
 
 bool drawPoint(Program *turtle, int row, int col);
 void writeFile(char* filename, Program *turtle);
+void varAngle(Program *turtle);
+void varFwd(Program *turtle);
+
+
 
 //Interpret SET:
 //Simple function for interpreting SET Ltr -> <NUM>
@@ -97,6 +103,7 @@ int compareFloat(double a, double b);
 void test_compareFloat();
 
 bool store(Program* turtle);
+bool freeStorage(Program* turtle);
 
 
 

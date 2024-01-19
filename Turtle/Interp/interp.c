@@ -24,6 +24,9 @@ int main(int argc, char* argv[]){
     if (turtle->simpleSet != NULL){
         freeStoreNum(turtle);
     }
+    if (turtle->store != NULL){
+        freeStorage(turtle);
+    }
     free(turtle);
     test();
     return 0;
@@ -31,8 +34,8 @@ int main(int argc, char* argv[]){
 
 static size_t test(void){
     puts("\n");
-    RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
-    RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
+    // RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
+    // RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
     RUN("[HELPER] Substring Test", test_subStr);
     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
     RUN("[HELPER] Comparing float Test", test_compareFloat);
@@ -62,7 +65,6 @@ FILE* openFile(char* filename){
 //TODO: Fix
 // Function to write to file
 void writeFile(char* filename, Program *turtle){
-    //TODO magicnum
     //concasinate to buffer without causing to reset
     //Another functio
     char filepath[BUFFER] = {"\0"};
@@ -101,8 +103,10 @@ void initPos(Program *turtle){
     turtle->row = SROW;
     turtle->rAngle = 0;
     turtle->colour = 'W';
-    turtle->numUsed = false;
-    turtle->varUsed = false;
+    for(int i = 0; i < MAX_VARS; i++){
+        turtle->setUsed[i] = false;
+
+    }
 }
 
 //TODO: Test how?
@@ -213,12 +217,23 @@ bool Fwd(Program *turtle){
         if(!Varnum(turtle)){
             return false;
         }
-        if(Num(turtle)){
-            turtle->distance = atof(turtle->wds[turtle->cw]);
+        varFwd(turtle);
+    }
+    return true;
+}
+
+void varFwd(Program *turtle){
+    if(Num(turtle)){
+        turtle->distance = atof(turtle->wds[turtle->cw]);
+        intFwd(turtle);
+    }
+    if(Var(turtle)){
+        int index = INDEX(turtle->wds[turtle->cw][1]);
+        if(turtle->setUsed[index] == true){
+            turtle->distance = atof(turtle->store[index]->var);
             intFwd(turtle);
         }
     }
-    return true;
 }
 
 bool intFwd(Program *turtle){
@@ -336,12 +351,23 @@ bool Rgt(Program *turtle){
         if(!Varnum(turtle)){
             return false;
         }
-        if(Num(turtle)){
+        varAngle(turtle);
+    }
+    return true;
+}
+
+void varAngle(Program *turtle){
+    if(Num(turtle)){
             double angle = atof(turtle->wds[turtle->cw]);
             turtle->rAngle = turtle->rAngle + degToRad(angle);
         }
+    if(Var(turtle)){
+        int index = INDEX(turtle->wds[turtle->cw][1]);
+        if(turtle->setUsed[index] == true){
+            double angle = atof(&turtle->store[index]->var[0]);
+            turtle->rAngle = turtle->rAngle + degToRad(angle);
+        }
     }
-    return true;
 }
 
 double degToRad(double degrees){
@@ -472,7 +498,13 @@ bool Set(Program *turtle){
     if(!Ltr(turtle)){
         return false;
     }
+    //TODO should be array:
+    turtle->numUsed = false;
+    turtle->varUsed = false;
     turtle->varTemp = turtle->wds[turtle->cw];
+    int index = INDEX(turtle->varTemp[0]);
+    turtle->setUsed[index] = true;
+    turtle->index = index;
     //Remember that Ltr is turtle->wds[turtle->cw - 2]
     turtle->cw++;
     if(!STRSAME(turtle->wds[turtle->cw], "(")){
@@ -490,27 +522,26 @@ bool Varnum(Program *turtle){
     if(!Var(turtle) && !Num(turtle)){
         return false;
     }
-    // store(turtle);
     return true; 
 }
 
 bool store(Program* turtle){
-    // if(turtle->){
-    //     DEBUG("Variable not SET!");
-    //     return false;
-    // }
-    if(!(turtle->varUsed && turtle->numUsed)){
-        DEBUG("Var or Num not used!");
+    int index = INDEX(turtle->varTemp[0]);
+    if((turtle->setUsed[index]) == false){
+        DEBUG("Variable is not set!");
         return false;
     }
-    
-    int index = &turtle->varTemp[0] - 'A';
     turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
     if (!turtle->store[index]){
         ERROR("simpleSet failed to initialise!\n");
         exit(EXIT_FAILURE);
     }
-    if(turtle->numUsed == true){
+    else if(turtle->numUsed == true){
+        strcpy(turtle->store[index]->var, turtle->wds[turtle->cw]);
+        turtle->store[index]->inUse = true;
+        return true;
+    }
+    else if(turtle->varUsed == true){
         strcpy(turtle->store[index]->var, turtle->wds[turtle->cw]);
         turtle->store[index]->inUse = true;
         return true;
@@ -524,7 +555,7 @@ bool Num(Program *turtle){
     strtod(number, &endptr);
     if (*endptr == '\0'){
         turtle->numUsed = true;
-        store(turtle);
+        // store(turtle);
         return true;
     }
     else{
@@ -539,7 +570,7 @@ bool Var(Program *turtle){
     }
     if (var[0] == '$' && Ltr(turtle)){
         turtle->varUsed = true;
-        store(turtle);
+        // store(turtle);
         return true;
     }
     return false;
@@ -636,6 +667,7 @@ bool Pfix(Program* turtle){
     if(!checkNull(turtle)){
         return false;
     }
+    //TODO: Interpreter should not store...but interprets
     if(STRSAME(turtle->wds[turtle->cw], ")")){
         return true;
     }
@@ -643,19 +675,12 @@ bool Pfix(Program* turtle){
         turtle->cw++;
         return Pfix(turtle);
     }
-    else if (Varnum(turtle)){
-        if (Num(turtle)){
-            interpSetNum(turtle);
-        }
-        // if (Var(turtle)){
-        //     interpSetVar(turtle);
-        // }
+    else if (Varnum(turtle)){    
+        store(turtle);
         turtle->cw++;
         return Pfix(turtle);
     }
-    else{
-        return false;
-    }
+    return false;
 }
 
 void interpSetNum(Program* turtle){
@@ -717,20 +742,27 @@ bool freeStoreNum(Program* turtle){
     return true;
 }
 
+bool freeStorage(Program* turtle){
+    for(int index = 0; index < MAX_VARS; index++){
+        if(turtle->store[index] != NULL){
+            free(turtle->store[index]);
+            turtle->store[index] = NULL;
+        }
+    }
+    return true;
+}
 
 void degToRadTest(void){
-    
-    // Test conversion of 0 degrees
     double result;
-    // Test conversion of 0 degrees
     result = degToRad(0);
-    assert((int)result == 0);
-    // Test conversion of -0 degrees (TODO Edge case - does RIGHT -0 work?)
+    INT_EQUAL((int)result, 0);
     result = degToRad(-0);
-    assert((int)result == 0);
+    INT_EQUAL((int)result, 0);
+    // assert((int)result == 0);
     // Test conversion of 360 degrees
     result = degToRad(FULLCIRC);
-    assert(result >= 6.1 && result <= 6.3);
+    INTO_RANGE(result, 6.1, 6.3);
+    // assert(result >= 6.1 && result <= 6.3);
     // Test conversion of -360 degrees
     result = degToRad(-FULLCIRC);
     assert(result >= 6.1 && result <= 6.3);

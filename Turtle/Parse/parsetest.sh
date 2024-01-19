@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# TODO split ttl by directory - ones that fail and ones that pass.
 # Test validArgs
 ./program 1 2 3
 if [ $? -eq 1 ]; then

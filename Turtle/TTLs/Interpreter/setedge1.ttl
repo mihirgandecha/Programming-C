@@ -1,0 +1,4 @@
+START
+  SET A ( )
+  FORWARD $A
+END

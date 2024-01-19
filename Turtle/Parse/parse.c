@@ -25,6 +25,7 @@ int main(int argc, char* argv[]){
 void validArgs(int argc){
     if(argc != EXPECTED_ARGS){
         ERROR("Error on argv[0]\n");
+        //TODO get rid of magicnum
         exit(EXIT_FAILURE);
     }
 }

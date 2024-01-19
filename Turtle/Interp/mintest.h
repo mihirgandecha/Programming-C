@@ -141,7 +141,12 @@ static size_t lfails = 0;
 
 #define STR_EQUAL(a, b)\
     lequal_base(strcmp((a), (b)) == 0, a, b, "%s")
-//End Mihir
 
+//Asserts that integer in range
+#define IN_RANGE(value, low, high) \
+    assert((value) >= (low) && (value) <= (high))
 
+#define INTO_RANGE(value, low, high) \
+    lequal_base((value) >= (low) && (value) <= (high), value, low, "%f"); \
+    lequal_base((value) >= (low) && (value) <= (high), value, high, "%f")
 #endif /*__MINCTEST_H__*/
