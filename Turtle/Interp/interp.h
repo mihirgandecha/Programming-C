@@ -32,6 +32,12 @@
 //feed in turtle.varTemp to get index
 #define INDEX(c) ((int)(c - 'A'))
 
+//Structure for implementing LOOP:
+typedef struct{
+   double instruct[100];
+   int top;
+} Stack;
+
 //Data Structure for storing <NUM>
 typedef struct{
    char var;

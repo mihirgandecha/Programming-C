@@ -489,6 +489,16 @@ bool Loop(Program *turtle){
     return true;
 }
 
+Stack* intStack(Program *turtle){
+    Stack* s = (Stack*)calloc(1, sizeof(Stack));
+    s->top = -1;
+    return s;
+}
+
+void pushStack(Stack *s, Program *turtle){
+    
+}
+
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
         DEBUG("Expected 'SET'");
