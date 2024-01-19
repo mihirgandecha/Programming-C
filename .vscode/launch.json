@@ -5,7 +5,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Turtle/interp_s",
-            "args": ["Turtle/TTLs/set1.ttl"],
+            "args": ["Turtle/TTLs/my_fwd.ttl"],
             //"args": ["Turtle/TTLs/octagon1.ttl", "Turtle/Results/octagon1test.txt"], // Adjust for different TTL files
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",
