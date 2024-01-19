@@ -495,13 +495,16 @@ bool Varnum(Program *turtle){
 }
 
 bool store(Program* turtle){
-    if(turtle->varTemp[0] != '\0'){
-        int index = *turtle->varTemp[0] - 'A';
-    }
-    else{
-        DEBUG("Variable not SET!");
+    // if(turtle->){
+    //     DEBUG("Variable not SET!");
+    //     return false;
+    // }
+    if(!(turtle->varUsed && turtle->numUsed)){
+        DEBUG("Var or Num not used!");
         return false;
     }
+    
+    int index = &turtle->varTemp[0] - 'A';
     turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
     if (!turtle->store[index]){
         ERROR("simpleSet failed to initialise!\n");
