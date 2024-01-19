@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
     }
     fclose(fttl);
     if (turtle->simpleSet != NULL){
-        freeVariable(turtle);
+        freeStoreNum(turtle);
     }
     free(turtle);
     test();
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]){
 
 static size_t test(void){
     puts("\n");
-    RUN("[INTERP] Set Function Test", test_interpSet_edge_cases);
+    RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
     RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
     RUN("[HELPER] Substring Test", test_subStr);
     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
@@ -613,11 +613,10 @@ bool Pfix(Program* turtle){
     }
     else if (Varnum(turtle)){
         if (Num(turtle)){
-            // int index = *turtle->varTemp - 'A';
-            // double numTemp = atof(turtle->wds[turtle->cw]);
-            // puts("\n");
-            // initVar(turtle, index, numTemp);
-            interpSet(turtle);
+            interpSetNum(turtle);
+        }
+        if (Var(turtle)){
+            interpSetVar(turtle);
         }
         turtle->cw++;
         return Pfix(turtle);
@@ -627,20 +626,11 @@ bool Pfix(Program* turtle){
     }
 }
 
-// void initVar(Program* turtle, int index, double value){
-//     turtle->simpleSet[index] = (Variable*)calloc(1, sizeof(Variable));
-//     if (!turtle->simpleSet){
-//         ERROR("simpleSet failed to initialise!\n");
-//         exit(EXIT_FAILURE);
-//     }
-//     turtle->simpleSet[index]->var = *turtle->varTemp;
-//     turtle->simpleSet[index]->value = value;
-// }
-
-void interpSet(Program* turtle){
+void interpSetNum(Program* turtle){
     int index = *turtle->varTemp - 'A';
+    printf("%s", turtle->wds[turtle->cw]);
     double numVal = atof(turtle->wds[turtle->cw]);
-    turtle->simpleSet[index] = (Variable*)calloc(1, sizeof(Variable));
+    turtle->simpleSet[index] = (storeNum*)calloc(1, sizeof(storeNum));
     if (!turtle->simpleSet){
         ERROR("simpleSet failed to initialise!\n");
         exit(EXIT_FAILURE);
@@ -649,24 +639,7 @@ void interpSet(Program* turtle){
     turtle->simpleSet[index]->value = numVal;
 }
 
-// void test_interpSet(void){
-//     Program *testTurtle =  initTurtle();
-//     testTurtle->cw = 0;
-//     char varTemp = 'A';
-//     testTurtle->wds[testTurtle->cw] = varTemp;
-//     testTurtle->cw++;
-//     double tempVal = -10.54;
-//     testTurtle->wds[testTurtle->cw] = tempVal;
-//     interpSet(testTurtle);
-//     int index = varTemp - 'A';
-//     assert(testTurtle->simpleSet[index]->value == tempVal);
-//     assert(testTurtle->simpleSet[index]->var == varTemp);
-    
-//     freeVariable(testTurtle);
-//     free(testTurtle);
-// }
-
-void test_interpSet_edge_cases(void){
+void test_interpSetNum_edge_cases(void){
     Program *testTurtle =  initTurtle();
     testTurtle->cw = 0;
     char varTemp;
@@ -678,30 +651,12 @@ void test_interpSet_edge_cases(void){
         testTurtle->varTemp = &varTemp;
         testTurtle->cw++;
         testTurtle->wds[testTurtle->cw][0] = tempVal;
-        interpSet(testTurtle);
+        interpSetNum(testTurtle);
         index = varTemp - 'A';
-        // assert(compareFloat(testTurtle->simpleSet[index]->value, tempVal));
         CHAR_EQUAL(testTurtle->simpleSet[index]->var, varTemp);
         testTurtle->cw = 0; // Reset the current word index for the next test
     }
-
-    // Test with a variety of valid double values
-    // double testValues[] = {0, -0, 1, -1, DBL_MIN, DBL_MAX, -DBL_MIN, -DBL_MAX};
-    // int numTestValues = sizeof(testValues) / sizeof(double);
-    // for(int i = 0; i < numTestValues; i++){
-    //     varTemp = 'A';
-    //     testTurtle->wds[testTurtle->cw] = varTemp;
-    //     testTurtle->cw++;
-    //     tempVal = testValues[i];
-    //     testTurtle->wds[testTurtle->cw] = tempVal;
-    //     interpSet(testTurtle);
-    //     index = varTemp - 'A';
-    //     assert(testTurtle->simpleSet[index]->value == tempVal);
-    //     assert(testTurtle->simpleSet[index]->var == varTemp);
-    //     testTurtle->cw = 0;
-    // }
-
-    freeVariable(testTurtle);
+    freeStoreNum(testTurtle);
     free(testTurtle);
 }
 
@@ -720,7 +675,7 @@ void test_compareFloat(){
     INT_EQUAL(compareFloat(a, c), 1);
 }
 
-bool freeVariable(Program* turtle){
+bool freeStoreNum(Program* turtle){
     for(int index = 0; index < MAX_VARS; index++){
         if(turtle->simpleSet[index] != NULL){
             free(turtle->simpleSet[index]);
@@ -730,7 +685,18 @@ bool freeVariable(Program* turtle){
     return true;
 }
 
-
+void interpSetNum(Program* turtle){
+    int index = *turtle->varTemp - 'A';
+    printf("%s", turtle->wds[turtle->cw]);
+    double numVal = atof(turtle->wds[turtle->cw]);
+    turtle->simpleSet[index] = (storeNum*)calloc(1, sizeof(storeNum));
+    if (!turtle->simpleSet){
+        ERROR("simpleSet failed to initialise!\n");
+        exit(EXIT_FAILURE);
+    }
+    turtle->simpleSet[index]->var = *turtle->varTemp;
+    turtle->simpleSet[index]->value = numVal;
+}
 
 void degToRadTest(void){
     

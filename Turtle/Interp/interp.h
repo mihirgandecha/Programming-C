@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <math.h>
+//Float library used to test that any float can be used
+#include <float.h>
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
@@ -27,11 +29,18 @@
 #define MAX_VARS 26
 #define THRESHHOLD 1e-9
 
-//Simple Data Structure for SET <LTR> -> <NUM>
+//Data Structure for storing <NUM>
 typedef struct{
    char var;
    double value;
-} Variable;
+} storeNum;
+
+// //Data Structure for storing <NUM>
+typedef struct{
+   char var[MAXTOKENSIZE];
+   bool inUse;
+} storeNum;
+
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -48,7 +57,8 @@ struct prog{
    char colour;
    char* strcol;
    char* varTemp;
-   Variable* simpleSet[MAX_VARS];
+   storeNum* simpleSet[MAX_VARS];
+
 };
 typedef struct prog Program;
 
@@ -75,10 +85,10 @@ void writeFile(char* filename, Program *turtle);
 //Simple function for interpreting SET Ltr -> <NUM>
 // bool setNum(char varName, double value);
 // void initVar(Program* turtle, int index, double value);
-void interpSet(Program* turtle);
-void test_interpSet_edge_cases(void);
+void interpSetNum(Program* turtle);
+void test_interpSetNum_edge_cases(void);
 
-bool freeVariable(Program* turtle);
+bool freeStoreNum(Program* turtle);
 int compareFloat(double a, double b);
 void test_compareFloat();
 
