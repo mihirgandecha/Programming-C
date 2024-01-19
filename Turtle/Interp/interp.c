@@ -698,6 +698,17 @@ void interpSetNum(Program* turtle){
     turtle->simpleSet[index]->value = numVal;
 }
 
+void interpSetNum(Program* turtle){
+    int index = INDEX(turtle);
+    turtle->Variable[index] = (Variable*)calloc(1, sizeof(Variable));
+    if (!turtle->Variable[index]){
+        ERROR("simpleSet failed to initialise!\n");
+        exit(EXIT_FAILURE);
+    }
+    turtle->store[index]->var = turtle->wds[turtle->cw];
+    turtle->store[index]->inUse = true;
+}
+
 void degToRadTest(void){
     
     // Test conversion of 0 degrees

@@ -29,6 +29,9 @@
 #define MAX_VARS 26
 #define THRESHHOLD 1e-9
 
+//feed in turtle.varTemp to get index
+#define INDEX(turtle) (*(turtle)->varTemp - 'A')
+
 //Data Structure for storing <NUM>
 typedef struct{
    char var;
@@ -39,7 +42,7 @@ typedef struct{
 typedef struct{
    char var[MAXTOKENSIZE];
    bool inUse;
-} storeNum;
+} Variable;
 
 
 struct prog{
@@ -58,7 +61,7 @@ struct prog{
    char* strcol;
    char* varTemp;
    storeNum* simpleSet[MAX_VARS];
-
+   Variable* store[MAX_VARS];
 };
 typedef struct prog Program;
 
@@ -128,3 +131,23 @@ bool checkNull(Program *turtle);
 void initPos(Program *turtle);
 double degToRad(double degrees);
 void degToRadTest(void);
+
+/*
+Pseudo code:
+Variable* store[MAX_VARS];
+typedef struct{
+   char var[MAXTOKENSIZE];
+   bool inUse;
+} Variable;
+
+
+
+1. get index by defining Macro to calculate eg 'B' - 'A'
+2. we can now store A->Z (the index), into array
+3. Within the array, storing the string which can be later converted:
+         ie if COLOUR $B, get index of B and check bool flag if stored
+               if yes then correct and get value
+               if no then return error
+         ie2. If SET $B (2), 2 needs to be converted into string first then stored
+
+*/
