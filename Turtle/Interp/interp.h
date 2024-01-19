@@ -56,6 +56,7 @@ struct prog{
    //TODO Change to radRot:
    double rAngle;
    bool numUsed;
+   bool varUsed;
    char SCREEN[ROW][COL];
    char colour;
    char* strcol;
@@ -94,6 +95,9 @@ void test_interpSetNum_edge_cases(void);
 bool freeStoreNum(Program* turtle);
 int compareFloat(double a, double b);
 void test_compareFloat();
+
+bool store(Program* turtle);
+
 
 
 

@@ -101,6 +101,8 @@ void initPos(Program *turtle){
     turtle->row = SROW;
     turtle->rAngle = 0;
     turtle->colour = 'W';
+    turtle->numUsed = false;
+    turtle->varUsed = false;
 }
 
 //TODO: Test how?
@@ -116,7 +118,8 @@ void readWords(FILE* fttl, Program* turtle){
 }
 //TODO: Test how?
 void runProgram(Program* turtle){
-    turtle->numUsed = false;
+    // turtle->numUsed = false;
+    // turtle->varUsed = false;
     if(!Prog(turtle)){
         ERROR("Grammar mistakes found in ttl.");
     }
@@ -487,7 +490,23 @@ bool Varnum(Program *turtle){
     if(!Var(turtle) && !Num(turtle)){
         return false;
     }
+    // store(turtle);
     return true; 
+}
+
+bool store(Program* turtle){
+    int index = INDEX(turtle);
+    turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
+    if (!turtle->store[index]){
+        ERROR("simpleSet failed to initialise!\n");
+        exit(EXIT_FAILURE);
+    }
+    if(turtle->numUsed == true){
+        strcpy(turtle->store[index]->var, turtle->wds[turtle->cw]);
+        turtle->store[index]->inUse = true;
+        return true;
+    }
+    return false;
 }
 
 bool Num(Program *turtle){
@@ -496,6 +515,7 @@ bool Num(Program *turtle){
     strtod(number, &endptr);
     if (*endptr == '\0'){
         turtle->numUsed = true;
+        store(turtle);
         return true;
     }
     else{
@@ -509,6 +529,7 @@ bool Var(Program *turtle){
         return false;
     }
     if (var[0] == '$' && Ltr(turtle)){
+        turtle->varUsed = true;
         return true;
     }
     return false;
@@ -520,6 +541,7 @@ bool Ltr(Program *turtle){
     if (len == 1){
         char firstChar = var[0];
         if (firstChar >= 'A' && firstChar <= 'Z'){
+            turtle->varTemp = var;
             return true;
         }
     }
@@ -615,9 +637,9 @@ bool Pfix(Program* turtle){
         if (Num(turtle)){
             interpSetNum(turtle);
         }
-        if (Var(turtle)){
-            interpSetVar(turtle);
-        }
+        // if (Var(turtle)){
+        //     interpSetVar(turtle);
+        // }
         turtle->cw++;
         return Pfix(turtle);
     }
@@ -685,29 +707,6 @@ bool freeStoreNum(Program* turtle){
     return true;
 }
 
-void interpSetNum(Program* turtle){
-    int index = *turtle->varTemp - 'A';
-    printf("%s", turtle->wds[turtle->cw]);
-    double numVal = atof(turtle->wds[turtle->cw]);
-    turtle->simpleSet[index] = (storeNum*)calloc(1, sizeof(storeNum));
-    if (!turtle->simpleSet){
-        ERROR("simpleSet failed to initialise!\n");
-        exit(EXIT_FAILURE);
-    }
-    turtle->simpleSet[index]->var = *turtle->varTemp;
-    turtle->simpleSet[index]->value = numVal;
-}
-
-void interpSetNum(Program* turtle){
-    int index = INDEX(turtle);
-    turtle->Variable[index] = (Variable*)calloc(1, sizeof(Variable));
-    if (!turtle->Variable[index]){
-        ERROR("simpleSet failed to initialise!\n");
-        exit(EXIT_FAILURE);
-    }
-    turtle->store[index]->var = turtle->wds[turtle->cw];
-    turtle->store[index]->inUse = true;
-}
 
 void degToRadTest(void){
     
