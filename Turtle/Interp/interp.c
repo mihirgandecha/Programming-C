@@ -475,22 +475,26 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
-    char Var = turtle->wds[turtle->cw];
-    turtle->loopVar = INDEX(atof(Var));
+    turtle->loopIndx = INDEX(turtle->wds[turtle->cw][0]);    
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
     turtle->cw++;
-    turtle->loopItems[turtle->loopVar] = 0;
+    turtle->loopItems[turtle->loopIndx] = 0;
     if (!Lst(turtle)){
         return false;
     }
-    assert(turtle->loopItems[turtle->loopVar] == 8);
-    //TODO remove after:
+    //TODO remove after for oct2:
+    // assert(turtle->loopItems[turtle->loopIndx] == 8);
+    //TODO remove after for labrin:
+    // assert(turtle->loopItems[2] == 4);
+    // assert(turtle->loopItems[3] == 12);
+
     if (!Inslst(turtle)){
         return false;
     }
+    //Call interp Loop here
     return true;
 }
 
@@ -624,7 +628,7 @@ bool Item(Program* turtle){
     if(!Varnum(turtle) && !Word(turtle)){
         return false;
     }
-    turtle->loopItems++;
+    turtle->loopItems[turtle->loopIndx]++;
     return true;
 }
 

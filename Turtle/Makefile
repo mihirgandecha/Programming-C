@@ -28,9 +28,12 @@ extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c nei
 test_interp: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
 	$(CC) $(TEST) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
 
+test: interp_s
+	./interp_s TTLs/octagon2.ttl 
+
 run: all	
 #	./interp_s TTLs/octagon1.ttl octagon1test.txt
-	./interp_s TTLs/octagon2.ttl 
+	./interp_s TTLs/labyrinth.ttl 
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
 #	./parse_s TTLs/empty.ttl

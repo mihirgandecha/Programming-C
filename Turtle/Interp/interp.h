@@ -84,7 +84,7 @@ struct prog{
    char* strcol;
    char* varTemp;
    int loopItems[MAX_VARS];
-   int loopVar;
+   int loopIndx;
    storeNum* simpleSet[MAX_VARS];
    Variable* store[MAX_VARS];
 };
