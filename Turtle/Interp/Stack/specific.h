@@ -5,12 +5,11 @@
 #define STACKTYPE "Linked"
 
 typedef struct{
-   char var[20];
+   char var[ELEMSIZE];
    bool inUse;
 } Instruction;
 
 struct dataframe {
-   int loopIndex;
    stacktype i;
    struct dataframe* next;
 };
@@ -18,6 +17,7 @@ typedef struct dataframe dataframe;
 
 struct stack {
    dataframe* start;
+   int loopIndex;
    int size;
    Instruction* inst;
 };

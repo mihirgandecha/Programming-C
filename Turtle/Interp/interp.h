@@ -71,11 +71,11 @@ struct prog{
    int loopIndx;
    storeNum* simpleSet[MAX_VARS];
    Variable* store[MAX_VARS];
+   stack* s;
 };
 typedef struct prog Program;
 
 
-// static size_t test(void);
 
 //Screen:
 void initScrn(Program *turtle);
@@ -110,6 +110,7 @@ void test_compareFloat();
 
 bool store(Program* turtle);
 bool freeStorage(Program* turtle);
+// static size_t test(void);
 
 
 
@@ -143,6 +144,7 @@ void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
 //End Parser
 
+void initStack(Program *turtle);
 
 //Interpreter Functions:
 void initPos(Program *turtle);

@@ -1,22 +1,10 @@
 #include "interp.h"
 #include "../neillsimplescreen.h"
 #include "mintest.h"
+#include "Stack/specific.h"
 
 
 int main(int argc, char* argv[]){
-
-    // stacktype d;
-    stack* s;
-    s = stack_init();
-    // stack_push(s, 10);
-
-    // assert(stack_free(NULL));
-    // assert(stack_peek(NULL, &d));
-    stack_free(s);
-    // test();
-
-
-    return 0;
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
     Program* turtle = initTurtle();
@@ -41,9 +29,12 @@ int main(int argc, char* argv[]){
     if (turtle->store != NULL){
         freeStorage(turtle);
     }
+    if(turtle->s != NULL){
+        free(turtle->s);
+    }
     free(turtle);
     // test();
-    // return 0;
+    return 0;
 } 
 
 // static size_t test(void){
@@ -489,7 +480,14 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
-    turtle->loopIndx = INDEX(turtle->wds[turtle->cw][0]);    
+    turtle->loopIndx = INDEX(turtle->wds[turtle->cw][0]);  
+    if(turtle->s == NULL){
+        initStack(turtle);
+    }
+    //Wrong placement needs to be under next!
+    // turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]); 
+    // stack* s = NULL;
+    // initStack(s, turtle);
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
@@ -508,19 +506,19 @@ bool Loop(Program *turtle){
     if (!Inslst(turtle)){
         return false;
     }
-    //Call interp Loop here
+    // free(&s->loopIndex);
+    // free(s);
     return true;
 }
 
-// Stack* intStack(Program *turtle){
-//     Stack* s = (Stack*)calloc(1, sizeof(Stack));
-//     s->top = -1;
-//     return s;
-// }
-
-// void pushStack(Stack *s, Program *turtle){
-    
-// }
+void initStack(Program *turtle){
+    //Had memory leak when in this function
+    stacktype d;
+    assert(stack_free(NULL));
+    assert(!stack_peek(NULL, &d));
+    turtle->s = stack_init();
+    // turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
+}
 
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
@@ -657,6 +655,7 @@ bool Items(Program* turtle){
     }
     return false;
 }
+
 
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){
