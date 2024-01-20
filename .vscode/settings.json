@@ -10,7 +10,8 @@
         "stdbool.h": "c",
         "stdlib.h": "c",
         "ctype.h": "c",
-        "interp.h": "c"
+        "interp.h": "c",
+        "specific.h": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

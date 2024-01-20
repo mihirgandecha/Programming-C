@@ -1,0 +1,5 @@
+//Test that treated differently!
+
+SET A ( 1 )     // Assigns 1 to the variable $A
+LOOP A OVER { ... }  // Starts a loop where A takes on each value in the list
+FORWARD $A      // Moves forward by the amount stored in $A, which is 1

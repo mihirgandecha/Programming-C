@@ -1,0 +1,12 @@
+START
+LOOP A OVER {1 2 3 4 5 6 7 8 9 10} 
+  LOOP B OVER {1 2 3 4 5 6 7 8 9 10} 
+    LOOP C OVER {1 2 3 4 5 6 7 8 9 10} 
+      LOOP D OVER {1 2 3 4 5 6 7 8 9 10} 
+        LOOP E OVER {1 2 3 4 5 6 7 8 9 10} 
+          FORWARD 1
+        END
+      END
+    END
+  END
+END

@@ -483,21 +483,23 @@ bool Loop(Program *turtle){
     if (!Lst(turtle)){
         return false;
     }
+    //TODO remove after:
+    assert(items == 8);
     if (!Inslst(turtle)){
         return false;
     }
     return true;
 }
 
-Stack* intStack(Program *turtle){
-    Stack* s = (Stack*)calloc(1, sizeof(Stack));
-    s->top = -1;
-    return s;
-}
+// Stack* intStack(Program *turtle){
+//     Stack* s = (Stack*)calloc(1, sizeof(Stack));
+//     s->top = -1;
+//     return s;
+// }
 
-void pushStack(Stack *s, Program *turtle){
+// void pushStack(Stack *s, Program *turtle){
     
-}
+// }
 
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
@@ -634,10 +636,20 @@ bool Items(Program* turtle){
     return false;
 }
 
+// bool Lst(Program* turtle){
+//     if(STRSAME(turtle->wds[turtle->cw], "{")){
+//         turtle->cw++;
+//         return Items(turtle);
+//     }
+//     return false;
+// }
+
 bool Lst(Program* turtle){
+    int items = 0;
     if(STRSAME(turtle->wds[turtle->cw], "{")){
         turtle->cw++;
         return Items(turtle);
+        items++;
     }
     return false;
 }

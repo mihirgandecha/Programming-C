@@ -1,6 +1,25 @@
 {
     "configurations": [
         {
+            "name": "Debug postfix_linked",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/ADTs/Stack/postfix_linked",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+        },
+        {
             "name": "Official",   
             "type": "cppdbg",
             "request": "launch",

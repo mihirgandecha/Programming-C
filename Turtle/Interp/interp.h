@@ -7,6 +7,8 @@
 //Float library used to test that any float can be used
 #include <float.h>
 
+#include <../ADTs/Stack/Linked/specific.h>
+
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
 #define MIN_ARGS 2
@@ -20,7 +22,7 @@
 #define SROW 16
 #define SCR_DELAY 0.05
 
-#define M_PI 3.14159265358979323846264338327950288
+// #define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
 #define DOUBLE 2
@@ -33,17 +35,30 @@
 #define INDEX(c) ((int)(c - 'A'))
 
 //Structure for implementing LOOP:
-typedef struct{
-   double instruct[100];
-   int top;
-} Stack;
+// typedef struct{
+//    double instruct[100];
+//    int top;
+// } Stack;
 
 //Data Structure for storing <NUM>
-typedef struct{
-   char var;
-   double value;
-} storeNum;
+// typedef struct{
+//    char var;
+//    double value;
+// } storeNum;
 
+typedef int stacktype;
+typedef struct stack stack;
+struct dataframe {
+   stacktype i;
+   struct dataframe* next;
+};
+typedef struct dataframe dataframe;
+
+struct stack {
+   /* Underlying array */
+   dataframe* start;
+   int size;
+};
 // //Data Structure for storing <NUM>
 typedef struct{
    char var[MAXTOKENSIZE];
