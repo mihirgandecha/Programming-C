@@ -2,7 +2,21 @@
 #include "../neillsimplescreen.h"
 #include "mintest.h"
 
+
 int main(int argc, char* argv[]){
+
+    // stacktype d;
+    stack* s;
+    s = stack_init();
+    // stack_push(s, 10);
+
+    // assert(stack_free(NULL));
+    // assert(stack_peek(NULL, &d));
+    stack_free(s);
+    // test();
+
+
+    return 0;
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
     Program* turtle = initTurtle();
@@ -28,21 +42,21 @@ int main(int argc, char* argv[]){
         freeStorage(turtle);
     }
     free(turtle);
-    test();
-    return 0;
+    // test();
+    // return 0;
 } 
 
-static size_t test(void){
-    puts("\n");
-    // RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
-    // RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
-    RUN("[HELPER] Substring Test", test_subStr);
-    RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
-    RUN("[HELPER] Comparing float Test", test_compareFloat);
-    RUN("[HELPER] Degree to Radians Test", degToRadTest);
-    RESULTS();
-    return lfails != 0;
-}
+// static size_t test(void){
+//     puts("\n");
+//     // RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
+//     // RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
+//     RUN("[HELPER] Substring Test", test_subStr);
+//     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
+//     RUN("[HELPER] Comparing float Test", test_compareFloat);
+//     RUN("[HELPER] Degree to Radians Test", degToRadTest);
+//     RESULTS();
+//     return lfails != 0;
+// }
 
 void validArgs(int argc){
     if(argc < MIN_ARGS){

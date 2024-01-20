@@ -1,25 +1,28 @@
 #pragma once
-#include "../../General/general.h"
-#include "interp.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
 
 #define FORMATSTR "%i"
 #define ELEMSIZE 20
+#define STACKTYPE "Linked"
 
+typedef struct{
+   char var[20];
+   bool inUse;
+} Instruction;
 
 struct dataframe {
    int loopIndex;
+   stacktype i;
    struct dataframe* next;
 };
+typedef struct dataframe dataframe;
 
-typedef struct stack {
+struct stack {
    dataframe* start;
    int size;
-   Variable* Instruction; 
-} stack;
+   Instruction* inst;
+};
+
+
 
 /* Create an empty stack */
 stack* stack_init(void);
@@ -36,6 +39,4 @@ bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 /* Make a string version - keep .dot in mind */
 void stack_tostring(stack*, char* str);
-/* Output a picture in the GraphViz/.dot format */
-void stack_todot(stack*, char* fname);
 

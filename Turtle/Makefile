@@ -31,8 +31,15 @@ test_interp: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescre
 test: interp_s
 	./interp_s TTLs/octagon2.ttl 
 
+combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h Interp/Stack/specific.h Interp/Stack/linked.c Interp/general/general.h Interp/general/general.c
+	$(CC) -g neillsimplescreen.c Interp/interp.c Interp/Stack/linked.c Interp/general/general.c -o combined_target -I./Interp/Stack $(SANITIZE) -lm
+
+runcom: combined
+	./combined_target TTLs/labyrinth.ttl 
+
+
 run: all	
-#	./interp_s TTLs/octagon1.ttl octagon1test.txt
+#	./interp_s TTLs/octagon1.ttl octagon1test.txt 
 	./interp_s TTLs/labyrinth.ttl 
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 

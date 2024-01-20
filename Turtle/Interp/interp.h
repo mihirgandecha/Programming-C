@@ -1,3 +1,5 @@
+#pragma once
+#include "general/general.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +8,6 @@
 #include <math.h>
 //Float library used to test that any float can be used
 #include <float.h>
-
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
@@ -33,37 +34,20 @@
 //feed in turtle.varTemp to get index
 #define INDEX(c) ((int)(c - 'A'))
 
-//Structure for implementing LOOP:
-// typedef struct{
-//    double instruct[100];
-//    int top;
-// } Stack;
+typedef int stacktype;
+
+typedef struct stack stack;
+
+typedef struct{
+   char var[MAXTOKENSIZE];
+   bool inUse;
+} Variable;
 
 // Data Structure for storing <NUM>
 typedef struct{
    char var;
    double value;
 } storeNum;
-
-// typedef int stacktype;
-// typedef struct stack stack;
-// struct dataframe {
-//    stacktype i;
-//    struct dataframe* next;
-// };
-// typedef struct dataframe dataframe;
-
-// struct stack {
-//    /* Underlying array */
-//    dataframe* start;
-//    int size;
-// };
-// //Data Structure for storing <NUM>
-typedef struct{
-   char var[MAXTOKENSIZE];
-   bool inUse;
-} Variable;
-
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
@@ -91,7 +75,7 @@ struct prog{
 typedef struct prog Program;
 
 
-static size_t test(void);
+// static size_t test(void);
 
 //Screen:
 void initScrn(Program *turtle);
@@ -165,22 +149,9 @@ void initPos(Program *turtle);
 double degToRad(double degrees);
 void degToRadTest(void);
 
-/*
-Pseudo code:
-Variable* store[MAX_VARS];
-typedef struct{
-   char var[MAXTOKENSIZE];
-   bool inUse;
-} Variable;
-
-
-
-1. get index by defining Macro to calculate eg 'B' - 'A'
-2. we can now store A->Z (the index), into array
-3. Within the array, storing the string which can be later converted:
-         ie if COLOUR $B, get index of B and check bool flag if stored
-               if yes then correct and get value
-               if no then return error
-         ie2. If SET $B (2), 2 needs to be converted into string first then stored
-
-*/
+stack* stack_init(void);
+void stack_push(stack* s, stacktype i);
+bool stack_pop(stack* s, stacktype* d);
+bool stack_free(stack* s);
+bool stack_peek(stack*s,  stacktype* d);
+void stack_tostring(stack*, char* str);
