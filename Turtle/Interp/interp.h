@@ -7,7 +7,6 @@
 //Float library used to test that any float can be used
 #include <float.h>
 
-#include <../ADTs/Stack/Linked/specific.h>
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
@@ -22,7 +21,7 @@
 #define SROW 16
 #define SCR_DELAY 0.05
 
-// #define M_PI 3.14159265358979323846264338327950288
+#define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
 #define DOUBLE 2
@@ -40,25 +39,25 @@
 //    int top;
 // } Stack;
 
-//Data Structure for storing <NUM>
-// typedef struct{
-//    char var;
-//    double value;
-// } storeNum;
+// Data Structure for storing <NUM>
+typedef struct{
+   char var;
+   double value;
+} storeNum;
 
-typedef int stacktype;
-typedef struct stack stack;
-struct dataframe {
-   stacktype i;
-   struct dataframe* next;
-};
-typedef struct dataframe dataframe;
+// typedef int stacktype;
+// typedef struct stack stack;
+// struct dataframe {
+//    stacktype i;
+//    struct dataframe* next;
+// };
+// typedef struct dataframe dataframe;
 
-struct stack {
-   /* Underlying array */
-   dataframe* start;
-   int size;
-};
+// struct stack {
+//    /* Underlying array */
+//    dataframe* start;
+//    int size;
+// };
 // //Data Structure for storing <NUM>
 typedef struct{
    char var[MAXTOKENSIZE];
@@ -84,6 +83,8 @@ struct prog{
    char colour;
    char* strcol;
    char* varTemp;
+   int loopItems[MAX_VARS];
+   int loopVar;
    storeNum* simpleSet[MAX_VARS];
    Variable* store[MAX_VARS];
 };

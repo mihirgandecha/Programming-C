@@ -475,16 +475,19 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
+    char Var = turtle->wds[turtle->cw];
+    turtle->loopVar = INDEX(atof(Var));
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
     turtle->cw++;
+    turtle->loopItems[turtle->loopVar] = 0;
     if (!Lst(turtle)){
         return false;
     }
+    assert(turtle->loopItems[turtle->loopVar] == 8);
     //TODO remove after:
-    assert(items == 8);
     if (!Inslst(turtle)){
         return false;
     }
@@ -621,6 +624,7 @@ bool Item(Program* turtle){
     if(!Varnum(turtle) && !Word(turtle)){
         return false;
     }
+    turtle->loopItems++;
     return true;
 }
 
@@ -636,20 +640,10 @@ bool Items(Program* turtle){
     return false;
 }
 
-// bool Lst(Program* turtle){
-//     if(STRSAME(turtle->wds[turtle->cw], "{")){
-//         turtle->cw++;
-//         return Items(turtle);
-//     }
-//     return false;
-// }
-
 bool Lst(Program* turtle){
-    int items = 0;
     if(STRSAME(turtle->wds[turtle->cw], "{")){
         turtle->cw++;
         return Items(turtle);
-        items++;
     }
     return false;
 }
