@@ -64,7 +64,6 @@ struct prog{
    bool numUsed;
    bool varUsed;
    bool setUsed[MAX_VARS];
-   int index;
    char SCREEN[ROW][COL];
    char colour;
    char* strcol;

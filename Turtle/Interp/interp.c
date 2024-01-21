@@ -108,7 +108,11 @@ void initInstruct(Program *turtle){
         ERROR("simpleSet failed to initialise!\n");
         exit(EXIT_FAILURE);
     }
-    turtle->store[turtle->loopIndx]->inUseIndx = 0;
+    int tempCw;
+    for (tempCw = 0; tempCw < MAXTOKENSIZE; tempCw++){
+        turtle->store[turtle->loopIndx]->var[tempCw][MAXTOKENSIZE] = NULL;
+    }
+    turtle->store[turtle->loopIndx]->cInst = 0;
 }
 
 //TODO: Test + should I put into initTurtle?
@@ -497,6 +501,7 @@ bool Loop(Program *turtle){
     assert(turtle->s->start == NULL);
     stacktype d = &turtle->wds[turtle->cw][0];
     stack_push(turtle->s, d);  
+
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
@@ -506,24 +511,47 @@ bool Loop(Program *turtle){
     if (!Lst(turtle)){
         return false;
     }
-    while(turtle->s->size > 0){
-        // stack_peek(turtle->s, &turtle->d);
-        stack_pop(turtle->s, &turtle->d);
-        int index = turtle->loopIndx;
-        int cwMax = turtle->store[index]->cInst;
-        for(int tempCw = 0; tempCw <= cwMax; tempCw++){
-            strncpy(turtle->d, turtle->store[turtle->loopIndx]->var[tempCw], MAXTOKENSIZE);
-            memmove(&turtle->wds[turtle->cw + 1], &turtle->wds[turtle->cw], (MAXCMND - turtle->cw - 1) * sizeof(turtle->wds[0]));
-            //Fix SET instruction!
-            snprintf(turtle->wds[turtle->cw], MAXTOKENSIZE, "SET %s", turtle->d);
-            if (!Inslst(turtle)){
+    // while(turtle->s->size > 0){
+    //     // stack_peek(turtle->s, &turtle->d);
+    //     int index = turtle->loopIndx;
+    //     int cwMax = turtle->store[index]->cInst;
+    //     for(int tempCw = 0; tempCw <= cwMax; tempCw++){
+    //         stack_pop(turtle->s, &d);
+    //         printf("%s", d);
+    //         stack_push(turtle->s, turtle->store[index]->var);
+
+    //         if (!Inslst(turtle)){
+    //             return false;
+    //         }
+    //     }
+    // return true;
+    // }
+    if (!Inslst(turtle)){
                 return false;
             }
-        }
-    return true;
-    }
     return true;
 }
+
+//want to pop B
+    //set B->list_item[start->end]
+// pStack(Program *turtle){
+//     while(turtle->s->size > 0){
+//         // stack_peek(turtle->s, &turtle->d);
+//         stack_pop(turtle->s, &turtle->d);
+//         int index = turtle->loopIndx;
+//         int cwMax = turtle->store[index]->cInst;
+//         for(int tempCw = 0; tempCw <= cwMax; tempCw++){
+//             strncpy(turtle->d, turtle->store[turtle->loopIndx]->var[tempCw], MAXTOKENSIZE);
+//             memmove(&turtle->wds[turtle->cw + 1], &turtle->wds[turtle->cw], (MAXCMND - turtle->cw - 1) * sizeof(turtle->wds[0]));
+//             //Fix SET instruction!
+//             snprintf(turtle->wds[turtle->cw], MAXTOKENSIZE, "SET %s", turtle->d);
+//             if (!Inslst(turtle)){
+//                 return false;
+//             }
+//         }
+//     return true;
+//     }
+// }
 
 void initStack(Program *turtle){
     //Had memory leak when in this function
@@ -531,8 +559,12 @@ void initStack(Program *turtle){
     //make sure it has nothing copied over
     assert(!stack_peek(NULL, &turtle->d));
     turtle->s = stack_init();
-    turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
-    turtle->s->loopCw = 0;
+    int index = turtle->loopIndx;
+    turtle->s[index].size = 0;
+    turtle->s[index].start = NULL;
+    
+    // turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
+    // turtle->s->loopCw = 0;
     // turtle->s->size = 1;
     // stack_tostring(turtle->s, turtle->str);
 }
@@ -547,12 +579,11 @@ bool Set(Program *turtle){
         return false;
     }
     //TODO should be array:
-    turtle->numUsed = false;
-    turtle->varUsed = false;
-    turtle->varTemp = turtle->wds[turtle->cw];
-    int index = INDEX(turtle->varTemp[0]);
-    turtle->setUsed[index] = true;
-    turtle->index = index;
+    // turtle->numUsed = false;
+    // turtle->varUsed = false;
+    // turtle->varTemp = turtle->wds[turtle->cw];
+    turtle->loopIndx = INDEX(turtle->wds[turtle->cw][0]);
+    turtle->setUsed[turtle->loopIndx] = true;
     //Remember that Ltr is turtle->wds[turtle->cw - 2]
     turtle->cw++;
     if(!STRSAME(turtle->wds[turtle->cw], "(")){
@@ -574,36 +605,34 @@ bool Varnum(Program *turtle){
 }
 
 bool store(Program* turtle){
-    int index = INDEX(turtle->varTemp[0]);
-    turtle->loopIndx = index;
-    if((turtle->setUsed[index]) == false){
+    int index = turtle->loopIndx;
+    if((turtle->setUsed[index]) == true){
         initInstruct(turtle);
-        // DEBUG("Variable is not set!");
-        // return false;
     }
-    // turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
-    // if (!turtle->store[index]){
-    //     ERROR("simpleSet failed to initialise!\n");
-    //     exit(EXIT_FAILURE);
+    int tempCw = turtle->store[index]->cInst;
+    while(turtle->store[index]->var[tempCw] != NULL){
+        tempCw++;
+    }
+    turtle->store[index]->cInst = tempCw;
+    strcpy(turtle->store[index]->var[tempCw], turtle->wds[turtle->cw]);
+    // if(turtle->numUsed == true){
+    //     // int tempUseIndx = turtle->store[turtle->loopIndx]->inUseIndx;
+    //     int cw = turtle->store[index]->cInst;
+    //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
+    //     turtle->store[index]->cInst++;
+    //     turtle->store[index]->inUse = true;
+    //     return true;
     // }
-    if(turtle->numUsed == true){
-        // int tempUseIndx = turtle->store[turtle->loopIndx]->inUseIndx;
-        int cw = turtle->store[index]->cInst;
-        strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-        turtle->store[index]->cInst++;
-        turtle->store[index]->inUse = true;
-        return true;
-    }
-    else if(turtle->varUsed == true){
-        // int tempUseIndx = turtle->store[index]->inUseIndx;
-        int cw = turtle->store[index]->cInst;
-        strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-        turtle->store[index]->cInst++;
-        turtle->store[index]->inUse = true;
-        // turtle->store[index]->inUse[turtle->store[index]->inUseIndx]++;
-        return true;
-    }
-    return false;
+    // else if(turtle->varUsed == true){
+    //     // int tempUseIndx = turtle->store[index]->inUseIndx;
+    //     int cw = turtle->store[index]->cInst;
+    //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
+    //     turtle->store[index]->cInst++;
+    //     turtle->store[index]->inUse = true;
+    //     // turtle->store[index]->inUse[turtle->store[index]->inUseIndx]++;
+    //     return true;
+    // }
+    return true;
 }
 
 bool findInstrStore(Program *turtle){
@@ -679,10 +708,6 @@ bool Item(Program* turtle){
     if(!Varnum(turtle) && !Word(turtle)){
         return false;
     }
-    // if(turtle->s != NULL){
-    //     turtle->s
-    // }
-    // turtle->loopItems[turtle->loopIndx]++;
     return true;
 }
 
@@ -692,12 +717,11 @@ bool Items(Program* turtle){
         //pop Variable here
         return true;
     }
-    else if(Item(turtle)){
-        // char* loopVar = &turtle->s->start->i;
+    else{
+    while(Item(turtle)){
         int index = turtle->loopIndx;
+        // turtle->s
         if(turtle->store[index] == NULL){
-            //TODO need queue for getting first item
-            // turtle->s->start->i = &turtle->s->start->i;
             turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
             turtle->store[index]->cInst = 0;
         }
@@ -707,7 +731,9 @@ bool Items(Program* turtle){
         turtle->cw++;
         return Items(turtle);
     }
+    }
     return false;
+        
 }
 
 // //copy instr from <INSLST> in loop for each item

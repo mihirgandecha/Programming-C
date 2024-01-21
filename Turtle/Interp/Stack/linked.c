@@ -30,7 +30,6 @@ void stack_push(stack* s, stacktype d)
       f->next = s->start;
       s->start = f;
       s->size = s->size + 1;
-      s->loopCw += 1;
    }
 }
 

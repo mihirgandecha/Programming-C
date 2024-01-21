@@ -35,7 +35,7 @@ combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 	$(CC) -g neillsimplescreen.c Interp/interp.c Interp/Stack/linked.c Interp/general/general.c -o combined_target -I./Interp/Stack $(SANITIZE) -lm
 
 runcom: combined
-	./combined_target TTLs/loopbasic.ttl 
+	./combined_target TTLs/set1.ttl 
 
 
 run: all	

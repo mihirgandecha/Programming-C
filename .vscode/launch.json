@@ -24,7 +24,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/Turtle/combined_target",
-            "args": ["Turtle/TTLs/loopbasic.ttl"],
+            "args": ["Turtle/TTLs/set1.ttl"],
             //"args": ["Turtle/TTLs/octagon1.ttl", "Turtle/Results/octagon1test.txt"], // Adjust for different TTL files
             "stopAtEntry": true,
             "cwd": "${workspaceFolder}",

@@ -10,27 +10,22 @@
 // } Instruction;
 
 struct inst {
-   char instruction[MAXTOKENSIZE];
    struct instruction* next;
 };
 typedef struct inst inst;
 
 struct dataframe {
    stacktype i;
-   // Instruction* inst;
-   // int loopIndex;
    inst* instruction;
    char wds[MAXCMND][MAXTOKENSIZE];
+   int cInst;
    struct dataframe* next;
 };
 typedef struct dataframe dataframe;
 
 struct stack {
    dataframe* start;
-   int loopCw;
    int size;
-   int loopIndex;
-   // char Instruction[MAXCMND][MAXTOKENSIZE];
 };
 
 
