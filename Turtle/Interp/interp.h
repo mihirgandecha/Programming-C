@@ -34,7 +34,6 @@
 //feed in turtle.varTemp to get index
 #define INDEX(c) ((int)(c - 'A'))
 
-typedef int stacktype;
 
 typedef struct stack stack;
 
@@ -43,6 +42,7 @@ typedef struct{
    bool inUse;
 } Variable;
 
+typedef char* stacktype;
 // Data Structure for storing <NUM>
 typedef struct{
    char var;
@@ -72,6 +72,9 @@ struct prog{
    storeNum* simpleSet[MAX_VARS];
    Variable* store[MAX_VARS];
    stack* s;
+   // Use for stack_peek: copy top element into d (but don't pop it) function
+   stacktype d;
+   char str[1000];
 };
 typedef struct prog Program;
 
@@ -150,10 +153,14 @@ void initStack(Program *turtle);
 void initPos(Program *turtle);
 double degToRad(double degrees);
 void degToRadTest(void);
+bool pushInstr(Program* turtle);
 
 stack* stack_init(void);
-void stack_push(stack* s, stacktype i);
+// void stack_push(stack* s, stacktype i);
+void stack_push(stack* s, stacktype d);
+
 bool stack_pop(stack* s, stacktype* d);
 bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 void stack_tostring(stack*, char* str);
+stack* pop_stack(stack* s);

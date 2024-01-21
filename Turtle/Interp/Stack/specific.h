@@ -4,22 +4,33 @@
 #define ELEMSIZE 20
 #define STACKTYPE "Linked"
 
-typedef struct{
-   char var[ELEMSIZE];
-   bool inUse;
-} Instruction;
+// typedef struct{
+//    char var[ELEMSIZE];
+//    bool inUse;
+// } Instruction;
+
+struct inst {
+   char instruction[MAXTOKENSIZE];
+   struct instruction* next;
+};
+typedef struct inst inst;
 
 struct dataframe {
    stacktype i;
+   // Instruction* inst;
+   int loopIndex;
+   inst* instruction;
+   char wds[MAXCMND][MAXTOKENSIZE];
    struct dataframe* next;
 };
 typedef struct dataframe dataframe;
 
 struct stack {
    dataframe* start;
-   int loopIndex;
+   int loopCw;
    int size;
-   Instruction* inst;
+   int loopIndex;
+   // char Instruction[MAXCMND][MAXTOKENSIZE];
 };
 
 
@@ -27,7 +38,7 @@ struct stack {
 /* Create an empty stack */
 stack* stack_init(void);
 /* Add element to top */
-void stack_push(stack* s, stacktype i);
+void pushItem(Program* turtle, stacktype item);
 /* Take element from top */
 bool stack_pop(stack* s, stacktype* d);
 /* Clears all space used */

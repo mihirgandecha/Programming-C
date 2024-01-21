@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
         freeStorage(turtle);
     }
     if(turtle->s != NULL){
-        free(turtle->s);
+        stack_free(turtle->s);
     }
     free(turtle);
     // test();
@@ -484,6 +484,7 @@ bool Loop(Program *turtle){
     if(turtle->s == NULL){
         initStack(turtle);
     }
+    turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
     //Wrong placement needs to be under next!
     // turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]); 
     // stack* s = NULL;
@@ -502,22 +503,66 @@ bool Loop(Program *turtle){
     //TODO remove after for labrin:
     // assert(turtle->loopItems[2] == 4);
     // assert(turtle->loopItems[3] == 12);
-
-    if (!Inslst(turtle)){
-        return false;
+    int cw = turtle->cw;
+    int temp = 0;
+    for (int i = turtle->s->size; i >= 1; i--){
+        stacktype d;
+        stack_pop(turtle->s, &d);
+        int len = strlen(d);
+        if(len > 1){
+            memmove(&turtle->wds[cw + 1], &turtle->wds[cw], (MAXCMND - cw - 1) * sizeof(turtle->wds[0]));
+            strncpy(turtle->wds[cw], d, MAXTOKENSIZE);
+            if(Word(turtle)){
+                temp += 2;
+                // Shift all elements from cw onwards one space to the right again.
+                memmove(&turtle->wds[cw + 1], &turtle->wds[cw], (MAXCMND - cw - 1) * sizeof(turtle->wds[0]));
+                // Copy "COLOUR" into turtle->wds[cw - 1].
+                strncpy(turtle->wds[cw], "COLOUR", MAXTOKENSIZE);
+                
+            }
+        }
+        turtle->cw = cw;
+        Inslst(turtle);
+        cw = cw + temp;
+        temp = 0;
+            // Copy d into turtle->wds[cw].
+            // free(d);
+        
+        // free(d);
+        // if(df != NULL){
+        //     // Use df->i, df->loopIndex, and df->instruction as needed.
+        //     // This will depend on the specifics of your program.
+        //     Inslst(turtle);
+        //     free(df);
+        // }
     }
-    // free(&s->loopIndex);
-    // free(s);
+    // if (!Inslst(turtle)){
+    //     return false;
+    // }
     return true;
 }
 
+//potential strategy: dont store stack in turtle yet!
+//Inslst needs an end
+    //store i
+//create new function after Ltr
+//Store Lst and call initStack then
+//Once its finished and return true, make a temporary turtle
+//store cw in temp turtle, and deep copy its readwords -> tempTurtle
+//make it run through the program, until it doesnt have Loop
+//store instructions below top instruction
+//make it return and now free temp turt, ready to pop at end
+
 void initStack(Program *turtle){
     //Had memory leak when in this function
-    stacktype d;
     assert(stack_free(NULL));
-    assert(!stack_peek(NULL, &d));
+    //make sure it has nothing copied over
+    assert(!stack_peek(NULL, &turtle->d));
     turtle->s = stack_init();
-    // turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
+    turtle->s->loopIndex = INDEX(turtle->wds[turtle->cw][0]);
+    turtle->s->loopCw = 0;
+    // turtle->s->size = 1;
+    // stack_tostring(turtle->s, turtle->str);
 }
 
 bool Set(Program *turtle){
@@ -640,6 +685,9 @@ bool Item(Program* turtle){
     if(!Varnum(turtle) && !Word(turtle)){
         return false;
     }
+    // if(turtle->s != NULL){
+    //     turtle->s
+    // }
     turtle->loopItems[turtle->loopIndx]++;
     return true;
 }
@@ -647,15 +695,30 @@ bool Item(Program* turtle){
 bool Items(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "}")){
         turtle->cw++;
+        // turtle->s->start->next = NULL;
         return true;
     }
     else if(Item(turtle)){
+        if(!pushInstr(turtle)){
+            return false;
+        }
         turtle->cw++;
         return Items(turtle);
     }
     return false;
 }
 
+//copy instr from <INSLST> in loop for each item
+bool pushInstr(Program* turtle){
+    // Instruction inst;
+    // strcpy(inst.var, turtle->wds[turtle->cw], MAXTOKENSIZE);
+    stacktype d = turtle->wds[turtle->cw];
+    
+    if(turtle->s != NULL){
+        stack_push(turtle->s, d);
+    }
+    return true;
+}
 
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){

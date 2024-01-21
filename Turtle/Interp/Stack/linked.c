@@ -9,25 +9,59 @@ stack* stack_init(void)
    return s;
 }
 
+// void stack_push(stack* s, stacktype d)
+// {
+//    if(s){
+//       dataframe* f = ncalloc(1, sizeof(dataframe));
+//       f->i = d;
+//       f->loopIndex = d;
+//       f->next = s->start;
+//       s->start = f;
+//       s->size = s->size + 1;
+
+//    }
+// }
+
 void stack_push(stack* s, stacktype d)
 {
    if(s){
       dataframe* f = ncalloc(1, sizeof(dataframe));
       f->i = d;
+      f->loopIndex = s->loopIndex;
       f->next = s->start;
       s->start = f;
       s->size = s->size + 1;
+      s->loopCw += 1;
    }
 }
+
+// void pushItem(Program* turtle, stacktype item){
+//     dataframe* df = ncalloc(1, sizeof(dataframe));
+//     df->i = item;
+//     df->next = turtle->s->start;
+//     turtle->s->start = df;
+//     turtle->s->size++;
+// }
+
+// dataframe* pop_stack(stack* s)
+// {
+//    if((s==NULL) || (s->start==NULL)){
+//       return NULL;
+//    }
+//    dataframe* f = s->start;
+//    s->start = f->next;
+//    s->size = s->size - 1;
+//    return f;
+// }
 
 bool stack_pop(stack* s, stacktype* d)
 {
    if((s==NULL) || (s->start==NULL)){
       return false;
    }
-
    dataframe* f = s->start->next;
-   *d = s->start->i;
+   *d = s->start->i; 
+   s->start->i = NULL; 
    free(s->start);
    s->start = f;
    s->size = s->size - 1;
@@ -43,22 +77,51 @@ bool stack_peek(stack* s, stacktype* d)
    return true;
 }
 
-void stack_tostring(stack* s, char* str)
-{
-   char tmp[ELEMSIZE];
-   str[0] = '\0';
-   if((s==NULL) || (s->size <1)){
-      return;
-   }
-   dataframe* p = s->start;
-   while(p){
-      sprintf(tmp, FORMATSTR, p->i); 
-      strcat(str, tmp);
-      strcat(str, "|");
-      p = p->next;
-   }
-   str[strlen(str)-1] = '\0';
-}
+// void stack_tostring(stack* s, char* str)
+// {
+//    char tmp[ELEMSIZE];
+//    str[0] = '\0';
+//    if((s==NULL) || (s->size <1)){
+//       return;
+//    }
+//    dataframe* p = s->start;
+//    while(p){
+//       sprintf(tmp, FORMATSTR, p->i); 
+//       strcat(str, tmp);
+//       strcat(str, "|");
+//       p = p->next;
+//    }
+//    str[strlen(str)-1] = '\0';
+// }
+
+// void stack_tostring(stack* s, char* str)
+// {
+//    char tmp[1000];
+//    str[0] = '\0';
+//    if((s==NULL) || (s->size <1)){
+//       return;
+//    }
+//    dataframe* p = s->start;
+//    while(p){
+//       // Print the loop index
+//       sprintf(tmp, "Loop %c: ", 'A' + p->loopIndex);
+//       strcat(str, tmp);
+
+//       // Print the stacktype
+//       sprintf(tmp, FORMATSTR, p->i); 
+//       strcat(str, tmp);
+
+//       // If there's an instruction, print it
+//       if (p->inst && p->inst->inUse) {
+//           sprintf(tmp, " Instruction: %s", p->inst->var);
+//           strcat(str, tmp);
+//       }
+
+//       strcat(str, "|");
+//       p = p->next;
+//    }
+//    str[strlen(str)-1] = '\0';
+// }
 
 bool stack_free(stack* s)
 {
