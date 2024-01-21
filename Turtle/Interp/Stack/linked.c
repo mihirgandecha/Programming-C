@@ -18,7 +18,6 @@ stack* stack_init(void)
 //       f->next = s->start;
 //       s->start = f;
 //       s->size = s->size + 1;
-
 //    }
 // }
 
@@ -27,7 +26,7 @@ void stack_push(stack* s, stacktype d)
    if(s){
       dataframe* f = ncalloc(1, sizeof(dataframe));
       f->i = d;
-      f->loopIndex = s->loopIndex;
+      // f->loopIndex = s->loopIndex;
       f->next = s->start;
       s->start = f;
       s->size = s->size + 1;

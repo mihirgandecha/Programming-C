@@ -18,7 +18,7 @@ typedef struct inst inst;
 struct dataframe {
    stacktype i;
    // Instruction* inst;
-   int loopIndex;
+   // int loopIndex;
    inst* instruction;
    char wds[MAXCMND][MAXTOKENSIZE];
    struct dataframe* next;

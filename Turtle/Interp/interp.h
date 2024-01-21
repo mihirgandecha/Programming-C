@@ -38,8 +38,10 @@
 typedef struct stack stack;
 
 typedef struct{
-   char var[MAXTOKENSIZE];
+   char var[MAXCMND][MAXTOKENSIZE];
+   int cInst;
    bool inUse;
+   int inUseIndx;
 } Variable;
 
 typedef char* stacktype;
@@ -79,6 +81,8 @@ struct prog{
 typedef struct prog Program;
 
 
+void initInstruct(Program *turtle);
+bool findInstrStore(Program *turtle);
 
 //Screen:
 void initScrn(Program *turtle);
@@ -159,8 +163,8 @@ stack* stack_init(void);
 // void stack_push(stack* s, stacktype i);
 void stack_push(stack* s, stacktype d);
 
+stack* pop_stack(stack* s);
 bool stack_pop(stack* s, stacktype* d);
 bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 void stack_tostring(stack*, char* str);
-stack* pop_stack(stack* s);
