@@ -19,9 +19,9 @@ int main(int argc, char* argv[]){
     2. Flag in main if SCREEN or if TXT and store in turtle
     3. After pos updated in FWD, if -Flag- printscreen or other
     */
-    else{
-        printtoscreen(turtle);
-    }
+    // else{
+    //     printtoscreen(turtle);
+    // }
     fclose(fttl);
     if (turtle->simpleSet != NULL){
         freeStoreNum(turtle);
@@ -108,10 +108,10 @@ void initInstruct(Program *turtle){
         ERROR("simpleSet failed to initialise!\n");
         exit(EXIT_FAILURE);
     }
-    int tempCw;
-    for (tempCw = 0; tempCw < MAXTOKENSIZE; tempCw++){
-        turtle->store[turtle->loopIndx]->var[tempCw][MAXTOKENSIZE] = NULL;
-    }
+    // int tempCw;
+    // for (tempCw = 0; tempCw < MAXTOKENSIZE; tempCw++){
+    //     turtle->store[turtle->loopIndx]->var[tempCw][MAXTOKENSIZE] = NULL;
+    // }
     turtle->store[turtle->loopIndx]->cInst = 0;
 }
 
@@ -265,8 +265,10 @@ bool intFwd(Program *turtle){
     int prevCol = (int)turtle->col;
     int prevRow = (int)turtle->row;
     //TODO: Func2 - trig calculations, combine with calculating newRow, newCol
-    int dRow = round(cos(turtle->rAngle) * -turtle->distance);
-    int dCol = round(sin(turtle->rAngle) * turtle->distance); 
+    // int dRow = round(cos(turtle->rAngle) * -turtle->distance);
+    // int dCol = round(sin(turtle->rAngle) * turtle->distance); 
+    int dRow = cos(turtle->rAngle) * -turtle->distance;
+    int dCol = sin(turtle->rAngle) * turtle->distance; 
     //(if not postscript) -> store (start + delta)
     // turtle->colour = 'W';
     int newRow = prevRow + dRow;
@@ -293,7 +295,15 @@ bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colE
     }
     //TODO: Is rowStart-rowEnd not same as dRow/dCol?
     int error = dCol - dRow;
-    while(abs(rowStart - rowEnd) > 1 || abs(colStart - colEnd) > 1){
+    printf("%d\n", abs(rowStart - rowEnd));
+    printf("%d\n", dRow);
+    printf("%d\n", abs(colStart - colEnd));
+    printf("%d\n", dCol);
+    
+    // while(abs(rowStart - rowEnd) > 1 || abs(colStart - colEnd) > 1){
+        while(dRow > 1 || dCol > 1){
+
+        //print these two values above and compare
         //TODO: This should be in updatePos function; given the error and dRow,dCol,colStart,rowStart
         int doubleError = DOUBLE * error;
         if(doubleError >= -dRow){
