@@ -21,21 +21,18 @@
 #define SCOL 25
 #define SROW 16
 #define SCR_DELAY 0.05
-
 #define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00
 #define FULLCIRC 360.00
 #define DOUBLE 2
 #define BUFFER 10000
-
 #define MAX_VARS 26
 #define THRESHHOLD 1e-9
-
-//feed in turtle.varTemp to get index
 #define INDEX(c) ((int)(c - 'A'))
 
 
 typedef struct stack stack;
+typedef char* stacktype;
 
 typedef struct{
    char var[MAXCMND][MAXTOKENSIZE];
@@ -46,40 +43,32 @@ typedef struct{
 
 //$A
 
-typedef char* stacktype;
-// Data Structure for storing <NUM>
-typedef struct{
-   char var;
-   double value;
-} storeNum;
+// // Data Structure for storing <NUM>
+// typedef struct{
+//    char var;
+//    double value;
+// } storeNum;
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
-   
-   bool endReached;
+
    int col, row;
-   double distance;
-   //Storing rotation of curser in degrees, and rAngle for radians
-   double rot;
    //TODO Change to radRot:
    double rAngle;
-   bool numUsed;
-   bool varUsed;
-   bool setUsed[MAX_VARS];
    bool isScreen;
    char SCREEN[ROW][COL];
    char colour;
-   char* strcol;
-   char* varTemp;
-   int loopItems[MAX_VARS];
-   int loopIndx;
-   storeNum* simpleSet[MAX_VARS];
    Variable* store[MAX_VARS];
+   // bool numUsed;
+   // bool varUsed;
+   bool setUsed[MAX_VARS];
+   char* varTemp;
+   //confusing - dont need both!:
+   int varIndx;
+   // storeNum* simpleSet[MAX_VARS];
    stack* s;
-   // Use for stack_peek: copy top element into d (but don't pop it) function
-   stacktype d;
-   char str[1000];
+   
 };
 typedef struct prog Program;
 
@@ -90,7 +79,9 @@ bool findInstrStore(Program *turtle);
 //Screen:
 void initScrn(Program *turtle);
 void printtoscreen(Program *turtle);
-bool intFwd(Program *turtle);
+// bool intFwd(Program *turtle);
+bool intFwd(Program *turtle, double distance);
+
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol);
 void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
@@ -123,6 +114,7 @@ void test_compareFloat();
 bool store(Program* turtle);
 bool freeStorage(Program* turtle);
 // static size_t test(void);
+void test(void);
 
 
 
@@ -159,7 +151,7 @@ bool checkNull(Program *turtle);
 void initStack(Program *turtle);
 
 //Interpreter Functions:
-void initPos(Program *turtle);
+// void initPos(Program *turtle);
 double degToRad(double degrees);
 void degToRadTest(void);
 bool pushInstr(Program* turtle);
