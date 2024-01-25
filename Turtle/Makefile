@@ -35,12 +35,12 @@ combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 	$(CC) -g neillsimplescreen.c Interp/interp.c Interp/Stack/linked.c Interp/general/general.c -o combined_target -I./Interp/Stack $(SANITIZE) -lm
 
 runcom: combined
-	./combined_target TTLs/forward.ttl
+	./combined_target TTLs/.ttl
 
 
 run: all	
 #	./interp_s TTLs/octagon1.ttl octagon1test.txt 
-	./interp_s TTLs/labyrinth.ttl 
+	./interp_s TTLs/octagon1.ttl 
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
 #	./parse_s TTLs/empty.ttl

@@ -70,8 +70,6 @@ FILE* openFile(char* filename){
     return fttl;
 }
 
-//TODO: Fix
-// Function to write to file
 void writeFile(char* filename, Program *turtle){
     //concasinate to buffer without causing to reset
     //Another functio
@@ -94,7 +92,6 @@ void writeFile(char* filename, Program *turtle){
     // return fttx;
 }
 
-//TODO: Test
 Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
     if (!turtle){
@@ -111,10 +108,6 @@ void initInstruct(Program *turtle){
         ERROR("simpleSet failed to initialise!\n");
         exit(EXIT_FAILURE);
     }
-    // int tempCw;
-    // for (tempCw = 0; tempCw < MAXTOKENSIZE; tempCw++){
-    //     turtle->store[turtle->loopIndx]->var[tempCw][MAXTOKENSIZE] = NULL;
-    // }
     turtle->store[turtle->loopIndx]->cInst = 0;
 }
 
@@ -164,16 +157,16 @@ void initScrn(Program *turtle){
 //TODO: Format: how many seconds delay and in right placement?
 void printtoscreen(Program *turtle){
     neillclrscrn();
-    neillbgcol(black);
+    // neillbgcol(black);
     neillcursorhome();
-    double seconds = 0.5;
+    double seconds = 1;
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
         }
-        neillbusywait(seconds);
         printf("\n");
     }
+    neillbusywait(seconds);
     neillreset();
 }
 
@@ -191,9 +184,7 @@ bool Prog(Program *turtle){
 }
 
 bool Inslst(Program *turtle){
-    turtle->endReached = false; 
     if(STRSAME(turtle->wds[turtle->cw], "END")){
-        turtle->endReached = true;
         return true;
     }
     if(!Ins(turtle)){
@@ -523,8 +514,7 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
-    turtle->loopIndx = INDEX(turtle->wds[turtle->cw][0]);
-    assert(turtle->s->start == NULL);
+    int varIndex = INDEX(*turtle->varTemp);
     stacktype d = &turtle->wds[turtle->cw][0];
     stack_push(turtle->s, d);  
 
@@ -533,30 +523,40 @@ bool Loop(Program *turtle){
         return false;
     }
     turtle->cw++;
-    turtle->loopItems[turtle->loopIndx] = 0;
+    turtle->loopItems[varIndex] = 0;
+    // int startList = turtle->cw;
     if (!Lst(turtle)){
         return false;
     }
-    // while(turtle->s->size > 0){
-    //     // stack_peek(turtle->s, &turtle->d);
-    //     int index = turtle->loopIndx;
-    //     int cwMax = turtle->store[index]->cInst;
-    //     for(int tempCw = 0; tempCw <= cwMax; tempCw++){
-    //         stack_pop(turtle->s, &d);
-    //         printf("%s", d);
-    //         stack_push(turtle->s, turtle->store[index]->var);
+    // int loopLen = turtle->cw - startList;
+    /*
+    for (int i=0; i < loopLen; i++)
+    last cw is ")"
+    */
 
-    //         if (!Inslst(turtle)){
-    //             return false;
-    //         }
-    //     }
-    // return true;
-    // }
+    while(turtle->s->size > 0){
+        // stack_peek(turtle->s, &turtle->d);
+        int index = turtle->loopIndx;
+        int cwMax = turtle->store[index]->cInst;
+        for(int tempCw = 0; tempCw <= cwMax; tempCw++){
+            stack_pop(turtle->s, &d);
+            printf("%s", d);
+            stack_push(turtle->s, d);
+
+            if (!Inslst(turtle)){
+                return false;
+            }
+        }
+    return true;
+    }
     if (!Inslst(turtle)){
                 return false;
             }
     return true;
 }
+
+/*
+*/
 
 //want to pop B
     //set B->list_item[start->end]

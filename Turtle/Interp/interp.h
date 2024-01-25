@@ -44,6 +44,8 @@ typedef struct{
    int inUseIndx;
 } Variable;
 
+//$A
+
 typedef char* stacktype;
 // Data Structure for storing <NUM>
 typedef struct{
@@ -54,6 +56,7 @@ typedef struct{
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
+   
    bool endReached;
    int col, row;
    double distance;

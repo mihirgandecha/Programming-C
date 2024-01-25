@@ -76,9 +76,7 @@ bool Prog(Program *turtle){
 
 bool Inslst(Program *turtle){
     //TODO should i move to prog?
-    turtle->endReached = false; 
     if(STRSAME(turtle->wds[turtle->cw], "END")){
-        turtle->endReached = true;
         return true;
     }
     if(!Ins(turtle)){
