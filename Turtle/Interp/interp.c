@@ -10,6 +10,12 @@ int main(int argc, char* argv[]){
     Program* turtle = initTurtle();
     initScrn(turtle);
     readWords(fttl, turtle);
+    if(argc > DOUBLE){
+        turtle->isScreen = false;
+    }
+    else{
+        turtle->isScreen = true;
+    }
     runProgram(turtle);
     if(argc > DOUBLE){
         writeFile(argv[DOUBLE], turtle);
@@ -19,9 +25,6 @@ int main(int argc, char* argv[]){
     2. Flag in main if SCREEN or if TXT and store in turtle
     3. After pos updated in FWD, if -Flag- printscreen or other
     */
-    // else{
-    //     printtoscreen(turtle);
-    // }
     fclose(fttl);
     if (turtle->simpleSet != NULL){
         freeStoreNum(turtle);
@@ -121,6 +124,7 @@ void initPos(Program *turtle){
     turtle->row = SROW;
     turtle->rAngle = 0;
     turtle->colour = 'W';
+    turtle->isScreen = false;
     for(int i = 0; i < MAX_VARS; i++){
         turtle->setUsed[i] = false;
     }
@@ -162,16 +166,11 @@ void printtoscreen(Program *turtle){
     neillclrscrn();
     neillbgcol(black);
     neillcursorhome();
-    double seconds = SCR_DELAY;
-    puts("\n");
-    puts("\n");
-    puts("\n");
+    double seconds = 0.5;
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
         }
-        //TODO Check if placement correct:
-        //TODO Seconds need to be 1 seconds
         neillbusywait(seconds);
         printf("\n");
     }
@@ -273,52 +272,43 @@ bool intFwd(Program *turtle){
     // turtle->colour = 'W';
     int newRow = prevRow + dRow;
     int newCol = prevCol + dCol;
-    if(Bresenham(turtle, prevRow, prevCol, newRow, newCol, dRow, dCol)){
-        //should store before in Func2
-        turtle->row = newRow;
-        turtle->col = newCol;
+    if(Bresenham(turtle, newRow, newCol, dRow, dCol)){
         return true;
     }
     return false;
 }
 
-//TODO: need to take what algorithm does, break into smaller testable functions
-//TODO: Remove parameters?/need to break down into smaller functions
-bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol){
-    int signRow = rowStart < rowEnd ? 1 : -1;
-    int signCol = colStart < colEnd ? 1 : -1;
-    //TODO: ask why putting this before (func call) produces runtime error
+bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
+    int signRow = turtle->row < rowEnd ? 1 : -1;
+    int signCol = turtle->col < colEnd ? 1 : -1;
     dRow = abs(dRow);
     dCol = abs(dCol);
-    if(!drawPoint(turtle, rowStart, colStart)){
+    if(!drawPoint(turtle, turtle->row, turtle->col)){
         return false;
     }
-    //TODO: Is rowStart-rowEnd not same as dRow/dCol?
     int error = dCol - dRow;
-    printf("%d\n", abs(rowStart - rowEnd));
-    printf("%d\n", dRow);
-    printf("%d\n", abs(colStart - colEnd));
-    printf("%d\n", dCol);
-    
-    // while(abs(rowStart - rowEnd) > 1 || abs(colStart - colEnd) > 1){
-        while(dRow > 1 || dCol > 1){
-
-        //print these two values above and compare
-        //TODO: This should be in updatePos function; given the error and dRow,dCol,colStart,rowStart
-        int doubleError = DOUBLE * error;
-        if(doubleError >= -dRow){
-            error -= dRow;
-            colStart += signCol;
-        }
-        if(doubleError <= dCol){
-            error += dCol;
-            rowStart += signRow;
-        }
-        if(!drawPoint(turtle, rowStart, colStart)){
+    while((dRow > 1 || dCol > 1) && ((turtle->row != rowEnd) || (turtle->col != colEnd))){           
+        updatePoints(turtle, error, dRow, dCol, signRow, signCol);
+        if(!drawPoint(turtle, turtle->row, turtle->col)){
             return false;
         }
     }
+    if(turtle->isScreen == true){
+        printtoscreen(turtle);
+    }
     return true;
+}
+
+void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol){
+    int doubleError = DOUBLE * error;
+    if(doubleError >= -dRow){
+        error -= dRow;
+        turtle->col += signCol;
+    }
+    if(doubleError <= dCol){
+        error += dCol;
+        turtle->row += signRow;
+    }
 }
 
 bool isWithinBounds(int row, int col){
@@ -343,6 +333,32 @@ bool drawPoint(Program *turtle, int row, int col){
         return true;
     }
     return false;
+}
+
+void test_Bresenham(){
+    Program turtle;
+    // TODO init test input values into turtle
+    assert(Bresenham(&turtle, 10, 10, 5, 5) == false);
+    // testing for updating position
+    turtle.row = 0;
+    turtle.col = 0;
+    Bresenham(&turtle, 10, 10, 5, 5);
+    assert(turtle.row == 5 && turtle.col == 5);
+    //testing negative dRow and dCol
+    turtle.row = 10;
+    turtle.col = 10;
+    Bresenham(&turtle, 0, 0, -5, -5);
+    assert(turtle.row == 5 && turtle.col == 5);
+    //row handling test
+    turtle.row = 10;
+    turtle.col = 0;
+    Bresenham(&turtle, 0, 10, -5, 5);
+    assert(turtle.row == 5 && turtle.col == 5);
+    // col handling test
+    turtle.row = 0;
+    turtle.col = 10;
+    Bresenham(&turtle, 10, 0, 5, -5);
+    assert(turtle.row == 5 && turtle.col == 5);
 }
 
 

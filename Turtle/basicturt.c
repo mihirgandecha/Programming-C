@@ -40,3 +40,31 @@ int main(void)
 
     return 0;
 }
+
+
+// bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
+//     int signRow = turtle->row < rowEnd ? 1 : -1;
+//     int signCol = turtle->col < colEnd ? 1 : -1;
+//     dRow = abs(dRow);
+//     dCol = abs(dCol);
+//     if(!drawPoint(turtle, turtle->row, turtle->col)){
+//         return false;
+//     }
+//     int error = dCol - dRow;
+//     while((dRow > 1 || dCol > 1) && ((turtle->row != rowEnd) || (turtle->col != colEnd))){          
+//         int doubleError = DOUBLE * error;
+//         if(doubleError >= -dRow){
+//             error -= dRow;
+//             turtle->col += signCol;
+//         }
+//         if(doubleError <= dCol){
+//             error += dCol;
+//             turtle->row += signRow;
+//         }
+//         if(!drawPoint(turtle, turtle->row, turtle->col)){
+//             return false;
+//         }
+//     }
+//     printtoscreen(turtle);
+//     return true;
+// }

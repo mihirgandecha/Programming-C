@@ -64,6 +64,7 @@ struct prog{
    bool numUsed;
    bool varUsed;
    bool setUsed[MAX_VARS];
+   bool isScreen;
    char SCREEN[ROW][COL];
    char colour;
    char* strcol;
@@ -88,7 +89,9 @@ void initScrn(Program *turtle);
 void printtoscreen(Program *turtle);
 bool intFwd(Program *turtle);
 void setCol(Program *turtle, char* colour);
-bool Bresenham(Program *turtle, int rowStart, int colStart, int rowEnd, int colEnd, int dRow, int dCol);
+bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol);
+void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
+
 void testBresenham(void);
 char* subStr(char *str);
 void test_subStr(void);
