@@ -11,7 +11,7 @@
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
-#define MIN_ARGS 2
+#define MIN_ARGS 3
 #define EXPECTED_VARLEN 2
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
