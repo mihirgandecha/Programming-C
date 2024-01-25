@@ -19,7 +19,7 @@
 #define COL 51
 #define ROW 33
 #define SCOL 25
-#define SROW 16
+#define SROW 17
 #define SCR_DELAY 0.05
 #define M_PI 3.14159265358979323846264338327950288
 #define HALFCIRC 180.00
@@ -35,7 +35,7 @@ typedef struct stack stack;
 typedef char* stacktype;
 
 typedef struct{
-   char var[MAXCMND][MAXTOKENSIZE];
+   char var[MAXTOKENSIZE];
    int cInst;
    bool inUse;
    int inUseIndx;
@@ -59,7 +59,7 @@ struct prog{
    bool isScreen;
    char SCREEN[ROW][COL];
    char colour;
-   Variable* store[MAX_VARS];
+   Variable store[MAX_VARS];
    // bool numUsed;
    // bool varUsed;
    bool setUsed[MAX_VARS];

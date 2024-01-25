@@ -1,3 +1,7 @@
 START
-   SET A ( 1 )
+   SET A ( 8 )
+   SET B ( 45 )
+   FORWARD $A
+   RIGHT $B
+   FORWARD $A
 END

@@ -5,20 +5,21 @@
 
 
 int main(int argc, char* argv[]){
+    printf("%i", argc);
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
     Program* turtle = initTurtle();
     initScrn(turtle);
     readWords(fttl, turtle);
-    turtle->isScreen = (argc > DOUBLE) ? false : true;
+    turtle->isScreen = (argc != DOUBLE) ? false : true;
     runProgram(turtle);
-    if(argc > DOUBLE){
-        writeFile(argv[DOUBLE], turtle);
+    if(argc == MIN_ARGS){
+        writeFile(argv[MIN_ARGS], turtle);
     }
     fclose(fttl);
-    if (turtle->store != NULL){
-        freeStorage(turtle);
-    }
+    // if (turtle->store != NULL){
+    //     freeStorage(turtle);
+    // }
     free(turtle->s);
     free(turtle);
     test();
@@ -101,14 +102,14 @@ void initScrn(Program *turtle){
     }
 }
 
-void initInstruct(Program *turtle){
-    turtle->store[turtle->varIndx] = (Variable*)calloc(1, sizeof(Variable));
-    if (!turtle->store[turtle->varIndx]){
-        ERROR("simpleSet failed to initialise!\n");
-        exit(EXIT_FAILURE);
-    }
-    turtle->store[turtle->varIndx]->cInst = 0;
-}
+// void initInstruct(Program *turtle){
+//     turtle->store[turtle->varIndx] = (Variable*)calloc(1, sizeof(Variable));
+//     if (!turtle->store[turtle->varIndx]){
+//         ERROR("simpleSet failed to initialise!\n");
+//         exit(EXIT_FAILURE);
+//     }
+//     turtle->store[turtle->varIndx]->cInst = 0;
+// }
 
 //TODO: Test how?
 void readWords(FILE* fttl, Program* turtle){
@@ -215,9 +216,8 @@ void varFwd(Program *turtle){
     }
     if(Var(turtle)){
         int index = INDEX(turtle->wds[turtle->cw][1]);
-        if(turtle->setUsed[index] == true){
-            // int cw = turtle->store[turtle->varIndx]->cInst;
-            double distance = atof(turtle->wds[turtle->cw]);
+        if(turtle->store[index].inUse == true){
+            double distance = atof(turtle->store[index].var);
             intFwd(turtle, distance);
         }
     }
@@ -229,8 +229,8 @@ bool intFwd(Program *turtle, double distance){
     }
     int prevCol = (int)turtle->col;
     int prevRow = (int)turtle->row; 
-    int dRow = cos(turtle->rAngle) * -distance;
-    int dCol = sin(turtle->rAngle) * distance; 
+    int dRow = round(cos(turtle->rAngle) * -distance);
+    int dCol = round(sin(turtle->rAngle) * distance); 
     //(if not postscript) -> store (start + delta)
     int newRow = prevRow + dRow;
     int newCol = prevCol + dCol;
@@ -245,15 +245,16 @@ bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
     int signCol = turtle->col < colEnd ? 1 : -1;
     dRow = abs(dRow);
     dCol = abs(dCol);
-    if(!drawPoint(turtle, turtle->row, turtle->col)){
-        return false;
-    }
     int error = dCol - dRow;
-    while(((turtle->row != rowEnd) || (turtle->col != colEnd)) && (dRow > 1 || dCol > 1)){           
+    // drawPoint(turtle, turtle->row, turtle->col);
+    while((dRow > 0 || dCol > 0) && ((turtle->row != rowEnd) || (turtle->col != colEnd))){
         updatePoints(turtle, error, dRow, dCol, signRow, signCol);
         if(!drawPoint(turtle, turtle->row, turtle->col)){
             return false;
         }
+    }
+    if(turtle->SCREEN[turtle->row][turtle->col] == ' '){
+        drawPoint(turtle, rowEnd, colEnd);
     }
     if(turtle->isScreen == true){
         printtoscreen(turtle);
@@ -366,18 +367,25 @@ bool Rgt(Program *turtle){
 
 void varAngle(Program *turtle){
     if(Num(turtle)){
-            double angle = atof(turtle->wds[turtle->cw]);
-            turtle->rAngle = turtle->rAngle + degToRad(angle);
-        }
+        double angle = atof(turtle->wds[turtle->cw]);
+        turtle->rAngle = turtle->rAngle + degToRad(angle);
+    }
     if(Var(turtle)){
         int index = INDEX(turtle->wds[turtle->cw][1]);
-        if(turtle->setUsed[index] == true){
-            int cw = turtle->store[index]->cInst;
-            double angle = atof(turtle->store[index]->var[cw]);
-            turtle->store[index]->cInst++;
+        if(turtle->store[index].inUse == true){
+            double angle = atof(turtle->store[index].var);
             turtle->rAngle = turtle->rAngle + degToRad(angle);
         }
     }
+    // if(Var(turtle)){
+    //     int index = INDEX(turtle->wds[turtle->cw][1]);
+    //     if(turtle->setUsed[index] == true){
+    //         int cw = turtle->store[index]->cInst;
+    //         double angle = atof(turtle->store[index]->var[cw]);
+    //         turtle->store[index]->cInst++;
+    //         turtle->rAngle = turtle->rAngle + degToRad(angle);
+    //     }
+    // }
 }
 
 double degToRad(double degrees){
@@ -502,21 +510,21 @@ bool Loop(Program *turtle){
     last cw is ")"
     */
 
-    while(turtle->s->size > 0){
-        // stack_peek(turtle->s, &turtle->d);
-        int index = turtle->varIndx;
-        int cwMax = turtle->store[index]->cInst;
-        for(int tempCw = 0; tempCw <= cwMax; tempCw++){
-            stack_pop(turtle->s, &d);
-            printf("%s", d);
-            stack_push(turtle->s, d);
+    // while(turtle->s->size > 0){
+    //     // stack_peek(turtle->s, &turtle->d);
+    //     int index = turtle->varIndx;
+    //     int cwMax = turtle->store[index]->cInst;
+    //     for(int tempCw = 0; tempCw <= cwMax; tempCw++){
+    //         stack_pop(turtle->s, &d);
+    //         printf("%s", d);
+    //         stack_push(turtle->s, d);
 
-            if (!Inslst(turtle)){
-                return false;
-            }
-        }
-    return true;
-    }
+    //         if (!Inslst(turtle)){
+    //             return false;
+    //         }
+    //     }
+    // return true;
+    // }
     if (!Inslst(turtle)){
                 return false;
             }
@@ -563,12 +571,11 @@ bool Set(Program *turtle){
     if(!Ltr(turtle)){
         return false;
     }
-    //TODO should be array:
-    // turtle->numUsed = false;
-    // turtle->varUsed = false;
-    // turtle->varTemp = turtle->wds[turtle->cw];
-    turtle->varIndx = INDEX(turtle->wds[turtle->cw][0]);
-    turtle->setUsed[turtle->varIndx] = true;
+    turtle->varTemp = &turtle->wds[turtle->cw][0];
+    int index = INDEX(*turtle->varTemp);
+    // turtle->varIndx = INDEX(turtle->wds[turtle->cw][0]);
+    turtle->store[index].inUse = true;
+    // turtle->setUsed[turtle->varIndx] = true;
     //Remember that Ltr is turtle->wds[turtle->cw - 2]
     turtle->cw++;
     if(!STRSAME(turtle->wds[turtle->cw], "(")){
@@ -589,40 +596,40 @@ bool Varnum(Program *turtle){
     return true; 
 }
 
-bool store(Program* turtle){
-    int index = turtle->varIndx;
-    if((turtle->setUsed[index]) == true){
-        initInstruct(turtle);
-    }
-    int tempCw = turtle->store[index]->cInst;
-    while(turtle->store[index]->var[tempCw] != NULL){
-        tempCw++;
-    }
-    turtle->store[index]->cInst = tempCw;
-    strcpy(turtle->store[index]->var[tempCw], turtle->wds[turtle->cw]);
-    // if(turtle->numUsed == true){
-    //     // int tempUseIndx = turtle->store[turtle->varIndx]->inUseIndx;
-    //     int cw = turtle->store[index]->cInst;
-    //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-    //     turtle->store[index]->cInst++;
-    //     turtle->store[index]->inUse = true;
-    //     return true;
-    // }
-    // else if(turtle->varUsed == true){
-    //     // int tempUseIndx = turtle->store[index]->inUseIndx;
-    //     int cw = turtle->store[index]->cInst;
-    //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-    //     turtle->store[index]->cInst++;
-    //     turtle->store[index]->inUse = true;
-    //     // turtle->store[index]->inUse[turtle->store[index]->inUseIndx]++;
-    //     return true;
-    // }
-    return true;
-}
+// bool store(Program* turtle){
+//     int index = turtle->varIndx;
+//     if((turtle->setUsed[index]) == true){
+//         initInstruct(turtle);
+//     }
+//     int tempCw = turtle->store[index]->cInst;
+//     while(turtle->store[index]->var[tempCw] != NULL){
+//         tempCw++;
+//     }
+//     turtle->store[index]->cInst = tempCw;
+//     strcpy(turtle->store[index]->var[tempCw], turtle->wds[turtle->cw]);
+//     // if(turtle->numUsed == true){
+//     //     // int tempUseIndx = turtle->store[turtle->varIndx]->inUseIndx;
+//     //     int cw = turtle->store[index]->cInst;
+//     //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
+//     //     turtle->store[index]->cInst++;
+//     //     turtle->store[index]->inUse = true;
+//     //     return true;
+//     // }
+//     // else if(turtle->varUsed == true){
+//     //     // int tempUseIndx = turtle->store[index]->inUseIndx;
+//     //     int cw = turtle->store[index]->cInst;
+//     //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
+//     //     turtle->store[index]->cInst++;
+//     //     turtle->store[index]->inUse = true;
+//     //     // turtle->store[index]->inUse[turtle->store[index]->inUseIndx]++;
+//     //     return true;
+//     // }
+//     return true;
+// }
 
 bool findInstrStore(Program *turtle){
     int tempUseIndx = 0;
-    while(turtle->store[turtle->varIndx]->var != NULL){
+    while(turtle->store[turtle->varIndx].var != NULL){
         tempUseIndx++;
         if(tempUseIndx == MAXTOKENSIZE){
             return false;
@@ -654,7 +661,8 @@ bool Var(Program *turtle){
     }
     if (var[0] == '$' && Ltr(turtle)){
         // turtle->varUsed = true;
-        store(turtle);
+        // store(turtle);
+        
         return true;
     }
     return false;
@@ -704,15 +712,15 @@ bool Items(Program* turtle){
     }
     else{
     while(Item(turtle)){
-        int index = turtle->varIndx;
+        // int index = turtle->varIndx;
         // turtle->s
-        if(turtle->store[index] == NULL){
-            turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
-            turtle->store[index]->cInst = 0;
-        }
-        if(!pushInstr(turtle)){
-            return false;
-        }
+        // if(turtle->store[index] == NULL){
+        //     turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
+        //     turtle->store[index]->cInst = 0;
+        // }
+        // if(!pushInstr(turtle)){
+        //     return false;
+        // }
         turtle->cw++;
         return Items(turtle);
     }
@@ -722,14 +730,14 @@ bool Items(Program* turtle){
 }
 
 // //copy instr from <INSLST> in loop for each item
-bool pushInstr(Program* turtle){
-    int index = turtle->varIndx;
-    int cw = turtle->store[index]->cInst;
-    strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-    turtle->store[index]->cInst++;
-    turtle->store[index]->inUse = true;
-    return true;
-}
+// bool pushInstr(Program* turtle){
+//     int index = turtle->varIndx;
+//     int cw = turtle->store[index].cInst;
+//     strcpy(turtle->store[index].var[cw], turtle->wds[turtle->cw]);
+//     turtle->store[index]->cInst++;
+//     turtle->store[index]->inUse = true;
+//     return true;
+// }
 
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){
@@ -782,8 +790,12 @@ bool Pfix(Program* turtle){
         turtle->cw++;
         return Pfix(turtle);
     }
-    else if (Varnum(turtle)){    
-        store(turtle);
+    else if (Varnum(turtle)){
+        int index = INDEX(*turtle->varTemp);
+        if(turtle->store[index].inUse == true){
+            strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
+        }    
+        // store(turtle);
         turtle->cw++;
         return Pfix(turtle);
     }
@@ -849,15 +861,15 @@ void test_compareFloat(){
 //     return true;
 // }
 
-bool freeStorage(Program* turtle){
-    for(int index = 0; index < MAX_VARS; index++){
-        if(turtle->store[index] != NULL){
-            free(turtle->store[index]);
-            turtle->store[index] = NULL;
-        }
-    }
-    return true;
-}
+// bool freeStorage(Program* turtle){
+//     for(int index = 0; index < MAX_VARS; index++){
+//         if(turtle->store[index] != NULL){
+//             free(turtle->store[index]);
+//             turtle->store[index] = NULL;
+//         }
+//     }
+//     return true;
+// }
 
 void degToRadTest(void){
     double result;
