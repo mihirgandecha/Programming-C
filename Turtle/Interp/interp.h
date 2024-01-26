@@ -29,6 +29,7 @@
 #define MAX_VARS 26
 #define THRESHHOLD 1e-9
 #define INDEX(c) ((int)(c - 'A'))
+   //ps2pdf PSFILENAME output.pdf
 
 
 typedef struct stack stack;
