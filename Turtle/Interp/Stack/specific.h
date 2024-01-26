@@ -16,9 +16,6 @@ typedef struct inst inst;
 
 struct dataframe {
    stacktype i;
-   inst* instruction;
-   char wds[MAXCMND][MAXTOKENSIZE];
-   int cInst;
    struct dataframe* next;
 };
 typedef struct dataframe dataframe;

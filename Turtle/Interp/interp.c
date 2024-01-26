@@ -5,7 +5,6 @@
 
 
 int main(int argc, char* argv[]){
-    printf("%i", argc);
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
     Program* turtle = initTurtle();
@@ -20,7 +19,7 @@ int main(int argc, char* argv[]){
     // if (turtle->store != NULL){
     //     freeStorage(turtle);
     // }
-    free(turtle->s);
+    // free(turtle->s);
     free(turtle);
     test();
     RESULTS();
@@ -483,24 +482,37 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
-    int varIndex = INDEX(*turtle->varTemp);
-    assert(varIndex != 0);
-    stacktype d = &turtle->wds[turtle->cw][0];
-    stack_push(turtle->s, d);  
+    turtle->varTemp = turtle->wds[turtle->cw];
+    int index = INDEX(*turtle->varTemp);
+    if(turtle->store[index].inUse == true){
+        ERROR("Variable already used!");
+        return false;
+    } 
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
     turtle->cw++;
-    // int startList = turtle->cw;
+    int startList = turtle->cw;
     if (!Lst(turtle)){
         return false;
     }
-    // int loopLen = turtle->cw - startList;
-    /*
-    for (int i=0; i < loopLen; i++)
-    last cw is ")"
-    */
+    int cList = turtle->cw;
+    int loopLen = turtle->cw - startList;
+    puts("\n");
+    printf("%i", loopLen);
+    puts("\n");
+    
+    for (int i = startList; i < cList; i++){
+        if(STRSAME(turtle->wds[i], "(") || STRSAME(turtle->wds[i], ")") || STRSAME(turtle->wds[i], "\' '")){
+            return false;
+        }
+        stacktype d;
+        printf("%s\n", d);
+        stack_pop(turtle->s, &d);
+
+    }    
+    stack_free(turtle->s);
 
     // while(turtle->s->size > 0){
     //     // stack_peek(turtle->s, &turtle->d);
@@ -663,37 +675,17 @@ bool Item(Program* turtle){
 bool Items(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "}")){
         turtle->cw++;
-        //pop Variable here
         return true;
     }
     else{
-    while(Item(turtle)){
-        // int index = turtle->varIndx;
-        // turtle->s
-        // if(turtle->store[index] == NULL){
-        //     turtle->store[index] = (Variable*)calloc(1, sizeof(Variable));
-        //     turtle->store[index]->cInst = 0;
-        // }
-        // if(!pushInstr(turtle)){
-        //     return false;
-        // }
+        stack_push(turtle->s, turtle->wds[turtle->cw]);        
         turtle->cw++;
         return Items(turtle);
-    }
+    
     }
     return false;
         
 }
-
-// //copy instr from <INSLST> in loop for each item
-// bool pushInstr(Program* turtle){
-//     int index = turtle->varIndx;
-//     int cw = turtle->store[index].cInst;
-//     strcpy(turtle->store[index].var[cw], turtle->wds[turtle->cw]);
-//     turtle->store[index]->cInst++;
-//     turtle->store[index]->inUse = true;
-//     return true;
-// }
 
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){
@@ -751,46 +743,11 @@ bool Pfix(Program* turtle){
         if(turtle->store[index].inUse == true){
             strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
         }    
-        // store(turtle);
         turtle->cw++;
         return Pfix(turtle);
     }
     return false;
 }
-
-//
-// void interpSetNum(Program* turtle){
-//     int index = turtle->varIndx;
-//     double numVal = atof(turtle->wds[turtle->cw]);
-//     turtle->simpleSet[index] = (storeNum*)calloc(1, sizeof(storeNum));
-//     if (!turtle->simpleSet){
-//         ERROR("simpleSet failed to initialise!\n");
-//         exit(EXIT_FAILURE);
-//     }
-//     turtle->simpleSet[index]->var = *turtle->varTemp;
-//     turtle->simpleSet[index]->value = numVal;
-// }
-
-// void test_interpSetNum_edge_cases(void){
-//     Program *testTurtle =  initTurtle();
-//     testTurtle->cw = 0;
-//     char varTemp;
-//     double tempVal = 5;
-//     int index;
-//     //First testing that value can be stored from A->Z
-//     for(varTemp = 'A'; varTemp <= 'Z'; varTemp++){
-//         testTurtle->wds[testTurtle->cw][0] = varTemp;
-//         testTurtle->varTemp = &varTemp;
-//         testTurtle->cw++;
-//         testTurtle->wds[testTurtle->cw][0] = tempVal;
-//         interpSetNum(testTurtle);
-//         index = varTemp - 'A';
-//         CHAR_EQUAL(testTurtle->simpleSet[index]->var, varTemp);
-//         testTurtle->cw = 0; // Reset the current word index for the next test
-//     }
-//     freeStoreNum(testTurtle);
-//     free(testTurtle);
-// }
 
 int compareFloat(double a, double b){
     if (fabs(a - b) < THRESHHOLD){
@@ -806,26 +763,6 @@ void test_compareFloat(){
     INT_EQUAL(compareFloat(a, b), 0);
     INT_EQUAL(compareFloat(a, c), 1);
 }
-//TODO dont need this!
-// bool freeStoreNum(Program* turtle){
-//     for(int index = 0; index < MAX_VARS; index++){
-//         if(turtle->simpleSet[index] != NULL){
-//             free(turtle->simpleSet[index]);
-//             turtle->simpleSet[index] = NULL;
-//         }
-//     }
-//     return true;
-// }
-
-// bool freeStorage(Program* turtle){
-//     for(int index = 0; index < MAX_VARS; index++){
-//         if(turtle->store[index] != NULL){
-//             free(turtle->store[index]);
-//             turtle->store[index] = NULL;
-//         }
-//     }
-//     return true;
-// }
 
 void degToRadTest(void){
     double result;
