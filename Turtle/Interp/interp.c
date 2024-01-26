@@ -253,9 +253,9 @@ bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
             return false;
         }
     }
-    if(turtle->SCREEN[turtle->row][turtle->col] == ' '){
-        drawPoint(turtle, rowEnd, colEnd);
-    }
+    // if(turtle->SCREEN[turtle->row][turtle->col] == ' '){
+    //     drawPoint(turtle, rowEnd, colEnd);
+    // }
     if(turtle->isScreen == true){
         printtoscreen(turtle);
     }
