@@ -246,16 +246,15 @@ bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
     dRow = abs(dRow);
     dCol = abs(dCol);
     int error = dCol - dRow;
-    // drawPoint(turtle, turtle->row, turtle->col);
-    while((dRow > 0 || dCol > 0) && ((turtle->row != rowEnd) || (turtle->col != colEnd))){
-        updatePoints(turtle, error, dRow, dCol, signRow, signCol);
+    while((turtle->row != rowEnd) || (turtle->col != colEnd)){
         if(!drawPoint(turtle, turtle->row, turtle->col)){
             return false;
         }
+        updatePoints(turtle, error, dRow, dCol, signRow, signCol);
     }
-    // if(turtle->SCREEN[turtle->row][turtle->col] == ' '){
-    //     drawPoint(turtle, rowEnd, colEnd);
-    // }
+    if(turtle->SCREEN[rowEnd][colEnd] == ' '){
+        drawPoint(turtle, rowEnd, colEnd);
+    }
     if(turtle->isScreen == true){
         printtoscreen(turtle);
     }

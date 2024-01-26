@@ -16,8 +16,8 @@
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
 #define DEBUG(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
-#define COL 50
-#define ROW 32
+#define COL 51
+#define ROW 33
 #define SCOL 25
 #define SROW 17
 #define SCR_DELAY 0.05
