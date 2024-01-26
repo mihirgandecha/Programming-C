@@ -36,32 +36,19 @@ typedef char* stacktype;
 
 typedef struct{
    char var[MAXTOKENSIZE];
-   int cInst;
    bool inUse;
-   int inUseIndx;
 } Variable;
-
-//$A
-
-// // Data Structure for storing <NUM>
-// typedef struct{
-//    char var;
-//    double value;
-// } storeNum;
 
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
-
    int col, row;
-   //TODO Change to radRot:
    double rAngle;
    bool isScreen;
    char SCREEN[ROW][COL];
    char colour;
+   char* setColour;
    Variable store[MAX_VARS];
-   // bool numUsed;
-   // bool varUsed;
    bool setUsed[MAX_VARS];
    char* varTemp;
    //confusing - dont need both!:

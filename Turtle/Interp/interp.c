@@ -84,13 +84,11 @@ Program* initTurtle(void){
     turtle->col = SCOL;
     turtle->row = SROW;
     turtle->rAngle = 0;
-    turtle->colour = 'W';
+    turtle->colour = ' ';
     turtle->isScreen = false;
-    for(int i = 0; i < MAX_VARS; i++){
-        turtle->setUsed[i] = false;
-    }
     initStack(turtle);
     turtle->s->start = NULL;
+    turtle->colour = 'W';
     return turtle;
 }
 
@@ -135,7 +133,6 @@ void runProgram(Program* turtle){
 //TODO: Format: how many seconds delay and in right placement?
 void printtoscreen(Program *turtle){
     neillclrscrn();
-    // neillbgcol(black);
     neillcursorhome();
     double seconds = 1;
     for (int row = 0; row < ROW; row++){
@@ -254,6 +251,9 @@ bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
     }
     if(turtle->SCREEN[rowEnd][colEnd] == ' '){
         drawPoint(turtle, rowEnd, colEnd);
+    }
+    if (turtle->colour != 'W'){
+        setCol(turtle, turtle->setColour);
     }
     if(turtle->isScreen == true){
         printtoscreen(turtle);
@@ -376,15 +376,6 @@ void varAngle(Program *turtle){
             turtle->rAngle = turtle->rAngle + degToRad(angle);
         }
     }
-    // if(Var(turtle)){
-    //     int index = INDEX(turtle->wds[turtle->cw][1]);
-    //     if(turtle->setUsed[index] == true){
-    //         int cw = turtle->store[index]->cInst;
-    //         double angle = atof(turtle->store[index]->var[cw]);
-    //         turtle->store[index]->cInst++;
-    //         turtle->rAngle = turtle->rAngle + degToRad(angle);
-    //     }
-    // }
 }
 
 double degToRad(double degrees){
@@ -402,10 +393,12 @@ bool Col(Program *turtle){
         return false;
     }
     turtle->cw++;
+    //TODO make work with set
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
     char *colVal = subStr(turtle->wds[turtle->cw]);
+    turtle->setColour = colVal;
     setCol(turtle, colVal);
     return true;
 }
@@ -572,10 +565,7 @@ bool Set(Program *turtle){
     }
     turtle->varTemp = &turtle->wds[turtle->cw][0];
     int index = INDEX(*turtle->varTemp);
-    // turtle->varIndx = INDEX(turtle->wds[turtle->cw][0]);
     turtle->store[index].inUse = true;
-    // turtle->setUsed[turtle->varIndx] = true;
-    //Remember that Ltr is turtle->wds[turtle->cw - 2]
     turtle->cw++;
     if(!STRSAME(turtle->wds[turtle->cw], "(")){
         DEBUG("Expected 'Opening '('");
@@ -595,37 +585,6 @@ bool Varnum(Program *turtle){
     return true; 
 }
 
-// bool store(Program* turtle){
-//     int index = turtle->varIndx;
-//     if((turtle->setUsed[index]) == true){
-//         initInstruct(turtle);
-//     }
-//     int tempCw = turtle->store[index]->cInst;
-//     while(turtle->store[index]->var[tempCw] != NULL){
-//         tempCw++;
-//     }
-//     turtle->store[index]->cInst = tempCw;
-//     strcpy(turtle->store[index]->var[tempCw], turtle->wds[turtle->cw]);
-//     // if(turtle->numUsed == true){
-//     //     // int tempUseIndx = turtle->store[turtle->varIndx]->inUseIndx;
-//     //     int cw = turtle->store[index]->cInst;
-//     //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-//     //     turtle->store[index]->cInst++;
-//     //     turtle->store[index]->inUse = true;
-//     //     return true;
-//     // }
-//     // else if(turtle->varUsed == true){
-//     //     // int tempUseIndx = turtle->store[index]->inUseIndx;
-//     //     int cw = turtle->store[index]->cInst;
-//     //     strcpy(turtle->store[index]->var[cw], turtle->wds[turtle->cw]);
-//     //     turtle->store[index]->cInst++;
-//     //     turtle->store[index]->inUse = true;
-//     //     // turtle->store[index]->inUse[turtle->store[index]->inUseIndx]++;
-//     //     return true;
-//     // }
-//     return true;
-// }
-
 bool findInstrStore(Program *turtle){
     int tempUseIndx = 0;
     while(turtle->store[turtle->varIndx].var != NULL){
@@ -634,8 +593,6 @@ bool findInstrStore(Program *turtle){
             return false;
         }
     }
-    // turtle->store[turtle->varIndx]->inUseIndx = tempUseIndx;
-    turtle->setUsed[turtle->varIndx] = true;
     return true;
 }
 

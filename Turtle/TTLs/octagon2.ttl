@@ -4,17 +4,3 @@ START
     RIGHT 45
   END
 END
-
-
-SET B ( 1 )
-
-
-
-while stack != Null
-  SET Ltr -> stack.pop
-  execute instructions
-}
-free(stack)
-if stack.pop == Null
-  Empty stack
-Set cw to End Inslist
