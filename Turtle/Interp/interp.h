@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include <assert.h>
 #include <math.h>
-//Float library used to test that any float can be used
 #include <float.h>
 
 #define MAXCMND 100
@@ -31,7 +30,6 @@
 #define INDEX(c) ((int)(c - 'A'))
    //ps2pdf PSFILENAME output.pdf
 
-
 typedef struct stack stack;
 typedef char* stacktype;
 
@@ -52,69 +50,10 @@ struct prog{
    Variable store[MAX_VARS];
    bool setUsed[MAX_VARS];
    char* varTemp;
-   //confusing - dont need both!:
    int varIndx;
-   // storeNum* simpleSet[MAX_VARS];
-   stack* s;
-   
+   stack* s; 
 };
 typedef struct prog Program;
-
-// void storeList(Program *turtle, int startList, int cList, int listLen);
-bool setList(Program *turtle);
-int findEnd(Program *turtle);
-bool processLoop(Program *turtle, int endP);
-
-
-
-
-void initInstruct(Program *turtle);
-bool findInstrStore(Program *turtle);
-
-//Screen:
-void initScrn(Program *turtle);
-void printtoscreen(Program *turtle);
-// bool intFwd(Program *turtle);
-bool intFwd(Program *turtle, double distance);
-
-void setCol(Program *turtle, char* colour);
-bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol);
-bool storeList(Program *turtle, int startList, int cList, int listLen);
-
-void testBresenham(void);
-char* subStr(char *str);
-void test_subStr(void);
-bool isWithinBounds(int row, int col);
-bool isWithinBounds(int row, int col);
-void test_isWithinBounds(void);
-
-bool drawPoint(Program *turtle, int row, int col);
-void writeFile(char* filename, Program *turtle);
-void varAngle(Program *turtle);
-void varFwd(Program *turtle);
-
-
-void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
-
-//Interpret SET:
-//Simple function for interpreting SET Ltr -> <NUM>
-// bool setNum(char varName, double value);
-// void initVar(Program* turtle, int index, double value);
-void interpSetNum(Program* turtle);
-void test_interpSetNum_edge_cases(void);
-
-bool freeStoreNum(Program* turtle);
-int compareFloat(double a, double b);
-void test_compareFloat();
-
-bool store(Program* turtle);
-bool freeStorage(Program* turtle);
-// static size_t test(void);
-void test(void);
-
-
-
-
 
 //Start Parser:
 void validArgs(int argc);
@@ -144,24 +83,45 @@ void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
 //End Parser
 
-void initStack(Program *turtle);
-
 //Interpreter Functions:
-// void initPos(Program *turtle);
+void writeFile(char* filename, Program *turtle);
+//Screen:
+void initScrn(Program *turtle);
+void printtoscreen(Program *turtle);
+//Fwd Int:
+void varFwd(Program *turtle);
+bool intFwd(Program *turtle, double distance);
+bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol);
+bool isWithinBounds(int row, int col);
+void test_isWithinBounds(void);
+bool drawPoint(Program *turtle, int row, int col);
+void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
+//TODO readjust:
+void testBresenham(void);
+//Lst Int:
+bool storeList(Program *turtle, int startList, int cList, int listLen);
+//Col Int:
+void setCol(Program *turtle, char* colour);
+char* subStr(char *str);
+void test_subStr(void);
+//Rgt Int:
+void varAngle(Program *turtle);
+//Num Int:
+int compareFloat(double a, double b);
+void test_compareFloat();
 double degToRad(double degrees);
 void degToRadTest(void);
-bool pushInstr(Program* turtle);
-
+//Pfix Int:
+void intPfxix(Program *turtle);
+//Stack:
 stack* stack_init(void);
-// void stack_push(stack* s, stacktype i);
 void stack_push(stack* s, stacktype d);
-
-stack* pop_stack(stack* s);
 bool stack_pop(stack* s, stacktype* d);
 bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 void stack_tostring(stack*, char* str);
-void queue_push(stack* s, stacktype d);
-bool queue_pop(stack* s, stacktype* d);
-bool queue_free(stack* s);
-
+//Test:
+void test(void);
+// void queue_push(stack* s, stacktype d);
+// bool queue_pop(stack* s, stacktype* d);
+// bool queue_free(stack* s);

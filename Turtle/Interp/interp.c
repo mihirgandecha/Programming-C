@@ -82,7 +82,6 @@ Program* initTurtle(void){
     turtle->rAngle = 0;
     turtle->colour = ' ';
     turtle->isScreen = false;
-    // initStack(turtle);
     turtle->s = stack_init();
     turtle->s->start = NULL;
     turtle->colour = 'W';
@@ -97,16 +96,6 @@ void initScrn(Program *turtle){
     }
 }
 
-// void initInstruct(Program *turtle){
-//     turtle->store[turtle->varIndx] = (Variable*)calloc(1, sizeof(Variable));
-//     if (!turtle->store[turtle->varIndx]){
-//         ERROR("simpleSet failed to initialise!\n");
-//         exit(EXIT_FAILURE);
-//     }
-//     turtle->store[turtle->varIndx]->cInst = 0;
-// }
-
-//TODO: Test how?
 void readWords(FILE* fttl, Program* turtle){
     if(!checkNull(turtle)){
         return;
@@ -497,11 +486,7 @@ bool Loop(Program *turtle){
     int cList = turtle->cw;
     int listLen = turtle->cw - cList;
     storeList(turtle, startList, cList, listLen);
-    // if(!(setList(turtle))){
-    //     return false;
-    // }
     stack_free(turtle->s);
-    // queue_free(turtle->s);
     return true;
 }
 
@@ -511,7 +496,7 @@ bool storeList(Program *turtle, int startList, int cList, int listLen){
         ERROR("Variable already in use!");
         return false;
     }
-    for(int i = startList; i < cList && listLen > 0; i++, listLen--){
+    for(int i = startList; i < cList; i++){
         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
             startList++;
             storeList(turtle, startList, cList, listLen);
@@ -522,7 +507,7 @@ bool storeList(Program *turtle, int startList, int cList, int listLen){
             return false;
         }
         turtle->store[index].inUse = false;
-        if(listLen > 0){
+        if(startList != cList){
             startList++;
             storeList(turtle, startList, cList, listLen);
         }
@@ -613,15 +598,6 @@ bool storeList(Program *turtle, int startList, int cList, int listLen){
 //     return;
 // }
 
-
-
-void initStack(Program *turtle){
-    turtle->s = stack_init();
-    int index = turtle->varIndx;
-    turtle->s[index].size = 0;
-    turtle->s[index].start = NULL;
-}
-
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
         DEBUG("Expected 'SET'");
@@ -651,17 +627,6 @@ bool Varnum(Program *turtle){
         return false;
     }
     return true; 
-}
-
-bool findInstrStore(Program *turtle){
-    int tempUseIndx = 0;
-    while(turtle->store[turtle->varIndx].var != NULL){
-        tempUseIndx++;
-        if(tempUseIndx == MAXTOKENSIZE){
-            return false;
-        }
-    }
-    return true;
 }
 
 bool Num(Program *turtle){
@@ -786,7 +751,6 @@ bool Pfix(Program* turtle){
     if(!checkNull(turtle)){
         return false;
     }
-    //TODO: Interpreter should not store...but interprets
     if(STRSAME(turtle->wds[turtle->cw], ")")){
         return true;
     }
@@ -804,6 +768,54 @@ bool Pfix(Program* turtle){
     }
     return false;
 }
+
+// void intPfxix(Program *turtle){
+//    char input[MAXCMND];
+//    stacktype d, g1, g2;
+
+//    stack* s = stack_init();
+//    while(fgets(input, MAXCMND, stdin)){
+//       /* If number push */
+//       if(sscanf(input, FORMATSTR, &d)==1){
+//          stack_push(s, d);
+//       }
+//       else{
+//          /* Must be an operator ? */
+//          assert(stack_pop(s, &g2));
+//          assert(stack_pop(s, &g1));
+//          switch(input[0]){
+//             case '+' :
+//                d = g1 + g2;
+//                break;
+//             case '-' :
+//                d = g1 - g2;
+//                break;
+//             case '*' :
+//                d = g1 * g2;
+//                break;
+//             case '/' :
+//                d = g1 / g2;
+//                break;
+//             default:
+//                fprintf(stderr, "Can't understand that ? %i\n", input[0]);
+//                exit(EXIT_FAILURE);
+//          }
+//          stack_push(s, d);
+//       }
+//    }
+//    assert(stack_pop(s, &d));
+//    printf("Answer = ");
+//    printf(FORMATSTR, d);
+//    printf("\n");
+   
+//    if(stack_peek(s, &d) == true){
+//       fprintf(stderr, "Stack still had items on it ?\n");
+//       exit(EXIT_FAILURE);
+//    }
+//    stack_free(s);
+//    return 0;
+// }
+
 
 int compareFloat(double a, double b){
     if (fabs(a - b) < THRESHHOLD){
