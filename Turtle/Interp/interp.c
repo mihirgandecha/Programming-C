@@ -3,7 +3,11 @@
 #include "mintest.h"
 #include "Stack/specific.h"
 
+/*
 
+LOSING MY MIND
+
+*/
 int main(int argc, char* argv[]){
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);
@@ -130,10 +134,6 @@ void printtoscreen(Program *turtle){
     neillbusywait(seconds);
     neillreset();
 }
-
-/*
-------------------------------------------------------------PARSER/INTERPRETER STARTS HERE----------------------------------------------------------------------------
-*/
 
 bool Prog(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "START")){
@@ -310,15 +310,12 @@ void test_Bresenham(){
 }
 
 
-//TODO: Gets hard to test - testing for edge case very difficult! Log.
 void testBresenham(void){
     Program *testTurtle = initTurtle();
     testTurtle->col = SCOL;
     testTurtle->row = SROW;
     testTurtle->rAngle = 0;
     initScrn(testTurtle);
-
-    //test for FWD 5
     testTurtle->cw = 0;
     char* cmnd = "FORWARD";
     strcpy(testTurtle->wds[testTurtle->cw], cmnd); 
@@ -461,6 +458,9 @@ void setCol(Program *turtle, char* colour){
     }
 }
 
+
+//@Lws
+
 bool Loop(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "LOOP")){
         return false;
@@ -490,6 +490,8 @@ bool Loop(Program *turtle){
     stack_free(turtle->s);
     return true;
 }
+
+//@Lws have been doing a few iterations of this func
 
 // bool storeList(Program *turtle, int startList, int cList, int listLen){
 //     int index = INDEX(*turtle->varTemp);
@@ -538,16 +540,25 @@ bool Loop(Program *turtle){
 //     return true;
 // }
 
+//@Lws function is attempting to save whatever is in Loop {}, inside my store, so that if an instruction like FORWARD $C, it interps first->last element recursively
+//Was struggling with how to use with stack without affecting PFIX
 bool storeList(Program *turtle, int startList, int cList){
     int index = INDEX(*turtle->varTemp);
+    //startList is '{' and cList is '}'
     for(int i = cList - 1; i >= startList; i--){
+        //resetting cw to where '{' is
         turtle->cw = i;
+        //first checking if it is { OR }
         if(!STRSAME(turtle->wds[i], "{") && !STRSAME(turtle->wds[i], "}")){
+            //looping through the list {}
             strcpy(turtle->store[index].var, turtle->wds[i]);
+            //setting the store to be true (array of struct)
             turtle->store[index].inUse = true;
             if (Word(turtle) || Varnum(turtle)){
+                //setting cw to where it originally was
                 turtle->cw = cList;
                 if(!Inslst(turtle)){
+                    //before recursive call resetting the store.
                     turtle->store[index].inUse = false;
                     return false;
                 }
@@ -741,14 +752,17 @@ bool Items(Program* turtle){
         return true;
     }
     else{
-        stack_push(turtle->s, turtle->wds[turtle->cw]);        
         turtle->cw++;
-        return Items(turtle);
-    
+        if(!(Items(turtle))){
+            return false;
+        }
+        stack_push(turtle->s, turtle->wds[turtle->cw]); 
+        return true;       
     }
-    return false;
-        
+    return false;       
 }
+
+
 
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){
