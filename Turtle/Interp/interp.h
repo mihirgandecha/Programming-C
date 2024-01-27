@@ -60,6 +60,7 @@ struct prog{
 };
 typedef struct prog Program;
 
+void storeList(Program *turtle, int startList, int cList);
 
 void initInstruct(Program *turtle);
 bool findInstrStore(Program *turtle);
@@ -153,3 +154,7 @@ bool stack_pop(stack* s, stacktype* d);
 bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 void stack_tostring(stack*, char* str);
+void queue_push(stack* s, stacktype d);
+bool queue_pop(stack* s, stacktype* d);
+bool queue_free(stack* s);
+

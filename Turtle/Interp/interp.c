@@ -16,9 +16,6 @@ int main(int argc, char* argv[]){
         writeFile(argv[MIN_ARGS], turtle);
     }
     fclose(fttl);
-    // if (turtle->store != NULL){
-    //     freeStorage(turtle);
-    // }
     // free(turtle->s);
     free(turtle);
     test();
@@ -85,7 +82,8 @@ Program* initTurtle(void){
     turtle->rAngle = 0;
     turtle->colour = ' ';
     turtle->isScreen = false;
-    initStack(turtle);
+    // initStack(turtle);
+    turtle->s = stack_init();
     turtle->s->start = NULL;
     turtle->colour = 'W';
     return turtle;
@@ -133,7 +131,7 @@ void runProgram(Program* turtle){
 void printtoscreen(Program *turtle){
     neillclrscrn();
     neillcursorhome();
-    double seconds = 1;
+    double seconds = 0.25;
     for (int row = 0; row < ROW; row++){
         for (int col = 0; col < COL; col++){
             printf("%c", turtle->SCREEN[row][col]);
@@ -486,7 +484,6 @@ bool Loop(Program *turtle){
     int index = INDEX(*turtle->varTemp);
     if(turtle->store[index].inUse == true){
         ERROR("Variable already used!");
-        return false;
     } 
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
@@ -498,66 +495,33 @@ bool Loop(Program *turtle){
         return false;
     }
     int cList = turtle->cw;
-    int loopLen = turtle->cw - startList;
-    puts("\n");
-    printf("%i", loopLen);
-    puts("\n");
-    
-    for (int i = startList; i < cList; i++){
-        if(STRSAME(turtle->wds[i], "(") || STRSAME(turtle->wds[i], ")") || STRSAME(turtle->wds[i], "\' '")){
-            return false;
-        }
-        stacktype d;
-        printf("%s\n", d);
-        stack_pop(turtle->s, &d);
-
-    }    
-    stack_free(turtle->s);
-
-    // while(turtle->s->size > 0){
-    //     // stack_peek(turtle->s, &turtle->d);
-    //     int index = turtle->varIndx;
-    //     int cwMax = turtle->store[index]->cInst;
-    //     for(int tempCw = 0; tempCw <= cwMax; tempCw++){
-    //         stack_pop(turtle->s, &d);
-    //         printf("%s", d);
-    //         stack_push(turtle->s, d);
-
-    //         if (!Inslst(turtle)){
-    //             return false;
-    //         }
-    //     }
-    // return true;
-    // }
-    if (!Inslst(turtle)){
-                return false;
-            }
+    storeList(turtle, startList, cList);
+    queue_free(turtle->s);
     return true;
 }
 
-/*
-*/
-
-//want to pop B
-    //set B->list_item[start->end]
-// pStack(Program *turtle){
-//     while(turtle->s->size > 0){
-//         // stack_peek(turtle->s, &turtle->d);
-//         stack_pop(turtle->s, &turtle->d);
-//         int index = turtle->varIndx;
-//         int cwMax = turtle->store[index]->cInst;
-//         for(int tempCw = 0; tempCw <= cwMax; tempCw++){
-//             strncpy(turtle->d, turtle->store[turtle->varIndx]->var[tempCw], MAXTOKENSIZE);
-//             memmove(&turtle->wds[turtle->cw + 1], &turtle->wds[turtle->cw], (MAXCMND - turtle->cw - 1) * sizeof(turtle->wds[0]));
-//             //Fix SET instruction!
-//             snprintf(turtle->wds[turtle->cw], MAXTOKENSIZE, "SET %s", turtle->d);
-//             if (!Inslst(turtle)){
-//                 return false;
-//             }
-//         }
-//     return true;
-//     }
-// }
+void storeList(Program *turtle, int startList, int cList){
+    int index = INDEX(*turtle->varTemp);
+    for(int i = startList; i < cList; i++){
+        turtle->cw = startList;
+        if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
+            startList++;
+            storeList(turtle, startList, cList);
+        }
+        stacktype d;
+        stack_peek(turtle->s, &d);
+        strcpy(turtle->store[index].var, d);
+        turtle->store[index].inUse = true;
+        if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
+            turtle->cw = cList;
+            Inslst(turtle);
+            queue_pop(turtle->s, &d);
+            turtle->store[index].inUse = false;
+            startList++;
+        }
+    }
+    return;
+}
 
 void initStack(Program *turtle){
     turtle->s = stack_init();
@@ -678,7 +642,8 @@ bool Items(Program* turtle){
         return true;
     }
     else{
-        stack_push(turtle->s, turtle->wds[turtle->cw]);        
+        queue_push(turtle->s, turtle->wds[turtle->cw]);
+        // stack_push(turtle->s, turtle->wds[turtle->cw]);        
         turtle->cw++;
         return Items(turtle);
     

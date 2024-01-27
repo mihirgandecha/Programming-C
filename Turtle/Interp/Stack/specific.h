@@ -4,11 +4,6 @@
 #define ELEMSIZE 20
 #define STACKTYPE "Linked"
 
-// typedef struct{
-//    char var[ELEMSIZE];
-//    bool inUse;
-// } Instruction;
-
 struct inst {
    struct instruction* next;
 };
@@ -22,6 +17,7 @@ typedef struct dataframe dataframe;
 
 struct stack {
    dataframe* start;
+   dataframe* end;
    int size;
 };
 
