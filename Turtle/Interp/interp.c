@@ -483,37 +483,79 @@ bool Loop(Program *turtle){
     if (!Lst(turtle)){
         return false;
     }
+    
     int cList = turtle->cw;
-    int listLen = turtle->cw - cList;
-    storeList(turtle, startList, cList, listLen);
+    // int listLen = turtle->cw - cList;
+    storeList(turtle, startList, cList);
     stack_free(turtle->s);
     return true;
 }
 
-bool storeList(Program *turtle, int startList, int cList, int listLen){
+// bool storeList(Program *turtle, int startList, int cList, int listLen){
+//     int index = INDEX(*turtle->varTemp);
+//     if(turtle->store[index].inUse == true){
+//         ERROR("Variable already in use!");
+//         return false;
+//     }
+//     for(int i = startList; i < cList; i++){
+//         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "{")){
+//             startList++;
+//             storeList(turtle, startList, cList, listLen);
+//         }
+//         strcpy(turtle->store[index].var, turtle->wds[startList]);
+//         turtle->store[index].inUse = true;
+//         if(Inslst(turtle) == false){
+//             return false;
+//         }
+//         memset(turtle->store[index].var, 0, sizeof(turtle->store[index].var));
+//         turtle->store[index].inUse = false;
+//         if(startList != cList){
+//             startList++;
+//             storeList(turtle, startList, cList, listLen);
+//         }
+//         return true;
+//     }
+//     return false;
+// }
+// bool storeList(Program *turtle, int startList, int cList){
+//     int index = INDEX(*turtle->varTemp);
+//     for(int i = startList; i < cList; i++){
+//         turtle->cw = i;
+//         if(STRSAME(turtle->wds[i], "{") || STRSAME(turtle->wds[i], "\' '")){
+//             storeList(turtle, startList, cList);
+//         }
+//         strcpy(turtle->store[index].var, turtle->wds[i]);
+//         turtle->store[index].inUse = true;
+//         if (Word(turtle) || Varnum(turtle)){
+//             turtle->cw = cList;
+//             if(!Inslst(turtle)){
+//                 turtle->store[index].inUse = false;
+//                 return false;
+//             }
+//         }
+//         turtle->store[index].inUse = false;
+//     }
+//     return true;
+// }
+
+bool storeList(Program *turtle, int startList, int cList){
     int index = INDEX(*turtle->varTemp);
-    if(turtle->store[index].inUse == true){
-        ERROR("Variable already in use!");
-        return false;
-    }
-    for(int i = startList; i < cList; i++){
-        if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
-            startList++;
-            storeList(turtle, startList, cList, listLen);
-        }
-        strcpy(turtle->store[index].var, turtle->wds[startList]);
-        turtle->store[index].inUse = true;
-        if(Inslst(turtle) == false){
-            return false;
-        }
+    for(int i = cList - 1; i >= startList; i--){
+        turtle->cw = i;
+        if(!STRSAME(turtle->wds[i], "{") && !STRSAME(turtle->wds[i], "}")){
+            strcpy(turtle->store[index].var, turtle->wds[i]);
+            turtle->store[index].inUse = true;
+            if (Word(turtle) || Varnum(turtle)){
+                turtle->cw = cList;
+                if(!Inslst(turtle)){
+                    turtle->store[index].inUse = false;
+                    return false;
+                }
+            }
         turtle->store[index].inUse = false;
-        if(startList != cList){
-            startList++;
-            storeList(turtle, startList, cList, listLen);
         }
-        return true;
     }
-    return false;
+    return true;
 }
 
 

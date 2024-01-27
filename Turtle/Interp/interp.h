@@ -55,6 +55,8 @@ struct prog{
 };
 typedef struct prog Program;
 
+bool storeList(Program *turtle, int startList, int cList);
+
 //Start Parser:
 void validArgs(int argc);
 FILE* openFile(char* filename);
@@ -99,7 +101,7 @@ void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, i
 //TODO readjust:
 void testBresenham(void);
 //Lst Int:
-bool storeList(Program *turtle, int startList, int cList, int listLen);
+bool storeList(Program *turtle, int startList, int cList);
 //Col Int:
 void setCol(Program *turtle, char* colour);
 char* subStr(char *str);
