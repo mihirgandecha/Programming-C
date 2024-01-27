@@ -40,27 +40,4 @@ else
 fi
 sleep 1
 
-# # Define the functions to test
-# declare -a functions=("validArgs" "openFile" "initTurtle" "readWords" "runProgram" "Prog" "Inslst" "Ins" "Fwd" "Rgt" "Col" "Loop" "Set" "Varnum" "Num" "Var" "Ltr" "Word" "Item" "Items" "Lst" "checkNull" "Op" "Pfix")
 
-# # Loop over the functions
-# for function in "${functions[@]}"; do
-#     # Run the program with the function as an argument
-#     output=$(./program $function)
-
-#     # Check for ERROR messages
-#     if [[ $output == *"ERROR"* ]]; then
-#         echo "ERROR message in function $function"
-#     fi
-
-#     # Check for EXIT_FAILURE messages
-#     if [[ $output == *"EXIT_FAILURE"* ]]; then
-#         echo "EXIT_FAILURE message in function $function"
-#     fi
-
-#     # Check for DEBUG messages
-#     if [[ $output == *"DEBUG"* ]]; then
-#         echo "DEBUG message in function $function"
-#     fi
-
-# done
