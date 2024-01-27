@@ -32,7 +32,7 @@ test: interp_s
 	./interp_s TTLs/octagon2.ttl 
 
 combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h Interp/Stack/specific.h Interp/Stack/linked.c Interp/general/general.h Interp/general/general.c
-	$(CC) -g neillsimplescreen.c Interp/interp.c Interp/Stack/linked.c Interp/general/general.c -o combined_target -I./Interp/Stack $(SANITIZE) -lm
+	$(CC) -g neillsimplescreen.c Interp/interp.c Interp/Stack/linked.c Interp/general/general.c -o combined_target -I./Interp/Stack $(VALGRIND) -lm
 
 runcom: combined
 	./combined_target TTLs/forward.ttl forward.txt

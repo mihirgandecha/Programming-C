@@ -34,36 +34,41 @@ bool stack_pop(stack* s, stacktype* d)
    return true;
 }
 
-void queue_push(stack* s, stacktype d)
-{
-   dataframe* f = ncalloc(1, sizeof(dataframe));
-   f->i = d;
-   f->next = NULL;
-   if(s->start == NULL) {
-      s->start = f;
-   } 
-   else {
-      s->end->next = f;
-   }
-   s->end = f;
-   s->size = s->size + 1;
-}
+// void queue_push(stack* s, stacktype d){
+//    if(s){
+//       dataframe* f = ncalloc(1, sizeof(dataframe));
+//       f->i = d;
+//       f->next = NULL;
+//       if(!(s->start)){
+//          s->start = f;
+//          s->end = f;
+//       } 
+//       else{
+//          f = s->start;
+//          f->next->i = d;
+//          s->start->next = f;
+//          s->end = f;
+//          s->end->next = NULL;
+//       }
+//       s->size = s->size + 1;
+//    }
+// }
 
-bool queue_pop(stack* s, stacktype* d)
-{
-   if(s->start == NULL){
-      return false;
-   }
-   dataframe* f = s->start->next;
-   *d = s->start->i; 
-   free(s->start);
-   s->start = f;
-   if(s->start == NULL) {
-      s->end = NULL;
-   }
-   s->size = s->size - 1;
-   return true;
-}
+// bool queue_pop(stack* s, stacktype* d)
+// {
+//    if(s->start == NULL){
+//       return false;
+//    }
+//    dataframe* f = s->start->next;
+//    *d = s->start->i; 
+//    free(s->start);
+//    s->start = f;
+//    if(s->start == NULL) {
+//       s->end = NULL;
+//    }
+//    s->size = s->size - 1;
+//    return true;
+// }
 
 bool stack_peek(stack* s, stacktype* d)
 {

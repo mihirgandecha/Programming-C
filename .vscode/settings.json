@@ -12,7 +12,14 @@
         "ctype.h": "c",
         "interp.h": "c",
         "specific.h": "c",
-        "neillsimplescreen.h": "c"
+        "neillsimplescreen.h": "c",
+        "array": "c",
+        "deque": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "string_view": "c",
+        "initializer_list": "c"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }

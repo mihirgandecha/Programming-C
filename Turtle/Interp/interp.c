@@ -495,33 +495,125 @@ bool Loop(Program *turtle){
         return false;
     }
     int cList = turtle->cw;
-    storeList(turtle, startList, cList);
-    queue_free(turtle->s);
+    int listLen = turtle->cw - cList;
+    storeList(turtle, startList, cList, listLen);
+    // if(!(setList(turtle))){
+    //     return false;
+    // }
+    stack_free(turtle->s);
+    // queue_free(turtle->s);
     return true;
 }
 
-void storeList(Program *turtle, int startList, int cList){
+bool storeList(Program *turtle, int startList, int cList, int listLen){
     int index = INDEX(*turtle->varTemp);
-    for(int i = startList; i < cList; i++){
-        turtle->cw = startList;
+    if(turtle->store[index].inUse == true){
+        ERROR("Variable already in use!");
+        return false;
+    }
+    for(int i = startList; i < cList && listLen > 0; i++, listLen--){
         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
             startList++;
-            storeList(turtle, startList, cList);
+            storeList(turtle, startList, cList, listLen);
         }
-        stacktype d;
-        stack_peek(turtle->s, &d);
-        strcpy(turtle->store[index].var, d);
+        strcpy(turtle->store[index].var, turtle->wds[startList]);
         turtle->store[index].inUse = true;
-        if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
-            turtle->cw = cList;
-            Inslst(turtle);
-            queue_pop(turtle->s, &d);
-            turtle->store[index].inUse = false;
-            startList++;
+        if(Inslst(turtle) == false){
+            return false;
         }
+        turtle->store[index].inUse = false;
+        if(listLen > 0){
+            startList++;
+            storeList(turtle, startList, cList, listLen);
+        }
+        return true;
     }
-    return;
+    return false;
 }
+
+
+// bool setList(Program *turtle){
+//     //find start and end of loop
+//     stacktype start = "{";
+//     stacktype c;
+//     stack_peek(turtle->s, &c);
+//     if(!(STRSAME(c, start))){
+//         return false;
+//     }
+//     //find its pair
+//     int endP;
+//     endP = findEnd(turtle);     
+//     //Making sure stack is in right place:
+//     if(turtle->s->size > 0){
+//         if(!(STRSAME(turtle->s->start->i, "{") && STRSAME(turtle->s->end->i, "}"))){
+//             return false;
+//         }
+//     }
+//     if(!(processLoop(turtle, endP))){
+//         return false;
+//     }
+//     return true;
+// }
+
+// bool processLoop(Program *turtle, int endP){
+//     for(int i = 0; i <= endP; i++){
+//         int index = INDEX(*turtle->varTemp);
+//         stacktype d;
+//         stack_peek(turtle->s, &d);
+//         strcpy(turtle->store[index].var, d);
+//         if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
+//             if(Inslst(turtle)){
+//                 queue_pop(turtle->s, &d);
+//                 turtle->store[index].inUse = false;
+//             }
+//             if(turtle->s->size == 0){
+//                 return true;
+//             }
+//         }
+//         return setList(turtle);
+//     }
+//     return false;
+// }
+
+// int findEnd(Program *turtle){
+//     int startP = 0;
+//     //find its pair
+//     int endP;
+//     while (startP <= turtle->s->size){
+//         stacktype end = "}";
+//         stacktype d;
+//         stack_peek(turtle->s, &d);
+//         if STRSAME(d, end){
+//             endP = startP;
+//             return endP;
+//         }
+//         startP++;
+//     }
+//     return 1;
+// }
+
+//     for(int i = startList; i < cList; i++){
+//         turtle->cw = startList;
+//         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
+//             startList++;
+//             storeList(turtle, startList, cList);
+//         }
+//         stacktype d;
+//         stack_peek(turtle->s, &d);
+//         strcpy(turtle->store[index].var, d);
+//         turtle->store[index].inUse = true;
+//         if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
+//             turtle->cw = cList;
+//             Inslst(turtle);
+//             queue_pop(turtle->s, &d);
+//             turtle->store[index].inUse = false;
+//             startList++;
+//         }
+//     }
+//     return;
+// }
+
+
 
 void initStack(Program *turtle){
     turtle->s = stack_init();
@@ -642,8 +734,7 @@ bool Items(Program* turtle){
         return true;
     }
     else{
-        queue_push(turtle->s, turtle->wds[turtle->cw]);
-        // stack_push(turtle->s, turtle->wds[turtle->cw]);        
+        stack_push(turtle->s, turtle->wds[turtle->cw]);        
         turtle->cw++;
         return Items(turtle);
     

@@ -60,7 +60,13 @@ struct prog{
 };
 typedef struct prog Program;
 
-void storeList(Program *turtle, int startList, int cList);
+// void storeList(Program *turtle, int startList, int cList, int listLen);
+bool setList(Program *turtle);
+int findEnd(Program *turtle);
+bool processLoop(Program *turtle, int endP);
+
+
+
 
 void initInstruct(Program *turtle);
 bool findInstrStore(Program *turtle);
@@ -73,7 +79,7 @@ bool intFwd(Program *turtle, double distance);
 
 void setCol(Program *turtle, char* colour);
 bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol);
-void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
+bool storeList(Program *turtle, int startList, int cList, int listLen);
 
 void testBresenham(void);
 char* subStr(char *str);
@@ -88,6 +94,7 @@ void varAngle(Program *turtle);
 void varFwd(Program *turtle);
 
 
+void updatePoints(Program *turtle, int error, int dRow, int dCol, int signRow, int signCol);
 
 //Interpret SET:
 //Simple function for interpreting SET Ltr -> <NUM>

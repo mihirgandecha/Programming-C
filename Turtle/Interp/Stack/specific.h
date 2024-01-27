@@ -23,6 +23,7 @@ struct stack {
 
 
 
+
 /* Create an empty stack */
 stack* stack_init(void);
 /* Add element to top */
