@@ -37,27 +37,43 @@ combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 runcom: combined
 	./combined_target TTLs/forward.ttl forward.txt
 
+run_parsetest: all
+	./parse_s TTLs/empty.ttl
+	./parse_s TTLs/forward.ttl
+	./parse_s TTLs/ok_parse_fail_interp.ttl
+	./parse_s TTLs/set1.ttl
+	./parse_s TTLs/donothing.ttl
+	./parse_s TTLs/set2.ttl
+	./parse_s TTLs/turn.ttl
+	./parse_s TTLs/spiral.ttl
+	./parse_s TTLs/octagon1.ttl
+	./parse_s TTLs/octagon2.ttl
+	./parse_s TTLs/tunnel.ttl
+	./parse_s TTLs/labyrinth.ttl
+	./parse_s TTLs/hypno.ttl
+	./parse_s TTLs/5x5.ttl
+	./parse_s TTLs/downarrow.ttl
 
 run: all	
 #	./interp_s TTLs/octagon1.ttl octagon1test.txt 
-	./interp_s TTLs/octagon1.ttl 
+#	./interp_s TTLs/octagon1.ttl 
 # to go through all TTL's in repo and run
 #	find TTLs -type f -exec ./parse_s {} \; 
-#	./parse_s TTLs/empty.ttl
-#	./parse_s TTLs/forward.ttl
-#	./parse_s TTLs/ok_parse_fail_interp.ttl
-#	./parse_s TTLs/set1.ttl
-#	./parse_s TTLs/donothing.ttl
-#	./parse_s TTLs/set2.ttl
-#	./parse_s TTLs/turn.ttl
-#	./parse_s TTLs/spiral.ttl
-#	./parse_s TTLs/octagon1.ttl
-#	./parse_s TTLs/octagon2.ttl
-#	./parse_s TTLs/tunnel.ttl
-#	./parse_s TTLs/labyrinth.ttl
-#	./parse_s TTLs/hypno.ttl
-#	./parse_s TTLs/5x5.ttl
-#	./parse_s TTLs/downarrow.ttl
+	./parse_s TTLs/empty.ttl
+	./parse_s TTLs/forward.ttl
+	./parse_s TTLs/ok_parse_fail_interp.ttl
+	./parse_s TTLs/set1.ttl
+	./parse_s TTLs/donothing.ttl
+	./parse_s TTLs/set2.ttl
+	./parse_s TTLs/turn.ttl
+	./parse_s TTLs/spiral.ttl
+	./parse_s TTLs/octagon1.ttl
+	./parse_s TTLs/octagon2.ttl
+	./parse_s TTLs/tunnel.ttl
+	./parse_s TTLs/labyrinth.ttl
+	./parse_s TTLs/hypno.ttl
+	./parse_s TTLs/5x5.ttl
+	./parse_s TTLs/downarrow.ttl
 
 #	out_empty.txt
 #	./interp_s TTLs/forward.ttl 

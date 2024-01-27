@@ -1,6 +1,6 @@
 #pragma once
 
-#define FORMATSTR "%i"
+// #define FORMATSTR "%i"
 #define ELEMSIZE 20
 #define STACKTYPE "Linked"
 

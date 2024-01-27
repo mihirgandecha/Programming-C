@@ -7,25 +7,16 @@ int main(int argc, char* argv[]){
     Program* turtle = initTurtle();
     readWords(fttl, turtle);
     runProgram(turtle);
-    puts("\nPassed Ok.");
     fclose(fttl);
     free(turtle);
     // test();
     // return 0;
     return 0;
 }
-/*TODO: 
-3. **Use different levels of verbosity**:
- For a cleaner output, you could implement different levels of verbosity for your error messages.
-  For example, in a "quiet" mode, you might only print out critical errors, 
-  while in a "verbose" mode, you might print out all errors and additional debugging information.
-
-*/
 
 void validArgs(int argc){
     if(argc != EXPECTED_ARGS){
         ERROR("Error on argv[0]\n");
-        //TODO get rid of magicnum
         exit(EXIT_FAILURE);
     }
 }

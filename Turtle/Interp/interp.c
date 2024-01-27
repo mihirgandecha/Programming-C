@@ -20,6 +20,7 @@ int main(int argc, char* argv[]){
         writeFile(argv[MIN_ARGS], turtle);
     }
     fclose(fttl);
+    stack_free(turtle->s);
     // free(turtle->s);
     free(turtle);
     test();
@@ -471,185 +472,58 @@ bool Loop(Program *turtle){
     }
     turtle->varTemp = turtle->wds[turtle->cw];
     int index = INDEX(*turtle->varTemp);
-    if(turtle->store[index].inUse == true){
-        ERROR("Variable already used!");
-    } 
+    // if(turtle->store[index].inUse == true){
+    //     ERROR("Variable already used!");
+    // } 
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
-    turtle->cw++;
     int startList = turtle->cw;
+    //startList = cw
+    //if ! Lst() return false
+    //int loopLen = cw - startList
+    //startLooping(turtle, letter, loop_len)
+    turtle->cw++;
     if (!Lst(turtle)){
         return false;
     }
-    
-    int cList = turtle->cw;
+    char str[1000];
+    stack_tostring(turtle->s, str);
+    printf("%s", str);
+    int loop_len = turtle->cw - startList;
+    startLooping(turtle, index, loop_len);
     // int listLen = turtle->cw - cList;
-    storeList(turtle, startList, cList);
-    stack_free(turtle->s);
+    // storeList(turtle, startList, cList);
     return true;
 }
 
-//@Lws have been doing a few iterations of this func
-
-// bool storeList(Program *turtle, int startList, int cList, int listLen){
-//     int index = INDEX(*turtle->varTemp);
-//     if(turtle->store[index].inUse == true){
-//         ERROR("Variable already in use!");
-//         return false;
-//     }
-//     for(int i = startList; i < cList; i++){
-//         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "{")){
-//             startList++;
-//             storeList(turtle, startList, cList, listLen);
-//         }
-//         strcpy(turtle->store[index].var, turtle->wds[startList]);
-//         turtle->store[index].inUse = true;
-//         if(Inslst(turtle) == false){
-//             return false;
-//         }
-//         memset(turtle->store[index].var, 0, sizeof(turtle->store[index].var));
-//         turtle->store[index].inUse = false;
-//         if(startList != cList){
-//             startList++;
-//             storeList(turtle, startList, cList, listLen);
-//         }
-//         return true;
-//     }
-//     return false;
-// }
-// bool storeList(Program *turtle, int startList, int cList){
-//     int index = INDEX(*turtle->varTemp);
-//     for(int i = startList; i < cList; i++){
-//         turtle->cw = i;
-//         if(STRSAME(turtle->wds[i], "{") || STRSAME(turtle->wds[i], "\' '")){
-//             storeList(turtle, startList, cList);
-//         }
-//         strcpy(turtle->store[index].var, turtle->wds[i]);
-//         turtle->store[index].inUse = true;
-//         if (Word(turtle) || Varnum(turtle)){
-//             turtle->cw = cList;
-//             if(!Inslst(turtle)){
-//                 turtle->store[index].inUse = false;
-//                 return false;
-//             }
-//         }
-//         turtle->store[index].inUse = false;
-//     }
-//     return true;
-// }
-
-//@Lws function is attempting to save whatever is in Loop {}, inside my store, so that if an instruction like FORWARD $C, it interps first->last element recursively
-//Was struggling with how to use with stack without affecting PFIX
-bool storeList(Program *turtle, int startList, int cList){
-    int index = INDEX(*turtle->varTemp);
-    //startList is '{' and cList is '}'
-    for(int i = cList - 1; i >= startList; i--){
-        //resetting cw to where '{' is
-        turtle->cw = i;
-        //first checking if it is { OR }
-        if(!STRSAME(turtle->wds[i], "{") && !STRSAME(turtle->wds[i], "}")){
-            //looping through the list {}
-            strcpy(turtle->store[index].var, turtle->wds[i]);
-            //setting the store to be true (array of struct)
-            turtle->store[index].inUse = true;
-            if (Word(turtle) || Varnum(turtle)){
-                //setting cw to where it originally was
-                turtle->cw = cList;
-                if(!Inslst(turtle)){
-                    //before recursive call resetting the store.
-                    turtle->store[index].inUse = false;
-                    return false;
-                }
-            }
-        turtle->store[index].inUse = false;
+bool startLooping(Program *turtle, int letter, int loop_len){
+    int startIndx = turtle->cw;
+    for (int i = 0; i < loop_len; i++){
+        turtle->cw = startIndx;
+        stacktype d;
+        if(!stack_pop(turtle->s, &d)){
+            return false;
+        }
+        strcpy(turtle->store[letter].var, d);
+        turtle->store[letter].inUse = true;
+        if(!(Inslst(turtle))){
+            return false;
         }
     }
     return true;
 }
 
 
-// bool setList(Program *turtle){
-//     //find start and end of loop
-//     stacktype start = "{";
-//     stacktype c;
-//     stack_peek(turtle->s, &c);
-//     if(!(STRSAME(c, start))){
-//         return false;
-//     }
-//     //find its pair
-//     int endP;
-//     endP = findEnd(turtle);     
-//     //Making sure stack is in right place:
-//     if(turtle->s->size > 0){
-//         if(!(STRSAME(turtle->s->start->i, "{") && STRSAME(turtle->s->end->i, "}"))){
-//             return false;
-//         }
-//     }
-//     if(!(processLoop(turtle, endP))){
-//         return false;
-//     }
-//     return true;
-// }
+//startLooping(turtle, letter, loop_len)
+//  int start_indx = turtle->cw
+//  for(int i = 0; i<loopLen; i++)
+//      turtle->cw = start_index
+//      variables[letter] = stack pop
+//      if ! Inslst return false
 
-// bool processLoop(Program *turtle, int endP){
-//     for(int i = 0; i <= endP; i++){
-//         int index = INDEX(*turtle->varTemp);
-//         stacktype d;
-//         stack_peek(turtle->s, &d);
-//         strcpy(turtle->store[index].var, d);
-//         if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
-//             if(Inslst(turtle)){
-//                 queue_pop(turtle->s, &d);
-//                 turtle->store[index].inUse = false;
-//             }
-//             if(turtle->s->size == 0){
-//                 return true;
-//             }
-//         }
-//         return setList(turtle);
-//     }
-//     return false;
-// }
 
-// int findEnd(Program *turtle){
-//     int startP = 0;
-//     //find its pair
-//     int endP;
-//     while (startP <= turtle->s->size){
-//         stacktype end = "}";
-//         stacktype d;
-//         stack_peek(turtle->s, &d);
-//         if STRSAME(d, end){
-//             endP = startP;
-//             return endP;
-//         }
-//         startP++;
-//     }
-//     return 1;
-// }
-
-//     for(int i = startList; i < cList; i++){
-//         turtle->cw = startList;
-//         if(STRSAME(turtle->wds[startList], "{") || STRSAME(turtle->wds[startList], "\' '")){
-//             startList++;
-//             storeList(turtle, startList, cList);
-//         }
-//         stacktype d;
-//         stack_peek(turtle->s, &d);
-//         strcpy(turtle->store[index].var, d);
-//         turtle->store[index].inUse = true;
-//         if (turtle->s->size > 0 && (Word(turtle) || Varnum(turtle))){
-//             turtle->cw = cList;
-//             Inslst(turtle);
-//             queue_pop(turtle->s, &d);
-//             turtle->store[index].inUse = false;
-//             startList++;
-//         }
-//     }
-//     return;
-// }
 
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
@@ -752,12 +626,15 @@ bool Items(Program* turtle){
         return true;
     }
     else{
+        int temp = turtle->cw;
         turtle->cw++;
         if(!(Items(turtle))){
             return false;
         }
-        stack_push(turtle->s, turtle->wds[turtle->cw]); 
-        return true;       
+        while(!(STRSAME(turtle->wds[temp], "{"))){
+            stack_push(turtle->s, turtle->wds[temp--]); 
+            return true;       
+        }
     }
     return false;       
 }
@@ -803,6 +680,47 @@ bool Op(Program* turtle){
     }
 }
 
+// void intOp(Program* turtle){
+//     char Op = turtle->wds[turtle.cw];
+    
+//     stacktype bottom;
+//     stacktype top;
+//     stack_pop(turtle->s, &top);
+//     stack_pop(turtle->s, &bottom);
+//     //check if Varnum and convert
+    
+//     int index = INDEX(turtle->varTemp);
+//     int result;
+//     //push onto stack (only one thing)
+//     switch(turtle->wds[turtle->cw][0]){
+//         case '+':
+//             bottom+top;
+
+//         case '-':
+//         case '/':
+
+//         case '*':
+//             return true;
+//         default:
+//             return false;
+//     }
+// }
+
+// int convert(stacktype varnum){
+//     if(Num(turtle)){
+//         int variable = atof(turtle->wds[turtle->cw]);
+//         return variable;
+//     }
+//     if(Var(turtle)){
+//         int index = INDEX(turtle->wds[turtle->cw][1]);
+//         if(turtle->store[index].inUse == true){
+//             double distance = atof(turtle->store[index].var);
+//             intFwd(turtle, distance);
+//         }
+//     }
+
+// }
+
 bool Pfix(Program* turtle){
     if(!checkNull(turtle)){
         return false;
@@ -828,7 +746,7 @@ bool Pfix(Program* turtle){
 // void intPfxix(Program *turtle){
 //    char input[MAXCMND];
 //    stacktype d, g1, g2;
-
+   
 //    stack* s = stack_init();
 //    while(fgets(input, MAXCMND, stdin)){
 //       /* If number push */
@@ -836,9 +754,6 @@ bool Pfix(Program* turtle){
 //          stack_push(s, d);
 //       }
 //       else{
-//          /* Must be an operator ? */
-//          assert(stack_pop(s, &g2));
-//          assert(stack_pop(s, &g1));
 //          switch(input[0]){
 //             case '+' :
 //                d = g1 + g2;

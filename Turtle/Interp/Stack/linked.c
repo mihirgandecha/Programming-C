@@ -70,6 +70,24 @@ bool stack_pop(stack* s, stacktype* d)
 //    return true;
 // }
 
+void stack_tostring(stack* s, char* str)
+{
+   char tmp[ELEMSIZE];
+   str[0] = '\0';
+   if((s==NULL) || (s->size <1)){
+      return;
+   }
+   dataframe* p = s->start;
+   while(p){
+      sprintf(tmp, "%s", p->i); 
+      strcat(str, tmp);
+      strcat(str, "|");
+      p = p->next;
+   }
+   str[strlen(str)-1] = '\0';
+}
+
+
 bool stack_peek(stack* s, stacktype* d)
 {
    if((s==NULL) || (s->start==NULL)){

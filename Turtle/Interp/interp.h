@@ -41,6 +41,7 @@ typedef struct{
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
+   int tempCw;
    int col, row;
    double rAngle;
    bool isScreen;
@@ -113,6 +114,8 @@ int compareFloat(double a, double b);
 void test_compareFloat();
 double degToRad(double degrees);
 void degToRadTest(void);
+//Loop Int:
+bool startLooping(Program *turtle, int letter, int loop_len);
 //Pfix Int:
 void intPfxix(Program *turtle);
 //Stack:
