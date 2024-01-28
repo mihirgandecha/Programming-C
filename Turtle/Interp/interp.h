@@ -16,6 +16,7 @@
 #define STRSAME(A,B) (strcmp(A, B)==0) 
 #define ERROR(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d\n", PHRASE, __FILE__, __LINE__); exit(EXIT_FAILURE);}
 #define DEBUG(PHRASE) {fprintf(stderr, "Fatal Error %s occurred in %s, line %d \n", PHRASE, __FILE__, __LINE__); }
+#define DOUBLE_TO_STRING(str, num) sprintf(str, "%f", num)
 #define COL 51
 #define ROW 33
 #define SCOL 25
@@ -82,7 +83,9 @@ bool Word(Program* turtle);
 bool Lst(Program* turtle);
 bool Items(Program* turtle);
 bool Item(Program* turtle);
-bool Pfix(Program* turtle);
+// bool Pfix(Program* turtle);
+bool Pfix(Program* turtle, int index);
+
 bool Op(Program* turtle);
 void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
@@ -107,6 +110,8 @@ void testBresenham(void);
 bool storeList(Program *turtle, int startList, int cList);
 //Col Int:
 void setCol(Program *turtle, char* colour);
+void varCol(Program *turtle);
+
 char* subStr(char *str);
 void test_subStr(void);
 //Rgt Int:
@@ -118,11 +123,14 @@ double degToRad(double degrees);
 void degToRadTest(void);
 //Set Int:
 void testSet(void);
+
 //Loop Int:
 bool startLooping(Program *turtle, int letter, int loop_len);
 //Pfix Int:
 void intPfxix(Program *turtle);
 bool storeOP(Program* turtle, int index);
+void intOp(Program* turtle, int index);
+
 
 double pFixNum(stacktype d);
 void test_pFixNum(void);

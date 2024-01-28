@@ -126,11 +126,12 @@ static size_t lfails = 0;
 /* Assert two floats are equal (Within LTEST_FLOAT_TOLERANCE). */
 #define FLOAT_EQUAL(a, b)\
     lequal_base(fabs((double)(a)-(double)(b)) <= LTEST_FLOAT_TOLERANCE, (double)(a), (double)(b), "%f")
-    
+
 /* Assert two strings are equal. */
 #define lsequal(a, b)\
     lequal_base(strcmp(a, b) == 0, a, b, "%s")
 
+#define DOUBLE_EQUAL(a, b) (fabs((double)(a)-(double)(b)) <= LTEST_FLOAT_TOLERANCE)
 //Mihir:
 
 /* Assert two characters are equal. */
@@ -148,3 +149,4 @@ static size_t lfails = 0;
     lequal_base((value) >= (low) && (value) <= (high), value, low, "%f"); \
     lequal_base((value) >= (low) && (value) <= (high), value, high, "%f")
 #endif /*__MINCTEST_H__*/
+

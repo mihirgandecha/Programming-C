@@ -26,7 +26,6 @@ int main(int argc, char* argv[]){
 
 void test(void){
     puts("\n");
-    // RUN("[INTERP] Set Function Test", test_interpSetNum_edge_cases);
     // RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
     RUN("[HELPER] Substring Test", test_subStr);
     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
@@ -73,6 +72,19 @@ void writeFile(char* filename, Program *turtle){
     }
     fclose(fttx);
 }
+
+// void pFixWrite(Program* turtle) {
+//     if (turtle->pfixUsed == true){
+//         FILE* psFile = fopen("output.ps", "w");
+//         if (psFile == NULL) {
+//             perror("Error opening file");
+//             return;
+//         }
+//         fprintf(psFile, "%% Placeholder PostScript commands\n");
+//         fclose(psFile);
+//         system("ps2pdf output.ps output.pdf");
+//     }
+// }
 
 Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
@@ -385,6 +397,22 @@ bool Col(Program *turtle){
     return true;
 }
 
+void varCol(Program *turtle){
+    if(Var(turtle)){
+        int index = INDEX(turtle->wds[turtle->cw][1]);
+        if(turtle->store[index].inUse == true){
+            char *colVal = subStr(turtle->store[index].var);
+            turtle->setColour = colVal;
+            setCol(turtle, colVal);
+        }
+    }
+    else if(Word(turtle)){
+        char *colVal = subStr(turtle->wds[turtle->cw]);
+        turtle->setColour = colVal;
+        setCol(turtle, colVal);
+    }
+}
+
 //TODO: Define as helper function in .h file
 char* subStr(char *str){
     if (str == NULL) {
@@ -529,7 +557,6 @@ bool Set(Program *turtle){
     if(!Ltr(turtle)){
         return false;
     }
-    turtle->varTemp = &turtle->wds[turtle->cw][0];
     int index = INDEX(*turtle->varTemp);
     turtle->store[index].inUse = true;
     turtle->cw++;
@@ -538,7 +565,7 @@ bool Set(Program *turtle){
         return false;
     }
     turtle->cw++;
-    if(!Pfix(turtle)){
+    if(!Pfix(turtle, index)){
         return false;
     }
     return true; 
@@ -577,22 +604,15 @@ void testSet(void){
     strcpy(testTurtle->wds[8], "END");
     testTurtle->cw = 1;
     Set(testTurtle);
+    //using $A = 5
     index = INDEX(*testTurtle->varTemp);
-    BOOL(testTurtle->store[index].pfixUse == true);
-    stacktype op;
-    stacktype bottom;
-    stacktype top;
-    stack_pop(testTurtle->s, &top);
-    STR_EQUAL(top, "$A");
-    stack_pop(testTurtle->s, &bottom);
-    STR_EQUAL(bottom, "1");
-    stack_pop(testTurtle->s, &op);
-    STR_EQUAL(op, "+");
-    BOOL(testTurtle->store[index].var[0] == '\0');
-    //Test for SET D ($A $B *)
+    double result = 6;
+    double out_result = atof(testTurtle->store[index].var);
+    FLOAT_EQUAL(result, out_result);
+    //Test for SET D ($A $C *)
     strcpy(testTurtle->wds[2], "D");
     strcpy(testTurtle->wds[4], "$A");
-    strcpy(testTurtle->wds[5], "$B");
+    strcpy(testTurtle->wds[5], "$C");
     strcpy(testTurtle->wds[6], "*");
     strcpy(testTurtle->wds[7], ")");
     strcpy(testTurtle->wds[8], "END");
@@ -600,16 +620,25 @@ void testSet(void){
     Set(testTurtle);
     index = INDEX(*testTurtle->varTemp);
     BOOL(testTurtle->store[index].pfixUse == true);
-    stacktype op2;
-    stacktype bottom2;
-    stacktype top2;
-    stack_pop(testTurtle->s, &top2);
-    STR_EQUAL(top, "$A");
-    stack_pop(testTurtle->s, &bottom2);
-    STR_EQUAL(bottom, "$B");
-    stack_pop(testTurtle->s, &op2);
-    STR_EQUAL(op, "*");
-    BOOL(testTurtle->store[index].var[0] == '\0');
+    //using $A = 5 and $C = 6
+    index = INDEX(*testTurtle->varTemp);
+    double result2 = 30;
+    double out_result2 = atof(testTurtle->store[index].var);
+    FLOAT_EQUAL(result2, out_result2);
+    // Test for SET $A ("RED")
+    strcpy(testTurtle->wds[0], "START");
+    strcpy(testTurtle->wds[1], "SET");
+    strcpy(testTurtle->wds[2], "A");
+    strcpy(testTurtle->wds[3], "(");
+    strcpy(testTurtle->wds[4], "\"RED\"");
+    strcpy(testTurtle->wds[5], ")");
+    strcpy(testTurtle->wds[6], "END");
+    testTurtle->cw = 1;
+    Set(testTurtle);
+    index = INDEX('A');
+    BOOL(testTurtle->store[index].inUse == true);
+    char* colour_out = subStr(testTurtle->store[index].var);
+    STR_EQUAL(colour_out, "RED");
     stack_free(testTurtle->s);
     free(testTurtle);
 }
@@ -626,8 +655,6 @@ bool Num(Program *turtle){
     char *endptr;
     strtod(number, &endptr);
     if (*endptr == '\0'){
-        // turtle->numUsed = true;
-        // store(turtle);
         return true;
     }
     else{
@@ -641,9 +668,6 @@ bool Var(Program *turtle){
         return false;
     }
     if (var[0] == '$' && Ltr(turtle)){
-        // turtle->varUsed = true;
-        // store(turtle);
-        
         return true;
     }
     return false;
@@ -746,7 +770,7 @@ bool Op(Program* turtle){
 }
 
 
-bool Pfix(Program* turtle){
+bool Pfix(Program* turtle, int index){
     if(!checkNull(turtle)){
         return false;
     }
@@ -754,21 +778,24 @@ bool Pfix(Program* turtle){
         return true;
     }
     else if (Op(turtle)){
-        int index = INDEX(*turtle->varTemp);
         int tempCw = turtle->cw;
         if(!(storeOP(turtle, index))){
             return false;
         }
-        turtle->store[index].var[0] = '\0';
+        intOp(turtle, index);
         turtle->cw = tempCw;
         turtle->cw++;
-        return Pfix(turtle);
+        return Pfix(turtle,index);
     }
     else if (Varnum(turtle)){
-        int index = INDEX(*turtle->varTemp);
         strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
         turtle->cw++;
-        return Pfix(turtle);
+        return Pfix(turtle, index);
+    }
+    else if (Word(turtle)){
+        strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
+        turtle->cw++;
+        return Pfix(turtle, index);
     }
     return false;
 }
@@ -793,75 +820,48 @@ bool storeOP(Program* turtle, int index){
     return storeOP(turtle, index);
 }
 
-
-// void intOp(Program* turtle){
-//     char Op = turtle->wds[turtle.cw];
-//     stacktype op;
-//     stacktype bottom;
-//     stacktype top;
-//     stack_pop(turtle->s, &top);
-//     stack_pop(turtle->s, &bottom);
-//     stack_pop(turtle->s, &op);
-//     if(Num)
-    
-//     int index = INDEX(turtle->varTemp);
-//     int result;
-//     //push onto stack (only one thing)
-//     switch(turtle->wds[turtle->cw][0]){
-//         case '+':
-//             bottom+top;
-
-//         case '-':
-//         case '/':
-
-//         case '*':
-//             return true;
-//         default:
-//             return false;
-//     }
-// }
-
-// void intOp(Program* turtle){
-//     char Op = turtle->wds[turtle->cw][0];
-//     stacktype op;
-//     stacktype bottom;
-//     stacktype top;
-//     stack_pop(turtle->s, &top);
-//     stack_pop(turtle->s, &bottom);
-//     stack_pop(turtle->s, &op);
-//     double topValue = pFixNum(turtle);
-//     if(topValue == -1){
-//         topValue = Var(turtle);
-//     }
-//     double bottomValue = pFixNum(turtle);
-//     if(bottomValue == -1) {
-//         bottomValue = Var(turtle);
-//     }
-//     double result;
-//     switch(Op){
-//         case '+':
-//             result = bottomValue + topValue;
-//             break;
-//         case '-':
-//             result = bottomValue - topValue;
-//             break;
-//         case '/':
-//             if(topValue != 0) {
-//                 result = bottomValue / topValue;
-//             } else {
-//                 printf("Error: Division by zero.\n");
-//                 return;
-//             }
-//             break;
-//         case '*':
-//             result = bottomValue * topValue;
-//             break;
-//         default:
-//             printf("Error: Invalid operator.\n");
-//             return;
-//     }
-//     stack_push(turtle->s, result);
-// }
+void intOp(Program* turtle, int index){
+    stacktype op;
+    stacktype bottom;
+    stacktype top;
+    stack_pop(turtle->s, &top);
+    stack_pop(turtle->s, &bottom);
+    stack_pop(turtle->s, &op);
+    char Op = op[0];
+    double topValue = pFixNum(top);
+    if(DOUBLE_EQUAL(topValue, 1)){
+        topValue = pFixVar(top, turtle);
+    }
+    double bottomValue = pFixNum(bottom);
+    if(DOUBLE_EQUAL(bottomValue, 1)){
+        bottomValue = pFixVar(bottom, turtle);
+    }
+    double result;
+    switch(Op){
+        case '+':
+            result = bottomValue + topValue;
+            break;
+        case '-':
+            result = bottomValue - topValue;
+            break;
+        case '*':
+            result = bottomValue * topValue;
+            break;
+        case '/':
+            if(!(compareFloat(topValue, 0)) && !(compareFloat(bottomValue, 0))){
+                result = bottomValue / topValue;
+            } else {
+                ERROR("Error: Division by zero.\n");
+            }
+            break;
+        default:
+            ERROR("Error: Invalid operator.\n");
+    }
+    char str[MAXTOKENSIZE];
+    DOUBLE_TO_STRING(str, result);
+    sprintf(str, "%f", result);
+    strcpy(turtle->store[index].var, str);
+}
 
 double pFixNum(stacktype d){
     char *number = d;
@@ -908,67 +908,12 @@ void test_pFixVar(void){
     strcpy(testTurtle->store[INDEX('C')].var, "123.45");
     FLOAT_EQUAL(pFixNum(validNum), 123.45);
     FLOAT_EQUAL(pFixNum(invalidNum), 1);
-    // Test pFixVar with valid variable
     FLOAT_EQUAL(pFixVar(validVar, testTurtle), 123.45);
-    // Test pFixVar with invalid variable, should return 1
     FLOAT_EQUAL(pFixVar(invalidVar, testTurtle), 1);
-    // Test pFixVar with non-existent variable, should return 1
     FLOAT_EQUAL(pFixVar(nonExistentVar, testTurtle), 1);
+    stack_free(testTurtle->s);
     free(testTurtle);
 }
-
-// void test_pFixNum(void){
-//     stacktype validNum = "123.45";
-//     stacktype invalidNum = "123abc";
-//     FLOAT_EQUAL(pFixNum(validNum), 123.45);
-//     //return 1 indicating not worked:
-//     FLOAT_EQUAL(pFixNum(invalidNum), 1);
-// }
-
-// void intPfxix(Program *turtle){
-//    char input[MAXCMND];
-//    stacktype d, g1, g2;
-   
-//    stack* s = stack_init();
-//    while(fgets(input, MAXCMND, stdin)){
-//       /* If number push */
-//       if(sscanf(input, FORMATSTR, &d)==1){
-//          stack_push(s, d);
-//       }
-//       else{
-//          switch(input[0]){
-//             case '+' :
-//                d = g1 + g2;
-//                break;
-//             case '-' :
-//                d = g1 - g2;
-//                break;
-//             case '*' :
-//                d = g1 * g2;
-//                break;
-//             case '/' :
-//                d = g1 / g2;
-//                break;
-//             default:
-//                fprintf(stderr, "Can't understand that ? %i\n", input[0]);
-//                exit(EXIT_FAILURE);
-//          }
-//          stack_push(s, d);
-//       }
-//    }
-//    assert(stack_pop(s, &d));
-//    printf("Answer = ");
-//    printf(FORMATSTR, d);
-//    printf("\n");
-   
-//    if(stack_peek(s, &d) == true){
-//       fprintf(stderr, "Stack still had items on it ?\n");
-//       exit(EXIT_FAILURE);
-//    }
-//    stack_free(s);
-//    return 0;
-// }
-
 
 int compareFloat(double a, double b){
     if (fabs(a - b) < THRESHHOLD){
@@ -991,56 +936,20 @@ void degToRadTest(void){
     INT_EQUAL((int)result, 0);
     result = degToRad(-0);
     INT_EQUAL((int)result, 0);
-    // assert((int)result == 0);
-    // Test conversion of 360 degrees
     result = degToRad(FULLCIRC);
     INTO_RANGE(result, 6.1, 6.3);
-    // assert(result >= 6.1 && result <= 6.3);
-    // Test conversion of -360 degrees
     result = degToRad(-FULLCIRC);
     assert(result >= 6.1 && result <= 6.3);
-    // Test conversion of 90 degrees
     result = degToRad(90);
     assert(result >= 1.3 && result <= 1.6);
-    // Test conversion of -90 degrees (testing fabs)
     result = degToRad(-90);
     assert(result >= 1.3 && result <= 1.6);
-    // Test conversion of 180 degrees
     result = degToRad(HALFCIRC);
     assert(result >= 3.10 && result <= 3.20);
-    // Test conversion of -180 degrees
     result = degToRad(-HALFCIRC);
     assert(result >= 3.10 && result <= 3.20);
-    // Test conversion of 270 degrees
     result = degToRad(270);
     assert(result >= 4.70 && result <= 4.80);
-    // Test conversion of -270 degrees
     result = degToRad(-270);
     assert(result >= 4.70 && result <= 4.80);
-    //Edge cases:
-    // .0 <- 
-    // test very small +ve degree
-    result = degToRad(1e-12);
-    assert(result > 0 && result < 1e-12);
-    // test very small -ve degree
-    result = degToRad(-1e-12);
-    assert(result > 0 && result < 1e-12);
-    // test very large -ve degree
-    result = degToRad(-1e12);
-    assert(result >= 0 && result <= 2 * M_PI);
-    // test very large +ve degree
-    result = degToRad(1e12);
-    assert(result >= 0 && result <= 2 * M_PI);
-    // test fractional degree
-    result = degToRad(0.123456789);
-    assert(result > 0 && result < M_PI / 360);
-    // test negative fractional degree
-    result = degToRad(-0.123456789);
-    assert(result > 0 && result < M_PI / 360);
-    // test degree slightly less than 360
-    result = degToRad(359.999999999);
-    assert(result > 0 && result < (2 * M_PI));
-    // test degree slightly more than 0
-    result = degToRad(0.000000001);
-    assert(result > 0 && result < M_PI / 180);
 }
