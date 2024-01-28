@@ -72,30 +72,10 @@
         },
 
         {
-            "name": "(gdb) Parser Attach",
-            "type": "cppdbg",
-            "request": "attach",
-            "program": "${workspaceFolder}/Turtle/parse_s",
-            "MIMode": "gdb",
-            "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                },
-                {
-                    "description": "Set Disassembly Flavor to Intel",
-                    "text": "-gdb-set disassembly-flavor intel",
-                    "ignoreFailures": true
-                }
-            ]
-        },
-
-        {
             "name": "(gdb) Parse Test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Turtle/parse_s", 
+            "program": "${workspaceFolder}/Turtle/parse_withtest", 
             "args": [], 
             "cwd": "${workspaceFolder}",
             "environment": [],

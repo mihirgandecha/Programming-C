@@ -3,11 +3,6 @@
 #include "mintest.h"
 #include "Stack/specific.h"
 
-/*
-
-LOSING MY MIND
-
-*/
 int main(int argc, char* argv[]){
     validArgs(argc);
     FILE* fttl = openFile(argv[1]);

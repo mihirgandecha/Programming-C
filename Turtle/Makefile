@@ -1,5 +1,5 @@
 CC=gcc 
-COMMON= -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 # -Werror
+COMMON= -Wall -Wextra -Wfloat-equal -Wpedantic -Wvla -std=c99 -Werror
 DEBUG= -g3
 SANITIZE= $(COMMON) -fsanitize=undefined -fsanitize=address $(DEBUG)
 VALGRIND= $(COMMON) $(DEBUG)
@@ -11,12 +11,12 @@ all: parse_s #interp_s
 parse_s: Parse/parse.h Parse/parse.c
 	$(CC) Parse/parse.c -o parse_s -I./Parse $(SANITIZE) -lm
 
-# parse_with_test: Parse/parse.h Parse/parse.c Testing/parse_test.c
-#     $(CC) Parse/parse.c Testing/parse_test.c -g -o parse_test -I./Parse -I./Testing -lm
+run_parsetest:
+	chmod +x ./Testing/parsetest.sh
+	./Testing/parsetest.sh
 
 interp_s: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.h
 	$(CC) neillsimplescreen.c Interp/interp.c -o interp_s -I./Interp $(SANITIZE) -lm
-
 ### An example : you may wish to adapt this slightly
 extension_s: Extension/extension.h Extension/extension.c neillsimplescreen.c neillsimplescreen.h
 	$(CC) neillsimplescreen.c Extension/extension.c -o extension_s -I./Extension $(SANITIZE) -lm
@@ -37,7 +37,18 @@ combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 runcom: combined
 	./combined_target TTLs/forward.ttl forward.txt
 
-run_parsetest: all
+
+
+# Additional:
+
+#Included in Parse script
+parse_assert: Parse/parse.h Testing/parse_withtest.c Testing/parse_test.c
+	$(CC) Testing/parse_withtest.c Testing/parse_test.c -g -o parse_withtest -I./Parse -I./Testing -lm
+	./parse_withtest
+
+#Included in Parse script
+run_parseTTLs: parse_s	
+#	find TTLs -type f -exec ./parse_s {} \; 
 	./parse_s TTLs/empty.ttl
 	./parse_s TTLs/forward.ttl
 	./parse_s TTLs/ok_parse_fail_interp.ttl
@@ -107,4 +118,8 @@ run: all
 #	./interp_s TTLs/5x5.ttl out_5x5.ps
 #	./interp_s TTLs/downarrow.ttl out_downarrow.ps
 clean:
-	rm -f parse_s parse_test interp_s out_*.txt out_*.ps out_*.pdf
+	rm -f Turtle.zip parse_s parse_test parse_withtest combined_target interp_s out_*.txt out_*.ps out_*.pdf
+
+zip:
+	zip -r Turtle.zip .
+

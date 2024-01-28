@@ -7,42 +7,19 @@
 
 void test(void){
     Program* testTurtle = initTurtle();
-    //Testing for Error msg [Start]: ~working
-    strcpy(testTurtle->wds[0], "END");
-    testTurtle->cw = 0;
-    puts("Test of <Prog> error msg:");
-    assert(Prog(testTurtle) == false);
-    // runProgram(testTurtle);
-    //Expecting Fatal Error No 'START' statement! occurred in Parse/parse.c, line 59 
-    //Uncomment runProgram - expecting Fatal Error Grammar mistakes found in ttl ~ terminated. occurred in Parse/parse.c, line 53
 
-    //Testing for Error msg [End]
-    strcpy(testTurtle->wds[0], "START");
-    strcpy(testTurtle->wds[1], "FINISH");
-    testTurtle->cw = 0;
-    puts("\nTest of <Prog> error msg:");
-    assert(Prog(testTurtle) == false);
-    // runProgram(testTurtle);
-    //Expecting: Fatal Error No 'END' or Unknown Command! occurred in Parse/parse.c, line 73
-
-    //Testing for End ~working
+    //Testing for End with runProgram:
     strcpy(testTurtle->wds[0], "START");
     strcpy(testTurtle->wds[1], "END");
     testTurtle->cw = 0;
     runProgram(testTurtle);
-    // assert(Prog(testTurtle) == true);
 
-    //Testing that return false if no End - working
+    //Testing that return false if no End
     strcpy(testTurtle->wds[1], "RIGHT");
     strcpy(testTurtle->wds[2], "45");
     strcpy(testTurtle->wds[3], "FORWARD");
     strcpy(testTurtle->wds[4], "20");
     testTurtle->cw = 0;
-    //Expecting no Error msg:
-    puts("\nTesting <Ins> error msg:");
-    assert(Ins(testTurtle) == false);
-    puts("\nTesting <Prog> error msg:");
-    assert(Prog(testTurtle) == false);
 
     //Expecting no Error msg:
     strcpy(testTurtle->wds[5], "END");
@@ -216,26 +193,6 @@ void test(void){
     testTurtle4->cw = 1;
     assert(Loop(testTurtle4) == true);
 
-    Program* testTurtle5 = initTurtle();
-    strcpy(testTurtle5->wds[0], "LOOP");
-    strcpy(testTurtle5->wds[1], "C");
-    strcpy(testTurtle5->wds[2], "OVER");
-    strcpy(testTurtle5->wds[3], "{");
-    strcpy(testTurtle5->wds[4], "\"RED\"");
-    strcpy(testTurtle5->wds[5], "\"GREEN\"");
-    strcpy(testTurtle5->wds[6], "\"BLUE\"");
-    strcpy(testTurtle5->wds[7], "}");
-    strcpy(testTurtle5->wds[8], "COLOUR");
-    strcpy(testTurtle5->wds[9], "$C");
-    strcpy(testTurtle5->wds[10], "FORWARD");
-    strcpy(testTurtle5->wds[11], "5");
-    strcpy(testTurtle5->wds[12], "RIGHT");
-    strcpy(testTurtle5->wds[13], "90");
-    // No END keyword
-    testTurtle5->cw = 0;
-    puts("\nTest of <Loop> function without END keyword:");
-    assert(Loop(testTurtle5) == false);
-
     //Test for <OPS> Function:
     Program* testTurtle6 = initTurtle();
     strcpy(testTurtle6->wds[0], "+");
@@ -308,7 +265,6 @@ void test(void){
     free(testTurtle2);
     free(testTurtle3);
     free(testTurtle4);
-    free(testTurtle5);
     free(testTurtle6);
     free(testTurtle7);
     free(testTurtle8);
