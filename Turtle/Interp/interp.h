@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <math.h>
 #include <float.h>
+#include <ctype.h>
 
 #define MAXCMND 100
 #define MAXTOKENSIZE 20
@@ -37,7 +38,6 @@ typedef struct{
    char var[MAXTOKENSIZE];
    bool inUse;
    bool pfixUse;
-   char Op[MAXTOKENSIZE];
 } Variable;
 
 struct prog{
@@ -123,6 +123,15 @@ bool startLooping(Program *turtle, int letter, int loop_len);
 //Pfix Int:
 void intPfxix(Program *turtle);
 bool storeOP(Program* turtle, int index);
+
+double pFixNum(stacktype d);
+void test_pFixNum(void);
+double pFixVar(stacktype d, Program *turtle);
+void test_pFixVar(void);
+
+
+
+
 //Stack:
 stack* stack_init(void);
 void stack_push(stack* s, stacktype d);

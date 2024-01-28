@@ -33,7 +33,8 @@ void test(void){
     RUN("[HELPER] Comparing float Test", test_compareFloat);
     RUN("[HELPER] Degree to Radians Test", degToRadTest);
     RUN("[HELPER] Set Test", testSet);
-    
+    RUN("[HELPER] PFix Test", test_pFixNum);
+    RUN("[HELPER] PFix Test", test_pFixVar);
 }
 
 void validArgs(int argc){
@@ -577,8 +578,17 @@ void testSet(void){
     testTurtle->cw = 1;
     Set(testTurtle);
     index = INDEX(*testTurtle->varTemp);
-    BOOL(testTurtle->store[index].inUse == true);
-    STR_EQUAL(testTurtle->store[index].var, "$A");
+    BOOL(testTurtle->store[index].pfixUse == true);
+    stacktype op;
+    stacktype bottom;
+    stacktype top;
+    stack_pop(testTurtle->s, &top);
+    STR_EQUAL(top, "$A");
+    stack_pop(testTurtle->s, &bottom);
+    STR_EQUAL(bottom, "1");
+    stack_pop(testTurtle->s, &op);
+    STR_EQUAL(op, "+");
+    BOOL(testTurtle->store[index].var[0] == '\0');
     //Test for SET D ($A $B *)
     strcpy(testTurtle->wds[2], "D");
     strcpy(testTurtle->wds[4], "$A");
@@ -589,9 +599,18 @@ void testSet(void){
     testTurtle->cw = 1;
     Set(testTurtle);
     index = INDEX(*testTurtle->varTemp);
-    BOOL(testTurtle->store[index].inUse == true);
-    STR_EQUAL(testTurtle->store[index].Op, "*");
-    STR_EQUAL(testTurtle->store[index].var, "$A");
+    BOOL(testTurtle->store[index].pfixUse == true);
+    stacktype op2;
+    stacktype bottom2;
+    stacktype top2;
+    stack_pop(testTurtle->s, &top2);
+    STR_EQUAL(top, "$A");
+    stack_pop(testTurtle->s, &bottom2);
+    STR_EQUAL(bottom, "$B");
+    stack_pop(testTurtle->s, &op2);
+    STR_EQUAL(op, "*");
+    BOOL(testTurtle->store[index].var[0] == '\0');
+    stack_free(testTurtle->s);
     free(testTurtle);
 }
 
@@ -726,46 +745,6 @@ bool Op(Program* turtle){
     }
 }
 
-// void intOp(Program* turtle){
-//     char Op = turtle->wds[turtle.cw];
-    
-//     stacktype bottom;
-//     stacktype top;
-//     stack_pop(turtle->s, &top);
-//     stack_pop(turtle->s, &bottom);
-//     //check if Varnum and convert
-    
-//     int index = INDEX(turtle->varTemp);
-//     int result;
-//     //push onto stack (only one thing)
-//     switch(turtle->wds[turtle->cw][0]){
-//         case '+':
-//             bottom+top;
-
-//         case '-':
-//         case '/':
-
-//         case '*':
-//             return true;
-//         default:
-//             return false;
-//     }
-// }
-
-// int convert(stacktype varnum){
-//     if(Num(turtle)){
-//         int variable = atof(turtle->wds[turtle->cw]);
-//         return variable;
-//     }
-//     if(Var(turtle)){
-//         int index = INDEX(turtle->wds[turtle->cw][1]);
-//         if(turtle->store[index].inUse == true){
-//             double distance = atof(turtle->store[index].var);
-//             intFwd(turtle, distance);
-//         }
-//     }
-
-// }
 
 bool Pfix(Program* turtle){
     if(!checkNull(turtle)){
@@ -777,7 +756,10 @@ bool Pfix(Program* turtle){
     else if (Op(turtle)){
         int index = INDEX(*turtle->varTemp);
         int tempCw = turtle->cw;
-        storeOP(turtle, index);
+        if(!(storeOP(turtle, index))){
+            return false;
+        }
+        turtle->store[index].var[0] = '\0';
         turtle->cw = tempCw;
         turtle->cw++;
         return Pfix(turtle);
@@ -799,10 +781,6 @@ bool storeOP(Program* turtle, int index){
         return storeOP(turtle, index);
     }
     if(Varnum(turtle)){
-        // if(turtle->store[index].var){
-        //     turtle->store[index].var = NULL;
-        // }
-        memset(turtle->store[index].var, 0, sizeof(turtle->store[index].var));
         if(turtle->store[index].pfixUse == true){
             stack_push(turtle->s, turtle->wds[turtle->cw]);
             turtle->cw--;
@@ -812,9 +790,140 @@ bool storeOP(Program* turtle, int index){
     if(STRSAME(turtle->wds[turtle->cw], "(")){
         return true;
     }
-    return false;
+    return storeOP(turtle, index);
 }
 
+
+// void intOp(Program* turtle){
+//     char Op = turtle->wds[turtle.cw];
+//     stacktype op;
+//     stacktype bottom;
+//     stacktype top;
+//     stack_pop(turtle->s, &top);
+//     stack_pop(turtle->s, &bottom);
+//     stack_pop(turtle->s, &op);
+//     if(Num)
+    
+//     int index = INDEX(turtle->varTemp);
+//     int result;
+//     //push onto stack (only one thing)
+//     switch(turtle->wds[turtle->cw][0]){
+//         case '+':
+//             bottom+top;
+
+//         case '-':
+//         case '/':
+
+//         case '*':
+//             return true;
+//         default:
+//             return false;
+//     }
+// }
+
+// void intOp(Program* turtle){
+//     char Op = turtle->wds[turtle->cw][0];
+//     stacktype op;
+//     stacktype bottom;
+//     stacktype top;
+//     stack_pop(turtle->s, &top);
+//     stack_pop(turtle->s, &bottom);
+//     stack_pop(turtle->s, &op);
+//     double topValue = pFixNum(turtle);
+//     if(topValue == -1){
+//         topValue = Var(turtle);
+//     }
+//     double bottomValue = pFixNum(turtle);
+//     if(bottomValue == -1) {
+//         bottomValue = Var(turtle);
+//     }
+//     double result;
+//     switch(Op){
+//         case '+':
+//             result = bottomValue + topValue;
+//             break;
+//         case '-':
+//             result = bottomValue - topValue;
+//             break;
+//         case '/':
+//             if(topValue != 0) {
+//                 result = bottomValue / topValue;
+//             } else {
+//                 printf("Error: Division by zero.\n");
+//                 return;
+//             }
+//             break;
+//         case '*':
+//             result = bottomValue * topValue;
+//             break;
+//         default:
+//             printf("Error: Invalid operator.\n");
+//             return;
+//     }
+//     stack_push(turtle->s, result);
+// }
+
+double pFixNum(stacktype d){
+    char *number = d;
+    char *endptr;
+    double value = strtod(number, &endptr);
+    if (*endptr == '\0'){
+        return value;
+    }
+    else{
+        return 1;
+    }
+}
+
+void test_pFixNum(void){
+    stacktype validNum = "123.45";
+    stacktype invalidNum = "123abc";
+    FLOAT_EQUAL(pFixNum(validNum), 123.45);
+    //return 1 indicating not worked:
+    FLOAT_EQUAL(pFixNum(invalidNum), 1);
+}
+
+double pFixVar(stacktype d, Program *turtle){
+    char* varName = d;
+    if (strlen(varName) != EXPECTED_VARLEN) {
+        return 1;
+    }
+    if (varName[0] == '$' && isalpha(varName[1])){
+        int index = INDEX(varName[1]);
+        if(turtle->store[index].inUse == true){
+            return atof(turtle->store[index].var);
+        }
+    }
+    return 1; 
+}
+
+void test_pFixVar(void){
+    Program* testTurtle = initTurtle();
+    stacktype validNum = "123.45";
+    stacktype invalidNum = "123abc";
+    stacktype validVar = "$C";
+    stacktype invalidVar = "$1";
+    stacktype nonExistentVar = "$Z";
+    testTurtle->store[INDEX('C')].inUse = true;
+    strcpy(testTurtle->store[INDEX('C')].var, "123.45");
+    FLOAT_EQUAL(pFixNum(validNum), 123.45);
+    FLOAT_EQUAL(pFixNum(invalidNum), 1);
+    // Test pFixVar with valid variable
+    FLOAT_EQUAL(pFixVar(validVar, testTurtle), 123.45);
+    // Test pFixVar with invalid variable, should return 1
+    FLOAT_EQUAL(pFixVar(invalidVar, testTurtle), 1);
+    // Test pFixVar with non-existent variable, should return 1
+    FLOAT_EQUAL(pFixVar(nonExistentVar, testTurtle), 1);
+    free(testTurtle);
+}
+
+// void test_pFixNum(void){
+//     stacktype validNum = "123.45";
+//     stacktype invalidNum = "123abc";
+//     FLOAT_EQUAL(pFixNum(validNum), 123.45);
+//     //return 1 indicating not worked:
+//     FLOAT_EQUAL(pFixNum(invalidNum), 1);
+// }
 
 // void intPfxix(Program *turtle){
 //    char input[MAXCMND];

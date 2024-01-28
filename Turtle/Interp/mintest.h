@@ -124,11 +124,9 @@ static size_t lfails = 0;
 
 
 /* Assert two floats are equal (Within LTEST_FLOAT_TOLERANCE). */
-#define lfequal(a, b)\
-    lequal_base(fabs((double)(a)-(double)(b)) <= LTEST_FLOAT_TOLERANCE\
-     && fabs((double)(a)-(double)(b)) == fabs((double)(a)-(double)(b)), (double)(a), (double)(b), "%f")
-
-
+#define FLOAT_EQUAL(a, b)\
+    lequal_base(fabs((double)(a)-(double)(b)) <= LTEST_FLOAT_TOLERANCE, (double)(a), (double)(b), "%f")
+    
 /* Assert two strings are equal. */
 #define lsequal(a, b)\
     lequal_base(strcmp(a, b) == 0, a, b, "%s")
