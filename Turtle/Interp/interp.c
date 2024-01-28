@@ -16,12 +16,10 @@ int main(int argc, char* argv[]){
     }
     fclose(fttl);
     stack_free(turtle->s);
-    // free(turtle->s);
     free(turtle);
     test();
     RESULTS();
     return lfails != 0;
-    // return 0;
 } 
 
 void test(void){
@@ -46,10 +44,8 @@ void validArgs(int argc){
 FILE* openFile(char* filename){
     FILE* fttl = fopen(filename, "r");
     if(!fttl){
-        ERROR("Cannot read from argv[1] \n");
         fclose(fttl);
-        //TODO: How am I doing error reporting in interpreter?
-        exit(EXIT_FAILURE);
+        ERROR("Cannot read from argv[1] \n");
     }
     return fttl;
 }
@@ -391,10 +387,20 @@ bool Col(Program *turtle){
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
-    char *colVal = subStr(turtle->wds[turtle->cw]);
-    turtle->setColour = colVal;
-    setCol(turtle, colVal);
-    return true;
+    if(Var(turtle)){
+        int index = INDEX(*turtle->varTemp);
+        char *colVal = subStr(turtle->store[index].var);
+        turtle->setColour = colVal;
+        setCol(turtle, colVal);
+        return true;
+    }
+    if(Word(turtle)){
+        char *colVal = subStr(turtle->wds[turtle->cw]);
+        turtle->setColour = colVal;
+        setCol(turtle, colVal);
+        return true;
+    }
+    return false;
 }
 
 void varCol(Program *turtle){
@@ -496,18 +502,17 @@ bool Loop(Program *turtle){
     if (!Ltr(turtle)){
         return false;
     }
-    turtle->varTemp = turtle->wds[turtle->cw];
     int index = INDEX(*turtle->varTemp);
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
-    int startList = turtle->cw;
     //startList = cw
     //if ! Lst() return false
     //int loopLen = cw - startList
     //startLooping(turtle, letter, loop_len)
     turtle->cw++;
+    int startList = turtle->cw;
     if (!Lst(turtle)){
         return false;
     }
@@ -515,6 +520,7 @@ bool Loop(Program *turtle){
     stack_tostring(turtle->s, str);
     printf("%s", str);
     int loop_len = turtle->cw - startList;
+    loop_len-=2;
     startLooping(turtle, index, loop_len);
     // int listLen = turtle->cw - cList;
     // storeList(turtle, startList, cList);
@@ -626,19 +632,19 @@ void testSet(void){
     double out_result2 = atof(testTurtle->store[index].var);
     FLOAT_EQUAL(result2, out_result2);
     // Test for SET $A ("RED")
-    strcpy(testTurtle->wds[0], "START");
-    strcpy(testTurtle->wds[1], "SET");
-    strcpy(testTurtle->wds[2], "A");
-    strcpy(testTurtle->wds[3], "(");
-    strcpy(testTurtle->wds[4], "\"RED\"");
-    strcpy(testTurtle->wds[5], ")");
-    strcpy(testTurtle->wds[6], "END");
-    testTurtle->cw = 1;
-    Set(testTurtle);
-    index = INDEX('A');
-    BOOL(testTurtle->store[index].inUse == true);
-    char* colour_out = subStr(testTurtle->store[index].var);
-    STR_EQUAL(colour_out, "RED");
+    // strcpy(testTurtle->wds[0], "START");
+    // strcpy(testTurtle->wds[1], "SET");
+    // strcpy(testTurtle->wds[2], "A");
+    // strcpy(testTurtle->wds[3], "(");
+    // strcpy(testTurtle->wds[4], "\"RED\"");
+    // strcpy(testTurtle->wds[5], ")");
+    // strcpy(testTurtle->wds[6], "END");
+    // testTurtle->cw = 1;
+    // Set(testTurtle);
+    // index = INDEX('A');
+    // BOOL(testTurtle->store[index].inUse == true);
+    // char* colour_out = subStr(testTurtle->store[index].var);
+    // STR_EQUAL(colour_out, "RED");
     stack_free(testTurtle->s);
     free(testTurtle);
 }
@@ -715,8 +721,9 @@ bool Items(Program* turtle){
         return true;
     }
     else{
-        int temp = turtle->cw;
         turtle->cw++;
+        int temp = turtle->cw;
+        temp--;
         if(!(Items(turtle))){
             return false;
         }
@@ -792,11 +799,11 @@ bool Pfix(Program* turtle, int index){
         turtle->cw++;
         return Pfix(turtle, index);
     }
-    else if (Word(turtle)){
-        strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
-        turtle->cw++;
-        return Pfix(turtle, index);
-    }
+    // else if (Word(turtle)){
+    //     strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
+    //     turtle->cw++;
+    //     return Pfix(turtle, index);
+    // }
     return false;
 }
 
