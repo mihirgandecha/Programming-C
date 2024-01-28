@@ -1,3 +1,7 @@
+Main Commands:
+make run_parsetest: Run parse script and assert test, with report format.
+
+
 Project: Turtle
 Project Timeline: 13th December 2023 -> 29th January 2024 (with extension)
 Expected: 2 weeks (however took approximately 5 weeks)
