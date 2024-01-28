@@ -32,6 +32,8 @@ void test(void){
     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
     RUN("[HELPER] Comparing float Test", test_compareFloat);
     RUN("[HELPER] Degree to Radians Test", degToRadTest);
+    RUN("[HELPER] Set Test", testSet);
+    
 }
 
 void validArgs(int argc){
@@ -467,9 +469,6 @@ bool Loop(Program *turtle){
     }
     turtle->varTemp = turtle->wds[turtle->cw];
     int index = INDEX(*turtle->varTemp);
-    // if(turtle->store[index].inUse == true){
-    //     ERROR("Variable already used!");
-    // } 
     turtle->cw++;
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
@@ -542,6 +541,58 @@ bool Set(Program *turtle){
         return false;
     }
     return true; 
+}
+
+void testSet(void){
+    Program* testTurtle = initTurtle();
+    int index;
+    // Test for SET A (5)
+    strcpy(testTurtle->wds[0], "START");
+    strcpy(testTurtle->wds[1], "SET");
+    strcpy(testTurtle->wds[2], "A");
+    strcpy(testTurtle->wds[3], "(");
+    strcpy(testTurtle->wds[4], "5");
+    strcpy(testTurtle->wds[5], ")");
+    strcpy(testTurtle->wds[6], "END");
+    testTurtle->cw = 1;
+    Set(testTurtle);
+    index = INDEX('A');
+    BOOL(testTurtle->store[index].inUse == true);
+    STR_EQUAL(testTurtle->store[index].var, "5");
+    //Test for SET B ($C)
+    strcpy(testTurtle->wds[2], "B");
+    strcpy(testTurtle->wds[4], "$C");
+    testTurtle->cw = 1;
+    Set(testTurtle);
+    index = INDEX(*testTurtle->varTemp);
+    BOOL(testTurtle->store[index].inUse == true);
+    STR_EQUAL(testTurtle->store[index].var, "$C");
+    //Test for SET C ($A 1 +)
+    strcpy(testTurtle->wds[2], "C");
+    strcpy(testTurtle->wds[4], "$A");
+    strcpy(testTurtle->wds[5], "1");
+    strcpy(testTurtle->wds[6], "+");
+    strcpy(testTurtle->wds[7], ")");
+    strcpy(testTurtle->wds[8], "END");
+    testTurtle->cw = 1;
+    Set(testTurtle);
+    index = INDEX(*testTurtle->varTemp);
+    BOOL(testTurtle->store[index].inUse == true);
+    STR_EQUAL(testTurtle->store[index].var, "$A");
+    //Test for SET D ($A $B *)
+    strcpy(testTurtle->wds[2], "D");
+    strcpy(testTurtle->wds[4], "$A");
+    strcpy(testTurtle->wds[5], "$B");
+    strcpy(testTurtle->wds[6], "*");
+    strcpy(testTurtle->wds[7], ")");
+    strcpy(testTurtle->wds[8], "END");
+    testTurtle->cw = 1;
+    Set(testTurtle);
+    index = INDEX(*testTurtle->varTemp);
+    BOOL(testTurtle->store[index].inUse == true);
+    STR_EQUAL(testTurtle->store[index].Op, "*");
+    STR_EQUAL(testTurtle->store[index].var, "$A");
+    free(testTurtle);
 }
 
 bool Varnum(Program *turtle){
@@ -724,19 +775,46 @@ bool Pfix(Program* turtle){
         return true;
     }
     else if (Op(turtle)){
+        int index = INDEX(*turtle->varTemp);
+        int tempCw = turtle->cw;
+        storeOP(turtle, index);
+        turtle->cw = tempCw;
         turtle->cw++;
         return Pfix(turtle);
     }
     else if (Varnum(turtle)){
         int index = INDEX(*turtle->varTemp);
-        if(turtle->store[index].inUse == true){
-            strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
-        }    
+        strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
         turtle->cw++;
         return Pfix(turtle);
     }
     return false;
 }
+
+bool storeOP(Program* turtle, int index){
+    if(Op(turtle)){
+        turtle->store[index].pfixUse = true;
+        stack_push(turtle->s, turtle->wds[turtle->cw]);
+        turtle->cw--;
+        return storeOP(turtle, index);
+    }
+    if(Varnum(turtle)){
+        // if(turtle->store[index].var){
+        //     turtle->store[index].var = NULL;
+        // }
+        memset(turtle->store[index].var, 0, sizeof(turtle->store[index].var));
+        if(turtle->store[index].pfixUse == true){
+            stack_push(turtle->s, turtle->wds[turtle->cw]);
+            turtle->cw--;
+            return storeOP(turtle, index);
+        }
+    }
+    if(STRSAME(turtle->wds[turtle->cw], "(")){
+        return true;
+    }
+    return false;
+}
+
 
 // void intPfxix(Program *turtle){
 //    char input[MAXCMND];

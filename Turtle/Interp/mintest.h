@@ -101,7 +101,7 @@ static size_t lfails = 0;
 
 
 /* Assert a true statement. */
-#define lok(test) do {\
+#define BOOL(test) do {\
     ++ltests;\
     if (!(test)) {\
         ++lfails;\

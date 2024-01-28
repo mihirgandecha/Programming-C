@@ -36,6 +36,8 @@ typedef char* stacktype;
 typedef struct{
    char var[MAXTOKENSIZE];
    bool inUse;
+   bool pfixUse;
+   char Op[MAXTOKENSIZE];
 } Variable;
 
 struct prog{
@@ -114,10 +116,13 @@ int compareFloat(double a, double b);
 void test_compareFloat();
 double degToRad(double degrees);
 void degToRadTest(void);
+//Set Int:
+void testSet(void);
 //Loop Int:
 bool startLooping(Program *turtle, int letter, int loop_len);
 //Pfix Int:
 void intPfxix(Program *turtle);
+bool storeOP(Program* turtle, int index);
 //Stack:
 stack* stack_init(void);
 void stack_push(stack* s, stacktype d);
