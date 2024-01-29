@@ -14,9 +14,9 @@ int main(int argc, char* argv[]){
     if(argc == MIN_ARGS){
         writeFile(argv[MIN_ARGS], turtle);
     }
-    fclose(fttl);
     stack_free(turtle->s);
     free(turtle);
+    neillreset();
     test();
     RESULTS();
     return lfails != 0;
@@ -24,7 +24,6 @@ int main(int argc, char* argv[]){
 
 void test(void){
     puts("\n");
-    // RUN("[INTERP] Bresenham Algorithm Test", testBresenham);
     RUN("[HELPER] Substring Test", test_subStr);
     RUN("[HELPER] Screen Bound Test", test_isWithinBounds);
     RUN("[HELPER] Comparing float Test", test_compareFloat);
@@ -45,7 +44,8 @@ FILE* openFile(char* filename){
     FILE* fttl = fopen(filename, "r");
     if(!fttl){
         fclose(fttl);
-        ERROR("Cannot read from argv[1] \n");
+        DEBUG("Cannot read from argv[1] \n");
+        exit(EXIT_FAILURE);
     }
     return fttl;
 }
@@ -53,7 +53,6 @@ FILE* openFile(char* filename){
 void writeFile(char* filename, Program *turtle){
     char filepath[BUFFER] = {"\0"};
     snprintf(filepath, sizeof(filepath), "myResults/%s", filename);
-    printf("%s", filepath);
     FILE* fttx = fopen(filepath, "w");
     if(!fttx){
         ERROR("Cannot read from argv[2] \n");
@@ -69,19 +68,6 @@ void writeFile(char* filename, Program *turtle){
     fclose(fttx);
 }
 
-// void pFixWrite(Program* turtle) {
-//     if (turtle->pfixUsed == true){
-//         FILE* psFile = fopen("output.ps", "w");
-//         if (psFile == NULL) {
-//             perror("Error opening file");
-//             return;
-//         }
-//         fprintf(psFile, "%% Placeholder PostScript commands\n");
-//         fclose(psFile);
-//         system("ps2pdf output.ps output.pdf");
-//     }
-// }
-
 Program* initTurtle(void){
     Program* turtle = (Program*)calloc(1, sizeof(Program));
     if (!turtle){
@@ -91,11 +77,10 @@ Program* initTurtle(void){
     turtle->col = SCOL;
     turtle->row = SROW;
     turtle->rAngle = 0;
-    turtle->colour = ' ';
     turtle->isScreen = false;
     turtle->s = stack_init();
     turtle->s->start = NULL;
-    turtle->colour = 'W';
+    turtle->setColour = "WHITE";
     return turtle;
 }
 
@@ -125,21 +110,20 @@ void runProgram(Program* turtle){
     }
 }
 
-
-//TODO: Format: remove puts?
-//TODO: Format: how many seconds delay and in right placement?
 void printtoscreen(Program *turtle){
     neillclrscrn();
     neillcursorhome();
     double seconds = 0.25;
     for (int row = 0; row < ROW; row++){
-        for (int col = 0; col < COL; col++){
+         for (int col = 0; col < COL; col++){
+            if(turtle->SCREEN[row][col] != ' '){
+                setCol(turtle->setColour);
+            }
             printf("%c", turtle->SCREEN[row][col]);
         }
         printf("\n");
     }
     neillbusywait(seconds);
-    neillreset();
 }
 
 bool Prog(Program *turtle){
@@ -221,7 +205,6 @@ bool intFwd(Program *turtle, double distance){
     int prevRow = (int)turtle->row; 
     int dRow = round(cos(turtle->rAngle) * -distance);
     int dCol = round(sin(turtle->rAngle) * distance); 
-    //(if not postscript) -> store (start + delta)
     int newRow = prevRow + dRow;
     int newCol = prevCol + dCol;
     if(Bresenham(turtle, newRow, newCol, dRow, dCol)){
@@ -244,9 +227,6 @@ bool Bresenham(Program *turtle, int rowEnd, int colEnd, int dRow, int dCol){
     }
     if(turtle->SCREEN[rowEnd][colEnd] == ' '){
         drawPoint(turtle, rowEnd, colEnd);
-    }
-    if (turtle->colour != 'W'){
-        setCol(turtle, turtle->setColour);
     }
     if(turtle->isScreen == true){
         printtoscreen(turtle);
@@ -284,7 +264,7 @@ void test_isWithinBounds(){
 
 bool drawPoint(Program *turtle, int row, int col){
     if(isWithinBounds(row, col)){
-        turtle->SCREEN[row][col] = turtle->colour;
+        turtle->SCREEN[row][col] = turtle->setColour[0];
         return true;
     }
     return false;
@@ -292,24 +272,19 @@ bool drawPoint(Program *turtle, int row, int col){
 
 void test_Bresenham(){
     Program turtle;
-    // TODO init test input values into turtle
     assert(Bresenham(&turtle, 10, 10, 5, 5) == false);
-    // testing for updating position
     turtle.row = 0;
     turtle.col = 0;
     Bresenham(&turtle, 10, 10, 5, 5);
     assert(turtle.row == 5 && turtle.col == 5);
-    //testing negative dRow and dCol
     turtle.row = 10;
     turtle.col = 10;
     Bresenham(&turtle, 0, 0, -5, -5);
     assert(turtle.row == 5 && turtle.col == 5);
-    //row handling test
     turtle.row = 10;
     turtle.col = 0;
     Bresenham(&turtle, 0, 10, -5, 5);
     assert(turtle.row == 5 && turtle.col == 5);
-    // col handling test
     turtle.row = 0;
     turtle.col = 10;
     Bresenham(&turtle, 10, 0, 5, -5);
@@ -383,7 +358,6 @@ bool Col(Program *turtle){
         return false;
     }
     turtle->cw++;
-    //TODO make work with set
     if(!Var(turtle) && !Word(turtle)){
         return false;
     }
@@ -391,35 +365,16 @@ bool Col(Program *turtle){
         int index = INDEX(*turtle->varTemp);
         char *colVal = subStr(turtle->store[index].var);
         turtle->setColour = colVal;
-        setCol(turtle, colVal);
         return true;
     }
     if(Word(turtle)){
         char *colVal = subStr(turtle->wds[turtle->cw]);
         turtle->setColour = colVal;
-        setCol(turtle, colVal);
         return true;
     }
     return false;
 }
 
-void varCol(Program *turtle){
-    if(Var(turtle)){
-        int index = INDEX(turtle->wds[turtle->cw][1]);
-        if(turtle->store[index].inUse == true){
-            char *colVal = subStr(turtle->store[index].var);
-            turtle->setColour = colVal;
-            setCol(turtle, colVal);
-        }
-    }
-    else if(Word(turtle)){
-        char *colVal = subStr(turtle->wds[turtle->cw]);
-        turtle->setColour = colVal;
-        setCol(turtle, colVal);
-    }
-}
-
-//TODO: Define as helper function in .h file
 char* subStr(char *str){
     if (str == NULL) {
         return NULL;
@@ -431,7 +386,7 @@ char* subStr(char *str){
     str[len - DOUBLE] = '\0';
     return str;
 }
-//TODO Remove after Fully tested!
+
 void test_subStr(void){
     char black[] = "\"BLACK\"";
     STR_EQUAL(subStr(black), "BLACK");
@@ -451,48 +406,36 @@ void test_subStr(void){
     STR_EQUAL(subStr(white), "WHITE");
 }
 
-//TODO: Should I use lookup table to condense function?
-void setCol(Program *turtle, char* colour){
-    if (STRSAME(colour, "BLACK")){
-        turtle->colour = 'B';
-        neillfgcol(black);
-    } 
-    else if (STRSAME(colour, "WHITE")){
-        turtle->colour = 'W';
-        neillfgcol(white);
-    } 
-    else if (STRSAME(colour, "RED")){
-        turtle->colour = 'R';
-        neillfgcol(red);
-    } 
-    else if (STRSAME(colour, "GREEN")){
-        turtle->colour = 'G';
-        neillfgcol(green);
-    } 
-    else if (STRSAME(colour, "BLUE")){
-        turtle->colour = 'B';
-        neillfgcol(blue);
-    } 
-    else if (STRSAME(colour, "YELLOW")){
-        turtle->colour = 'Y';
-        neillfgcol(yellow);
-    } 
-    else if (STRSAME(colour, "CYAN")){
-        turtle->colour = 'C';
-        neillfgcol(cyan);
-    } 
-    else if (STRSAME(colour, "MAGENTA")){
-        turtle->colour = 'M';
-        neillfgcol(magenta);
-    } 
-    else {
-        turtle->colour = 'W';
-        neillfgcol(white);
+void setCol(char* colour){
+    switch(colour[0]){
+        case 'B':
+            neillfgcol(black);
+            break;
+        case 'W':
+            neillfgcol(white);
+            break;
+        case 'R':
+            neillfgcol(red);
+            break;
+        case 'G':
+            neillfgcol(green);
+            break;
+        case 'Y':
+            neillfgcol(yellow);
+            break;
+        case 'C':
+            neillfgcol(cyan);
+            break;
+        case 'M':
+            neillfgcol(magenta);
+            break;
+        case 'U':
+            neillfgcol(blue);
+            break;
+        default:
+            break;
     }
 }
-
-
-//@Lws
 
 bool Loop(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "LOOP")){
@@ -507,23 +450,14 @@ bool Loop(Program *turtle){
     if (!STRSAME(turtle->wds[turtle->cw], "OVER")){
         return false;
     }
-    //startList = cw
-    //if ! Lst() return false
-    //int loopLen = cw - startList
-    //startLooping(turtle, letter, loop_len)
     turtle->cw++;
     int startList = turtle->cw;
     if (!Lst(turtle)){
         return false;
     }
-    char str[1000];
-    stack_tostring(turtle->s, str);
-    printf("%s", str);
     int loop_len = turtle->cw - startList;
     loop_len-=2;
     startLooping(turtle, index, loop_len);
-    // int listLen = turtle->cw - cList;
-    // storeList(turtle, startList, cList);
     return true;
 }
 
@@ -543,16 +477,6 @@ bool startLooping(Program *turtle, int letter, int loop_len){
     }
     return true;
 }
-
-
-//startLooping(turtle, letter, loop_len)
-//  int start_indx = turtle->cw
-//  for(int i = 0; i<loopLen; i++)
-//      turtle->cw = start_index
-//      variables[letter] = stack pop
-//      if ! Inslst return false
-
-
 
 bool Set(Program *turtle){
     if(!STRSAME(turtle->wds[turtle->cw], "SET")){
@@ -631,20 +555,6 @@ void testSet(void){
     double result2 = 30;
     double out_result2 = atof(testTurtle->store[index].var);
     FLOAT_EQUAL(result2, out_result2);
-    // Test for SET $A ("RED")
-    // strcpy(testTurtle->wds[0], "START");
-    // strcpy(testTurtle->wds[1], "SET");
-    // strcpy(testTurtle->wds[2], "A");
-    // strcpy(testTurtle->wds[3], "(");
-    // strcpy(testTurtle->wds[4], "\"RED\"");
-    // strcpy(testTurtle->wds[5], ")");
-    // strcpy(testTurtle->wds[6], "END");
-    // testTurtle->cw = 1;
-    // Set(testTurtle);
-    // index = INDEX('A');
-    // BOOL(testTurtle->store[index].inUse == true);
-    // char* colour_out = subStr(testTurtle->store[index].var);
-    // STR_EQUAL(colour_out, "RED");
     stack_free(testTurtle->s);
     free(testTurtle);
 }
@@ -735,8 +645,6 @@ bool Items(Program* turtle){
     return false;       
 }
 
-
-
 bool Lst(Program* turtle){
     if(STRSAME(turtle->wds[turtle->cw], "{")){
         turtle->cw++;
@@ -799,11 +707,6 @@ bool Pfix(Program* turtle, int index){
         turtle->cw++;
         return Pfix(turtle, index);
     }
-    // else if (Word(turtle)){
-    //     strcpy(turtle->store[index].var, turtle->wds[turtle->cw]);
-    //     turtle->cw++;
-    //     return Pfix(turtle, index);
-    // }
     return false;
 }
 

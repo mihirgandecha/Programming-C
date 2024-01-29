@@ -9,8 +9,6 @@ int main(int argc, char* argv[]){
     runProgram(turtle);
     fclose(fttl);
     free(turtle);
-    // test();
-    // return 0;
     return 0;
 }
 
@@ -66,7 +64,6 @@ bool Prog(Program *turtle){
 }
 
 bool Inslst(Program *turtle){
-    //TODO should i move to prog?
     if(STRSAME(turtle->wds[turtle->cw], "END")){
         return true;
     }
@@ -80,7 +77,6 @@ bool Inslst(Program *turtle){
 
 bool Ins(Program *turtle){
     char* cmnd = turtle->wds[turtle->cw];
-    //TODO this is repeated in Fwd
     if (STRSAME(cmnd, "FORWARD")){ 
         return Fwd(turtle);
     } 
@@ -282,7 +278,6 @@ bool checkNull(Program *turtle){
 }
 
 bool Op(Program* turtle){
-    //TODO shall i be testing NULL for all functions?
     if(!checkNull(turtle)){
         return false;
     }

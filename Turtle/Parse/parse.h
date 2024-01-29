@@ -15,7 +15,6 @@
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
-   bool endReached;
 };
 typedef struct prog Program;
 

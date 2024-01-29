@@ -59,22 +59,3 @@ understand how they work. However must say learning curve only increased as I wa
 and made an end of day reflection for each major bug found.
 
 
------------------------------------------------------INTERPRETER----------------------------------------------------------------------------
-
-Interp: #endif BUG 
-
-
-Testing Parser:
-For the parser, I split by
-
-Parsing Test:
-White-box Testing:
--Testing Input/Output 
--Therefore running through TTLs provided
--Wrote new to include more edge cases
-	-perhaps more ttl that will parse but doesnt interpret?
-
-Black-box Testing:
--Testing I/O, but also internal testing
--Bash script to check error messaging
--assert testing each function for recursive nature

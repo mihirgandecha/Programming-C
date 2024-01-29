@@ -44,7 +44,6 @@ typedef struct{
 struct prog{
    char wds[MAXCMND][MAXTOKENSIZE];
    int cw; 
-   int tempCw;
    int col, row;
    double rAngle;
    bool isScreen;
@@ -52,9 +51,7 @@ struct prog{
    char colour;
    char* setColour;
    Variable store[MAX_VARS];
-   bool setUsed[MAX_VARS];
    char* varTemp;
-   int varIndx;
    stack* s; 
 };
 typedef struct prog Program;
@@ -83,9 +80,7 @@ bool Word(Program* turtle);
 bool Lst(Program* turtle);
 bool Items(Program* turtle);
 bool Item(Program* turtle);
-// bool Pfix(Program* turtle);
 bool Pfix(Program* turtle, int index);
-
 bool Op(Program* turtle);
 void splitIntoWords(char* str, char* words);
 bool checkNull(Program *turtle);
@@ -109,9 +104,8 @@ void testBresenham(void);
 //Lst Int:
 bool storeList(Program *turtle, int startList, int cList);
 //Col Int:
-void setCol(Program *turtle, char* colour);
+void setCol(char* colour);
 void varCol(Program *turtle);
-
 char* subStr(char *str);
 void test_subStr(void);
 //Rgt Int:
@@ -130,15 +124,10 @@ bool startLooping(Program *turtle, int letter, int loop_len);
 void intPfxix(Program *turtle);
 bool storeOP(Program* turtle, int index);
 void intOp(Program* turtle, int index);
-
-
 double pFixNum(stacktype d);
 void test_pFixNum(void);
 double pFixVar(stacktype d, Program *turtle);
 void test_pFixVar(void);
-
-
-
 
 //Stack:
 stack* stack_init(void);
@@ -147,8 +136,7 @@ bool stack_pop(stack* s, stacktype* d);
 bool stack_free(stack* s);
 bool stack_peek(stack*s,  stacktype* d);
 void stack_tostring(stack*, char* str);
+
 //Test:
 void test(void);
-// void queue_push(stack* s, stacktype d);
-// bool queue_pop(stack* s, stacktype* d);
-// bool queue_free(stack* s);
+
