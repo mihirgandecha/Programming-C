@@ -37,10 +37,10 @@ combined: Interp/interp.h Interp/interp.c neillsimplescreen.c neillsimplescreen.
 
 # Uncomment as you test for different .ttl files
 runcom: clean combined
-	./combined_target TTLs/empty.ttl 
+#	./combined_target TTLs/empty.ttl 
 # ./combined_target TTLs/forward.ttl 
 # ./combined_target TTLs/5x5.ttl 
-# ./combined_target TTLs/octagon1.ttl 
+# 	./combined_target TTLs/octagon1.ttl 
 # ./combined_target TTLs/octagon2.ttl
 # ./combined_target TTLs/my_fwd.ttl 
 # ./combined_target TTLs/downarrow.ttl 
@@ -51,7 +51,7 @@ runcom: clean combined
 # ./combined_target TTLs/nested.ttl 
 # ./combined_target TTLs/set1.ttl 
 # ./combined_target TTLs/set2.ttl 
-# ./combined_target TTLs/spiral.ttl 
+ ./combined_target TTLs/spiral.ttl 
 # ./combined_target TTLs/tunnel.ttl 
 # ./combined_target TTLs/turn.ttl 
 
