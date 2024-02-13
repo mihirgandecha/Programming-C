@@ -7,6 +7,5 @@ The projects are organised in reverse chronological order, with the most recent 
 ## Projects List
 
 1. **Recursive Decent Parser of Turtle Program**  
-   *Description*: Implementation of various advanced data structures, such as Linked Stack, and algorithms to implement my own parser and interpreter of the Turtle program. This project emphasizes on efficient testing, data manipulation and algorithm optimisation.
+   *Description*: Implementation of various advanced data structures, such as Linked Stack, and algorithms to implement my own parser and interpreter of the Turtle program. This project emphasizes on efficient testing, data manipulation, and algorithm optimization.  
    *Project Link*: [View on GitHub](https://github.com/mihirgandecha/Programming-C/tree/main/AdvancedDataStructures)
-   
